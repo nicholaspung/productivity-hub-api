@@ -39,9 +39,9 @@ class Habit(models.Model):
     date_created = models.DateTimeField(auto_now_add=True)
     order = models.IntegerField(default=1)
     user = models.ForeignKey('auth.User', on_delete=models.CASCADE)
+    archived = models.BooleanField(default=False)
 
     def save(self, *args, **kwargs):
-        print(self)
         if self._state.adding:
             last_order = Habit.objects.filter(user=self.user).count()
             if last_order is not None:
@@ -50,11 +50,7 @@ class Habit(models.Model):
 
 
 class Daily(models.Model):
-    def get_sentinel_habit():
-        return Habit.objects.get_or_create(pk='habits_id')[0]
-
-    date = models.DateField(auto_now_add=True, unique=True)
-    habits_id = models.ForeignKey(
-        'Habit', on_delete=models.SET(get_sentinel_habit))
+    date = models.DateField(auto_now_add=True)
+    habit = models.ForeignKey('Habit', on_delete=models.CASCADE)
     finished = models.BooleanField(default=False)
     user = models.ForeignKey('auth.User', on_delete=models.CASCADE)

@@ -38,9 +38,10 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
     # Third Party
+    'rest_framework',
     # Internal
-    'habit_tracker',
-    'post_saver',
+    'habit_tracker.apps.HabitTrackerConfig',
+    'post_saver.apps.PostSaverConfig',
 ]
 
 MIDDLEWARE = [

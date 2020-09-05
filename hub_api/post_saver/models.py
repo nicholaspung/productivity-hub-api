@@ -1,3 +1,19 @@
 from django.db import models
 
-# Create your models here.
+
+class Post(models.Model):
+    reddit_id = models.TextField(blank=True, null=True, unique=True)
+    title = models.CharField(max_length=200)
+    url = models.TextField(blank=True, null=True)
+
+
+class Title(models.Model):
+    title = models.CharField(max_length=200, unique=True)
+    user = models.ForeignKey('auth.User', on_delete=models.CASCADE)
+
+
+class SavedPost(models.Model):
+    title = models.CharField(max_length=200, unique=True)
+    url = models.TextField(blank=True, null=True)
+    seen = models.BooleanField(default=False)
+    user = models.ForeignKey('auth.User', on_delete=models.CASCADE)
