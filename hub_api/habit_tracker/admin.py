@@ -1,3 +1,22 @@
 from django.contrib import admin
 
-# Register your models here.
+from .models import Todo, Habit, Daily
+
+
+class TodoAdmin(admin.ModelAdmin):
+    fields = ['name', 'description',
+              'finished', 'priority', 'user']
+
+
+class HabitAdmin(admin.ModelAdmin):
+    fields = ['name', 'description',
+              'user', 'archived']
+
+
+class DailyAdmin(admin.ModelAdmin):
+    fields = ['habit', 'finished', 'user']
+
+
+admin.site.register(Todo, TodoAdmin)
+admin.site.register(Habit, HabitAdmin)
+admin.site.register(Daily, DailyAdmin)

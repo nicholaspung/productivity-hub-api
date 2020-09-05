@@ -20,17 +20,15 @@ class HabitSerializer(serializers.HyperlinkedModelSerializer):
 class DailySerializer(serializers.HyperlinkedModelSerializer):
     class Meta:
         model = Daily
-        fields = ['date', 'habit', 'finished', 'user']
+        fields = ['date', 'finished', 'user', 'habit']
 
 
 class UserSerializer(serializers.HyperlinkedModelSerializer):
     habits = serializers.HyperlinkedRelatedField(
-        many=True, view_name='habit-detail', read_only=True)
+        many=True, read_only=True, view_name='habit-detail')
     todos = serializers.HyperlinkedRelatedField(
-        many=True, view_name='todo-detail', read_only=True)
-    dailies = serializers.HyperlinkedRelatedField(
-        many=True, view_name='daily-detail', read_only=True)
+        many=True, read_only=True, view_name='todo-detail')
 
     class Meta:
         model = User
-        fields = ['id', 'username', 'url', 'habits', 'todos', 'dailies']
+        fields = ['id', 'username', 'url', 'habits', 'todos']

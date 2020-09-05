@@ -17,7 +17,8 @@ class Todo(models.Model):
     finished = models.BooleanField(default=False)
     priority = models.CharField(
         max_length=4, choices=ENUM_PRIORITY_CHOICES, default=ENUM_PRIORITY_CHOICES[0])
-    user = models.ForeignKey('auth.User', on_delete=models.CASCADE)
+    user = models.ForeignKey(
+        'auth.User', on_delete=models.CASCADE, related_name='todos')
     order = models.IntegerField(default=1)
 
     def save(self, *args, **kwargs):
@@ -38,7 +39,8 @@ class Habit(models.Model):
     description = models.TextField(blank=True, default="")
     date_created = models.DateTimeField(auto_now_add=True)
     order = models.IntegerField(default=1)
-    user = models.ForeignKey('auth.User', on_delete=models.CASCADE)
+    user = models.ForeignKey(
+        'auth.User', on_delete=models.CASCADE, related_name='habits')
     archived = models.BooleanField(default=False)
 
     def save(self, *args, **kwargs):
@@ -51,6 +53,8 @@ class Habit(models.Model):
 
 class Daily(models.Model):
     date = models.DateField(auto_now_add=True)
-    habit = models.ForeignKey('Habit', on_delete=models.CASCADE)
+    habit = models.ForeignKey(
+        Habit, on_delete=models.CASCADE, related_name='dailys')
     finished = models.BooleanField(default=False)
-    user = models.ForeignKey('auth.User', on_delete=models.CASCADE)
+    user = models.ForeignKey(
+        'auth.User', on_delete=models.CASCADE, related_name='dailys')

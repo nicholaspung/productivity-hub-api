@@ -52,7 +52,7 @@ class DailyViewSet(viewsets.ModelViewSet):
     permission_classes = is_authenticated_and_owner_classes
 
     def get_queryset(self):
-        return Todo.objects.filter(user=self.request.user)
+        return Daily.objects.filter(user=self.request.user)
 
 
 @api_view(['GET'])
