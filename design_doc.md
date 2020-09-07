@@ -107,26 +107,31 @@ Habit Tracker
 
 - Todos
 
-  - Add todos
-  - Edit todos
-  - Delete todos
-  - Finish todos
-  - Unfinish todos
-  - Order todos (up, down, drag up and down)
-  - Prioritize todos (none, high, low)
+  [x] Add todos
+  [x] Edit todos
+  [x] Delete todos
+  [x] Finish todos
+  [x] Unfinish todos
+  [x] Order todos (up, down, drag up and down)
+  [x] Prioritize todos (none, high, low)
 
 - Habits
 
-  - Add habits
-  - Edit habits
-  - Delete habits
-  - Finish todos
-  - Unfinish todos
-  - Order habits (up, down, drag up and down)
+  [x] Add habits
+  [x] Edit habits
+  [x] Delete habits
+  [x] Archive habits
+  [x] Unarchive habits
+  [x] Order habits (up, down, drag up and down)
 
 - Daily Habits
 
-  - Show habits for week, month, and year view
+  [x] Show habits for today
+  [] Show habits for week
+  [] Show habits for month
+  [] Show habits for year
+  [x] Finish habits
+  [x] Unfinish habits
 
 Post Saver
 

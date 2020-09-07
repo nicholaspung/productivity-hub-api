@@ -3,18 +3,18 @@ from .models import Todo, Habit, Daily
 from django.contrib.auth.models import User
 
 
-class TodoSerializer(serializers.HyperlinkedModelSerializer):
+class TodoSerializer(serializers.ModelSerializer):
     class Meta:
         model = Todo
-        fields = ['name', 'description', 'date_created',
+        fields = ['id', 'name', 'description', 'date_created',
                   'date_finished', 'finished', 'priority', 'user', 'order']
         read_only_fields = ['user']
 
 
-class HabitSerializer(serializers.HyperlinkedModelSerializer):
+class HabitSerializer(serializers.ModelSerializer):
     class Meta:
         model = Habit
-        fields = ['name', 'description',
+        fields = ['id', 'name', 'description',
                   'date_created', 'order', 'user', 'archived']
         read_only_fields = ['user']
 
@@ -24,11 +24,11 @@ class DailySerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Daily
-        fields = ['date', 'finished', 'user', 'habit']
+        fields = ['id', 'date', 'finished', 'user', 'habit']
         read_only_fields = ['user']
 
 
-class UserSerializer(serializers.HyperlinkedModelSerializer):
+class UserSerializer(serializers.ModelSerializer):
     habits = HabitSerializer(many=True, read_only=True)
     todos = TodoSerializer(many=True, read_only=True)
     dailies = DailySerializer(many=True, read_only=True)
