@@ -54,7 +54,7 @@ class Habit(models.Model):
 class Daily(models.Model):
     date = models.DateField(auto_now_add=True)
     habit = models.ForeignKey(
-        Habit, on_delete=models.CASCADE, related_name='dailys')
+        Habit, on_delete=models.CASCADE, related_name='dailies')
     finished = models.BooleanField(default=False)
     user = models.ForeignKey(
-        'auth.User', on_delete=models.CASCADE, related_name='dailys')
+        'auth.User', on_delete=models.CASCADE, related_name='dailies')

@@ -8,6 +8,7 @@ class TodoSerializer(serializers.HyperlinkedModelSerializer):
         model = Todo
         fields = ['name', 'description', 'date_created',
                   'date_finished', 'finished', 'priority', 'user', 'order']
+        read_only_fields = ['user']
 
 
 class HabitSerializer(serializers.HyperlinkedModelSerializer):
@@ -15,20 +16,23 @@ class HabitSerializer(serializers.HyperlinkedModelSerializer):
         model = Habit
         fields = ['name', 'description',
                   'date_created', 'order', 'user', 'archived']
+        read_only_fields = ['user']
 
 
-class DailySerializer(serializers.HyperlinkedModelSerializer):
+class DailySerializer(serializers.ModelSerializer):
+    habit = HabitSerializer(many=False, read_only=True)
+
     class Meta:
         model = Daily
         fields = ['date', 'finished', 'user', 'habit']
+        read_only_fields = ['user']
 
 
 class UserSerializer(serializers.HyperlinkedModelSerializer):
-    habits = serializers.HyperlinkedRelatedField(
-        many=True, read_only=True, view_name='habit-detail')
-    todos = serializers.HyperlinkedRelatedField(
-        many=True, read_only=True, view_name='todo-detail')
+    habits = HabitSerializer(many=True, read_only=True)
+    todos = TodoSerializer(many=True, read_only=True)
+    dailies = DailySerializer(many=True, read_only=True)
 
     class Meta:
         model = User
-        fields = ['id', 'username', 'url', 'habits', 'todos']
+        fields = ['id', 'username', 'url', 'habits', 'todos', 'dailies']
