@@ -1,6 +1,7 @@
-from django.db import models
 import datetime
+
 import pytz
+from django.db import models
 
 
 class Todo(models.Model):

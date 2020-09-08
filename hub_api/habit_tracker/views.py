@@ -1,4 +1,4 @@
-from datetime import date
+from datetime import date, timedelta
 
 from rest_framework import permissions, renderers, viewsets
 from rest_framework.decorators import api_view
@@ -94,13 +94,23 @@ class DailyViewSet(viewsets.ModelViewSet):
             Daily.objects.get_or_create(
                 habit=habit, date=date.today(), user=user)
 
-        if 'date' in self.request.query_params:
-            if self.request.query_params['date'] == 'week':
-                queryset = Daily.objects.filter(date__range=())
-            elif self.request.query_params['date'] == 'month':
-                queryset = Daily.objects.filter(date__range=())
-            elif self.request.query_params['date'] == 'year':
-                queryset = Daily.objects.filter(date__range=())
+        if 'timeframe' in self.request.query_params:  # week, month, year
+            today = date.today()
+            if 'date' in self.request.query_params:  # 2020-09-08 | YYYY-MM-DD
+                request_date = self.request.query_params["date"]
+                today = date(int(request_date[:4]), int(
+                    request_date[5:7]), int(request_date[-2:]))
+
+            if self.request.query_params['timeframe'] == 'week':
+                isocalendar = today.isocalendar()
+                queryset = Daily.objects.filter(user=self.request.user, date__range=(
+                    date.fromisocalendar(today.year, isocalendar[1], 1) - timedelta(days=1), date.today()))
+            elif self.request.query_params['timeframe'] == 'month':
+                queryset = Daily.objects.filter(user=self.request.user, date__range=(
+                    date(today.year, today.month, 1), date.today()))
+            elif self.request.query_params['timeframe'] == 'year':
+                queryset = Daily.objects.filter(user=self.request.user,
+                                                date__range=(date(today.year, 1, 1), date.today()))
             else:
                 queryset = Daily.objects.filter(
                     user=self.request.user, date=date.today())

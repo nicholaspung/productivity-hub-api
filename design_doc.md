@@ -127,9 +127,9 @@ Habit Tracker
 - Daily Habits
 
   [x] Show habits for today
-  [] Show habits for week
-  [] Show habits for month
-  [] Show habits for year
+  [x] Show habits for week
+  [x] Show habits for month
+  [x] Show habits for year
   [x] Finish habits
   [x] Unfinish habits
 
