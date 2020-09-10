@@ -1,9 +1,12 @@
 from rest_framework import serializers
-from .models import Todo, Habit, Daily
+from .models import Todo, Habit, Daily, ENUM_PRIORITY_CHOICES
 from django.contrib.auth.models import User
 
 
 class TodoSerializer(serializers.ModelSerializer):
+    priority = serializers.ChoiceField(
+        choices=ENUM_PRIORITY_CHOICES, default=ENUM_PRIORITY_CHOICES[0])
+
     class Meta:
         model = Todo
         fields = ['id', 'name', 'description', 'date_created',

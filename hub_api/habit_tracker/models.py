@@ -3,14 +3,14 @@ import datetime
 import pytz
 from django.db import models
 
+ENUM_PRIORITY_CHOICES = (
+    ("none", "NONE"),
+    ("high", "HIGH"),
+    ("low", "LOW")
+)
+
 
 class Todo(models.Model):
-    ENUM_PRIORITY_CHOICES = [
-        ("NONE", "none"),
-        ("HIGH", "high"),
-        ("LOW", "low")
-    ]
-
     name = models.CharField(max_length=280)
     description = models.TextField(blank=True, default="")
     date_created = models.DateTimeField(auto_now_add=True)

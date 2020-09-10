@@ -5,18 +5,18 @@ from rest_framework import status
 from rest_framework.authtoken.models import Token
 from rest_framework.test import APITestCase
 
-from .models import Daily, Habit, Todo
+from .models import Daily, Habit, Todo, ENUM_PRIORITY_CHOICES
 from .serializers import (DailySerializer, HabitSerializer, TodoSerializer,
                           UserSerializer)
 
 test_username = "testcase"
 test_password = "strong_password_123"
 
+
 # Integration Tests with API
-
-
 class TodoTestCase(APITestCase):
-    list_url = "/habits/"
+    base_url = "/todos/"
+    sample_todo = {"name": "new todo", "description": "new description"}
 
     def setUp(self):
         self.user = User.objects.create_user(
@@ -24,103 +24,219 @@ class TodoTestCase(APITestCase):
         self.client.login(username=test_username, password=test_password)
 
     def test_todo_create_view(self):
-        todo = {"name": "new todo", "description": "new description"}
-        response = self.client.post(self.list_url, data=todo)
+        response = self.client.post(self.base_url, data=self.sample_todo)
         self.assertEqual(response.status_code, status.HTTP_201_CREATED)
-        self.assertEqual(response.data['name'], todo['name'])
-        self.assertEqual(response.data['description'], todo['description'])
+        self.assertEqual(response.data['name'], self.sample_todo['name'])
+        self.assertEqual(response.data['description'],
+                         self.sample_todo['description'])
 
     def test_todo_list_view(self):
-        todo = {"name": "new todo", "description": "new description"}
-        self.client.post(self.list_url, data=todo)
+        self.client.post(self.base_url, data=self.sample_todo)
         todo2 = {"name": "new todo 2", "description": "new description 2"}
-        self.client.post(self.list_url, data=todo2)
+        self.client.post(self.base_url, data=todo2)
 
-        response = self.client.get(self.list_url)
+        response = self.client.get(self.base_url)
         self.assertEqual(response.status_code, status.HTTP_200_OK)
-        self.assertEqual(response.data[0]['name'], todo['name'])
+        self.assertEqual(response.data[0]['name'], self.sample_todo['name'])
         self.assertEqual(response.data[1]['name'], todo2['name'])
-        self.assertEqual(response.data[0]['description'], todo['description'])
+        self.assertEqual(
+            response.data[0]['description'], self.sample_todo['description'])
         self.assertEqual(response.data[1]['description'], todo2['description'])
 
     def test_todo_detail_delete(self):
-        pass
+        self.client.post(self.base_url, data=self.sample_todo)
+        response = self.client.delete(f"{self.base_url}1/")
+        self.assertEqual(response.status_code, status.HTTP_204_NO_CONTENT)
 
     def test_todo_detail_edit(self):
+        self.client.post(self.base_url, data=self.sample_todo)
         # Edit name, description
+        new_todo = {"name": "updated", "description": "updated"}
+        response = self.client.put(f"{self.base_url}1/", data=new_todo)
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        self.assertEqual(response.data["name"], new_todo["name"])
+        self.assertEqual(response.data["description"], new_todo["description"])
         # Edit finish status
+        finished_field = {"finished": True, "name": new_todo["name"]}
+        response2 = self.client.put(
+            f"{self.base_url}1/", data=finished_field)
+        self.assertEqual(response2.status_code, status.HTTP_200_OK)
+        self.assertEqual(response2.data["finished"],
+                         finished_field["finished"])
         # Edit priority
-        pass
+        priority_field = {"priority": "high", "name": new_todo["name"]}
+        response3 = self.client.put(f"{self.base_url}1/", data=priority_field)
+        self.assertEqual(response3.status_code, status.HTTP_200_OK)
+        self.assertEqual(response3.data["priority"],
+                         priority_field["priority"])
 
     def test_todo_detail_order_switch(self):
-        pass
+        # Patch, data={reorder:id}
+        self.client.post(self.base_url, data=self.sample_todo)
+        todo = {"name": "yello", "description": "black"}
+        self.client.post(self.base_url, data=todo)
+
+        response = self.client.patch(f"{self.base_url}1/", data={"reorder": 2})
+        # Id 1 has Order 1, Id 2 has Order 0
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        self.assertEqual(response.data[0]["name"], self.sample_todo["name"])
+        self.assertEqual(response.data[0]["order"], 1)
+        self.assertEqual(response.data[1]["name"], todo["name"])
+        self.assertEqual(response.data[1]["order"], 0)
+
+        new_todo = {"name": "blue", "description": "green"}
+        self.client.post(self.base_url, data=new_todo)
+        response2 = self.client.patch(
+            f"{self.base_url}3/", data={"reorder": 1})
+        # Id 3 has Order 1, Id 1 has Order 2
+        self.assertEqual(response2.status_code, status.HTTP_200_OK)
+        self.assertEqual(response2.data[0]["name"], new_todo["name"])
+        self.assertEqual(response2.data[0]["order"], 1)
+        self.assertEqual(response2.data[1]["name"], self.sample_todo["name"])
+        self.assertEqual(response2.data[1]["order"], 2)
 
     def test_unauthenticated(self):
         self.client.force_authenticate(user=None)
+        response = self.client.get(self.base_url)
+        self.assertEqual(response.status_code, status.HTTP_403_FORBIDDEN)
 
-        pass
 
-
-'''
 class HabitTestCase(APITestCase):
-    def setUp(self):
-        self.user = new_user
-        self.token = Token.objects.create(user=self.user)
-        self.api_authentication()
+    base_url = "/habits/"
+    sample_habit = {"name": "new habit", "description": "new description"}
 
-    def api_authentication(self):
-        self.client.credentials(HTTP_AUTHORIZATION="Token " + self.token.key)
+    def setUp(self):
+        self.user = User.objects.create_user(
+            username=test_username, password=test_password)
+        self.client.login(username=test_username, password=test_password)
+
+    def test_habit_create_view(self):
+        response = self.client.post(self.base_url, data=self.sample_habit)
+        self.assertEqual(response.status_code, status.HTTP_201_CREATED)
+        self.assertEqual(response.data['name'], self.sample_habit['name'])
+        self.assertEqual(response.data['description'],
+                         self.sample_habit['description'])
 
     def test_habit_list_view(self):
-        pass
+        self.client.post(self.base_url, data=self.sample_habit)
+        habit2 = {"name": "new habit 2", "description": "new description 2"}
+        self.client.post(self.base_url, data=habit2)
+
+        response = self.client.get(self.base_url)
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        self.assertEqual(response.data[0]['name'], self.sample_habit['name'])
+        self.assertEqual(response.data[1]['name'], habit2['name'])
+        self.assertEqual(
+            response.data[0]['description'], self.sample_habit['description'])
+        self.assertEqual(
+            response.data[1]['description'], habit2['description'])
 
     def test_habit_detail_delete(self):
-        pass
+        self.client.post(self.base_url, data=self.sample_habit)
+        response = self.client.delete(f"{self.base_url}1/")
+        self.assertEqual(response.status_code, status.HTTP_204_NO_CONTENT)
 
     def test_habit_detail_edit(self):
+        self.client.post(self.base_url, data=self.sample_habit)
         # Edit name, description
+        new_habit = {"name": "updated", "description": "updated"}
+        response = self.client.put(f"{self.base_url}1/", data=new_habit)
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        self.assertEqual(response.data["name"], new_habit["name"])
+        self.assertEqual(
+            response.data["description"], new_habit["description"])
         # Edit archive status
-        pass
+        archived_field = {"archived": True, "name": self.sample_habit["name"]}
+        response2 = self.client.put(
+            f"{self.base_url}1/", data=archived_field)
+        self.assertEqual(response2.status_code, status.HTTP_200_OK)
+        self.assertEqual(response2.data["archived"],
+                         archived_field["archived"])
 
     def test_habit_detail_order_switch(self):
-        pass
+        # Patch, data={reorder:id}
+        self.client.post(self.base_url, data=self.sample_habit)
+        habit = {"name": "yello", "description": "black"}
+        self.client.post(self.base_url, data=habit)
+
+        response = self.client.patch(f"{self.base_url}1/", data={"reorder": 2})
+        # Id 1 has Order 1, Id 2 has Order 0
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        self.assertEqual(response.data[0]["name"], self.sample_habit["name"])
+        self.assertEqual(response.data[0]["order"], 1)
+        self.assertEqual(response.data[1]["name"], habit["name"])
+        self.assertEqual(response.data[1]["order"], 0)
+
+        new_habit = {"name": "blue", "description": "green"}
+        self.client.post(self.base_url, data=new_habit)
+        response2 = self.client.patch(
+            f"{self.base_url}3/", data={"reorder": 1})
+        # Id 3 has Order 1, Id 1 has Order 2
+        self.assertEqual(response2.status_code, status.HTTP_200_OK)
+        self.assertEqual(response2.data[0]["name"], new_habit["name"])
+        self.assertEqual(response2.data[0]["order"], 1)
+        self.assertEqual(response2.data[1]["name"], self.sample_habit["name"])
+        self.assertEqual(response2.data[1]["order"], 2)
 
     def test_unauthenticated(self):
         self.client.force_authenticate(user=None)
-
-        pass
+        response = self.client.get(self.base_url)
+        self.assertEqual(response.status_code, status.HTTP_403_FORBIDDEN)
 
 
 class DailyTestCase(APITestCase):
-    def setUp(self):
-        self.user = new_user
-        self.token = Token.objects.create(user=self.user)
-        self.api_authentication()
+    base_url = "/dailies/"
+    habit_url = '/habits/'
+    sample_habit = {"name": "new habit", "description": "new description"}
+    sample_habit2 = {"name": "new habit", "description": "new description"}
 
-    def api_authentication(self):
-        self.client.credentials(HTTP_AUTHORIZATION="Token " + self.token.key)
+    def setUp(self):
+        self.user = User.objects.create_user(
+            username=test_username, password=test_password)
+        self.client.login(username=test_username, password=test_password)
 
     def test_daily_list_view(self):
-        pass
+        self.client.post(self.habit_url, data=self.sample_habit)
+        self.client.post(self.habit_url, data=self.sample_habit2)
+        response = self.client.get(self.base_url)
+        self.assertEqual(
+            response.data[0]["habit"]["name"], self.sample_habit["name"])
+        self.assertEqual(
+            response.data[1]["habit"]["name"], self.sample_habit2["name"])
 
     def test_daily_week_list_view(self):
+        self.client.post(self.habit_url, data=self.sample_habit)
+        self.client.post(self.habit_url, data=self.sample_habit2)
+
         pass
 
     def test_daily_month_list_view(self):
+        self.client.post(self.habit_url, data=self.sample_habit)
+        self.client.post(self.habit_url, data=self.sample_habit2)
+
         pass
 
     def test_daily_year_list_view(self):
+        self.client.post(self.habit_url, data=self.sample_habit)
+        self.client.post(self.habit_url, data=self.sample_habit2)
         pass
 
     def test_daily_detail_edit(self):
+        self.client.post(self.habit_url, data=self.sample_habit)
+        self.client.post(self.habit_url, data=self.sample_habit2)
+        response = self.client.get(self.base_url)
+
+        first_daily_id = response.data[0]["id"]
         # Edit finish status
-        pass
+        response2 = self.client.patch(
+            f"{self.base_url}{first_daily_id}/", data={"finished": True})
+        self.assertEqual(response2.data["finished"], True)
 
     def test_unauthenticated(self):
         self.client.force_authenticate(user=None)
+        response = self.client.get(self.base_url)
+        self.assertEqual(response.status_code, status.HTTP_403_FORBIDDEN)
 
-        pass
-'''
 
 '''
 class RegistrationTestCase(APITestCase):
