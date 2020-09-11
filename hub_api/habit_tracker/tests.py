@@ -1,4 +1,5 @@
 import json
+from datetime import date
 
 from django.contrib.auth.models import User
 from rest_framework import status
@@ -8,6 +9,7 @@ from rest_framework.test import APITestCase
 from .models import Daily, Habit, Todo, ENUM_PRIORITY_CHOICES
 from .serializers import (DailySerializer, HabitSerializer, TodoSerializer,
                           UserSerializer)
+from .views import get_date
 
 test_username = "testcase"
 test_password = "strong_password_123"
@@ -184,11 +186,19 @@ class HabitTestCase(APITestCase):
         self.assertEqual(response.status_code, status.HTTP_403_FORBIDDEN)
 
 
+def create_sample_habit(name="new habit", description="new description"):
+    return {"name": name, "description": description}
+
+
+def create_sample_daily(habit, user, date):
+    daily = Daily(habit=habit, user=user, date=get_date({"date": date}))
+    print(daily.date)
+    daily.save()
+
+
 class DailyTestCase(APITestCase):
     base_url = "/dailies/"
     habit_url = '/habits/'
-    sample_habit = {"name": "new habit", "description": "new description"}
-    sample_habit2 = {"name": "new habit", "description": "new description"}
 
     def setUp(self):
         self.user = User.objects.create_user(
@@ -196,34 +206,73 @@ class DailyTestCase(APITestCase):
         self.client.login(username=test_username, password=test_password)
 
     def test_daily_list_view(self):
-        self.client.post(self.habit_url, data=self.sample_habit)
-        self.client.post(self.habit_url, data=self.sample_habit2)
+        habit1 = create_sample_habit()
+        habit2 = create_sample_habit()
+        self.client.post(self.habit_url, data=habit1)
+        self.client.post(self.habit_url, data=habit2)
         response = self.client.get(self.base_url)
         self.assertEqual(
-            response.data[0]["habit"]["name"], self.sample_habit["name"])
+            response.data[0]["habit"]["name"], habit1["name"])
         self.assertEqual(
-            response.data[1]["habit"]["name"], self.sample_habit2["name"])
+            response.data[1]["habit"]["name"], habit2["name"])
 
     def test_daily_week_list_view(self):
-        self.client.post(self.habit_url, data=self.sample_habit)
-        self.client.post(self.habit_url, data=self.sample_habit2)
+        habit1 = create_sample_habit()
+        habit2 = create_sample_habit()
+        self.client.post(self.habit_url, data=habit1)
+        self.client.post(self.habit_url, data=habit2)
+        create_sample_daily(habit=habit1, user=self.user, date="2020-01-01")
+        create_sample_daily(habit=habit1, user=self.user, date="2019-12-29")
+        create_sample_daily(habit=habit1, user=self.user, date="2020-01-05")
+        response = self.client.get(f"{self.base_url}?timeframe=year")
 
+        # Different date
+        # Week view for 2020-01-01 is from 2019-12-29 to 2020-01-04
+        response2 = self.client.get(
+            f"{self.base_url}?timeframe=year&date=2020-01-01")
         pass
 
     def test_daily_month_list_view(self):
-        self.client.post(self.habit_url, data=self.sample_habit)
-        self.client.post(self.habit_url, data=self.sample_habit2)
+        habit1 = create_sample_habit()
+        habit2 = create_sample_habit()
+        self.client.post(self.habit_url, data=habit1)
+        self.client.post(self.habit_url, data=habit2)
+        create_sample_daily(habit=habit1, user=self.user, date="2020-01-01")
+        create_sample_daily(habit=habit1, user=self.user, date="2020-01-16")
+        create_sample_daily(habit=habit1, user=self.user, date="2019-12-31")
+        response = self.client.get(f"{self.base_url}?timeframe=month")
 
+        # Different date
+        # Month view for 2020-01-01 is from 2020-01-01 to 2020-01-31
+        response2 = self.client.get(
+            f"{self.base_url}?timeframe=month&date=2020-01-01")
         pass
 
     def test_daily_year_list_view(self):
-        self.client.post(self.habit_url, data=self.sample_habit)
-        self.client.post(self.habit_url, data=self.sample_habit2)
+        habit1 = create_sample_habit()
+        habit2 = create_sample_habit()
+        self.client.post(self.habit_url, data=habit1)
+        self.client.post(self.habit_url, data=habit2)
+        habit1_instance = Habit.objects.get(pk=1)
+        create_sample_daily(habit=habit1_instance,
+                            user=self.user, date="2019-01-01")
+        create_sample_daily(habit=habit1_instance,
+                            user=self.user, date="2019-06-01")
+        create_sample_daily(habit=habit1_instance,
+                            user=self.user, date="2018-11-01")
+        self.client.get(self.base_url, {"timeframe": "year"})
+        response = self.client.get(f"{self.base_url}?timeframe=year")
+        # Different date
+        # Year view for 2019-01-01 to 2019-12-31
+        response2 = self.client.get(
+            f"{self.base_url}?timeframe=year&date=2020-01-01")
         pass
 
     def test_daily_detail_edit(self):
-        self.client.post(self.habit_url, data=self.sample_habit)
-        self.client.post(self.habit_url, data=self.sample_habit2)
+        habit1 = create_sample_habit()
+        habit2 = create_sample_habit()
+        self.client.post(self.habit_url, data=habit1)
+        self.client.post(self.habit_url, data=habit2)
         response = self.client.get(self.base_url)
 
         first_daily_id = response.data[0]["id"]
@@ -231,6 +280,9 @@ class DailyTestCase(APITestCase):
         response2 = self.client.patch(
             f"{self.base_url}{first_daily_id}/", data={"finished": True})
         self.assertEqual(response2.data["finished"], True)
+        response3 = self.client.get(self.base_url)
+        self.assertEqual(response3.data[0]["finished"], True)
+        self.assertEqual(response3.data[1]["finished"], False)
 
     def test_unauthenticated(self):
         self.client.force_authenticate(user=None)

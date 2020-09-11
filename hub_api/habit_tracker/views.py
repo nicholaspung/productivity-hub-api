@@ -16,6 +16,15 @@ is_authenticated_and_owner_classes = [
     permissions.IsAuthenticated, IsOwnerOrReadOnly]
 
 
+def get_date(data):
+    if 'date' in data:  # 2020-09-08 | YYYY-MM-DD
+        request_date = data["date"]
+        return date(int(request_date[:4]), int(
+            request_date[5:7]), int(request_date[-2:]))
+
+    return date.today()
+
+
 def reorder(self, Model, ModelSerializer, id):
     model1 = self.get_object()
     model2 = Model.objects.get(pk=id)
@@ -79,6 +88,18 @@ class HabitViewSet(viewsets.ModelViewSet):
             return self.update(request, *args, **kwargs)
 
 
+def beginning_of_week(year, isoCalendarMonth):
+    return date.fromisocalendar(year, isoCalendarMonth, 1) - timedelta(days=1)
+
+
+def beginning_of_month(year, month):
+    return date(year, month, 1)
+
+
+def beginning_of_year(year):
+    return date(year, 1, 1)
+
+
 class DailyViewSet(viewsets.ModelViewSet):
     """
     This viewset automatically provides `list`, `create`, `retrieve`, `update`, and `destroy` actions.
@@ -94,23 +115,21 @@ class DailyViewSet(viewsets.ModelViewSet):
             Daily.objects.get_or_create(
                 habit=habit, date=date.today(), user=user)
 
+        print(dir(self.request))
+        print(self.request.query_params)
         if 'timeframe' in self.request.query_params:  # week, month, year
-            today = date.today()
-            if 'date' in self.request.query_params:  # 2020-09-08 | YYYY-MM-DD
-                request_date = self.request.query_params["date"]
-                today = date(int(request_date[:4]), int(
-                    request_date[5:7]), int(request_date[-2:]))
+            obj_date = get_date(self.request.query_params)
 
             if self.request.query_params['timeframe'] == 'week':
-                isocalendar = today.isocalendar()
+                isocalendar = obj_date.isocalendar()
                 queryset = Daily.objects.filter(user=self.request.user, date__range=(
-                    date.fromisocalendar(today.year, isocalendar[1], 1) - timedelta(days=1), date.today()))
+                    beginning_of_week(year=obj_date.year, isoCalendarMonth=isocalendar[1]), date.today()))
             elif self.request.query_params['timeframe'] == 'month':
                 queryset = Daily.objects.filter(user=self.request.user, date__range=(
-                    date(today.year, today.month, 1), date.today()))
+                    beginning_of_month(year=obj_date.year, month=obj_date.month), date.today()))
             elif self.request.query_params['timeframe'] == 'year':
                 queryset = Daily.objects.filter(user=self.request.user,
-                                                date__range=(date(today.year, 1, 1), date.today()))
+                                                date__range=(beginning_of_year(year=obj_date.year), date.today()))
             else:
                 queryset = Daily.objects.filter(
                     user=self.request.user, date=date.today())
