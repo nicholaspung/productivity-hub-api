@@ -1,5 +1,4 @@
 import json
-from datetime import date
 
 from django.contrib.auth.models import User
 from rest_framework import status
@@ -65,11 +64,17 @@ class TodoTestCase(APITestCase):
         self.assertEqual(response2.status_code, status.HTTP_200_OK)
         self.assertEqual(response2.data["finished"],
                          finished_field["finished"])
+        finished_field["finished"] = False
+        response3 = self.client.put(
+            f"{self.base_url}1/", data=finished_field)
+        self.assertEqual(response3.status_code, status.HTTP_200_OK)
+        self.assertEqual(response3.data["finished"],
+                         finished_field["finished"])
         # Edit priority
         priority_field = {"priority": "high", "name": new_todo["name"]}
-        response3 = self.client.put(f"{self.base_url}1/", data=priority_field)
-        self.assertEqual(response3.status_code, status.HTTP_200_OK)
-        self.assertEqual(response3.data["priority"],
+        response4 = self.client.put(f"{self.base_url}1/", data=priority_field)
+        self.assertEqual(response4.status_code, status.HTTP_200_OK)
+        self.assertEqual(response4.data["priority"],
                          priority_field["priority"])
 
     def test_todo_detail_order_switch(self):
@@ -154,6 +159,12 @@ class HabitTestCase(APITestCase):
         self.assertEqual(response2.status_code, status.HTTP_200_OK)
         self.assertEqual(response2.data["archived"],
                          archived_field["archived"])
+        archived_field["archived"] = False
+        response3 = self.client.put(
+            f"{self.base_url}1/", data=archived_field)
+        self.assertEqual(response3.status_code, status.HTTP_200_OK)
+        self.assertEqual(response3.data["archived"],
+                         archived_field["archived"])
 
     def test_habit_detail_order_switch(self):
         # Patch, data={reorder:id}
@@ -191,8 +202,9 @@ def create_sample_habit(name="new habit", description="new description"):
 
 
 def create_sample_daily(habit, user, date):
-    daily = Daily(habit=habit, user=user, date=get_date({"date": date}))
-    print(daily.date)
+    daily = Daily(habit=habit, user=user)
+    daily.save()
+    daily.date = get_date({"date": date})
     daily.save()
 
 
@@ -215,38 +227,53 @@ class DailyTestCase(APITestCase):
             response.data[0]["habit"]["name"], habit1["name"])
         self.assertEqual(
             response.data[1]["habit"]["name"], habit2["name"])
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
 
     def test_daily_week_list_view(self):
         habit1 = create_sample_habit()
         habit2 = create_sample_habit()
         self.client.post(self.habit_url, data=habit1)
         self.client.post(self.habit_url, data=habit2)
-        create_sample_daily(habit=habit1, user=self.user, date="2020-01-01")
-        create_sample_daily(habit=habit1, user=self.user, date="2019-12-29")
-        create_sample_daily(habit=habit1, user=self.user, date="2020-01-05")
-        response = self.client.get(f"{self.base_url}?timeframe=year")
+        habit1_instance = Habit.objects.get(pk=1)
+        create_sample_daily(habit=habit1_instance,
+                            user=self.user, date="2020-01-01")
+        create_sample_daily(habit=habit1_instance,
+                            user=self.user, date="2019-12-29")
+        create_sample_daily(habit=habit1_instance,
+                            user=self.user, date="2020-01-04")
+        response = self.client.get(f"{self.base_url}?timeframe=week")
+        self.assertEqual(len(response.data), 2)
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
 
         # Different date
         # Week view for 2020-01-01 is from 2019-12-29 to 2020-01-04
         response2 = self.client.get(
-            f"{self.base_url}?timeframe=year&date=2020-01-01")
-        pass
+            f"{self.base_url}?timeframe=week&date=2020-01-01")
+        self.assertEqual(len(response2.data), 3)
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
 
     def test_daily_month_list_view(self):
         habit1 = create_sample_habit()
         habit2 = create_sample_habit()
         self.client.post(self.habit_url, data=habit1)
         self.client.post(self.habit_url, data=habit2)
-        create_sample_daily(habit=habit1, user=self.user, date="2020-01-01")
-        create_sample_daily(habit=habit1, user=self.user, date="2020-01-16")
-        create_sample_daily(habit=habit1, user=self.user, date="2019-12-31")
+        habit1_instance = Habit.objects.get(pk=1)
+        create_sample_daily(habit=habit1_instance,
+                            user=self.user, date="2020-01-01")
+        create_sample_daily(habit=habit1_instance,
+                            user=self.user, date="2020-01-16")
+        create_sample_daily(habit=habit1_instance,
+                            user=self.user, date="2020-01-31")
         response = self.client.get(f"{self.base_url}?timeframe=month")
+        self.assertEqual(len(response.data), 2)
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
 
         # Different date
         # Month view for 2020-01-01 is from 2020-01-01 to 2020-01-31
         response2 = self.client.get(
             f"{self.base_url}?timeframe=month&date=2020-01-01")
-        pass
+        self.assertEqual(len(response2.data), 3)
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
 
     def test_daily_year_list_view(self):
         habit1 = create_sample_habit()
@@ -259,14 +286,17 @@ class DailyTestCase(APITestCase):
         create_sample_daily(habit=habit1_instance,
                             user=self.user, date="2019-06-01")
         create_sample_daily(habit=habit1_instance,
-                            user=self.user, date="2018-11-01")
-        self.client.get(self.base_url, {"timeframe": "year"})
+                            user=self.user, date="2019-11-01")
         response = self.client.get(f"{self.base_url}?timeframe=year")
+        self.assertEqual(len(response.data), 2)
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+
         # Different date
         # Year view for 2019-01-01 to 2019-12-31
         response2 = self.client.get(
-            f"{self.base_url}?timeframe=year&date=2020-01-01")
-        pass
+            f"{self.base_url}?timeframe=year&date=2019-01-01")
+        self.assertEqual(len(response2.data), 3)
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
 
     def test_daily_detail_edit(self):
         habit1 = create_sample_habit()
@@ -274,67 +304,24 @@ class DailyTestCase(APITestCase):
         self.client.post(self.habit_url, data=habit1)
         self.client.post(self.habit_url, data=habit2)
         response = self.client.get(self.base_url)
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
 
         first_daily_id = response.data[0]["id"]
         # Edit finish status
         response2 = self.client.patch(
             f"{self.base_url}{first_daily_id}/", data={"finished": True})
         self.assertEqual(response2.data["finished"], True)
+        self.assertEqual(response2.status_code, status.HTTP_200_OK)
         response3 = self.client.get(self.base_url)
         self.assertEqual(response3.data[0]["finished"], True)
         self.assertEqual(response3.data[1]["finished"], False)
+        self.assertEqual(response3.status_code, status.HTTP_200_OK)
+        response4 = self.client.patch(
+            f"{self.base_url}{first_daily_id}/", data={"finished": False})
+        self.assertEqual(response4.data["finished"], False)
+        self.assertEqual(response4.status_code, status.HTTP_200_OK)
 
     def test_unauthenticated(self):
         self.client.force_authenticate(user=None)
         response = self.client.get(self.base_url)
         self.assertEqual(response.status_code, status.HTTP_403_FORBIDDEN)
-
-
-'''
-class RegistrationTestCase(APITestCase):
-    def test_registration(self):
-        data = {"username": "testcase", "email": "test@localhost.app",
-                "password1": "some_strong_psw", "password2": "some_strong_psw"}
-        response = self.client.post("/api/rest-auth/registration/", data)
-        self.assertEqual(response.status_code, status.HTTP_201_CREATED)
-
-
-class ProfileViewSetTestCase(APITestCase):
-    list_url = reverse("profile-list")
-
-    def setUp(self):
-        self.user = User.objects.create_user(
-            username="davinci", password="some_strong_psw")
-        self.token = Token.objects.create(user=self.user)
-        self.api_authentication()
-
-    def api_authentication(self):
-        self.client.credentials(HTTP_AUTHORIZATION="Token " + self.token.key)
-
-    def test_profile_list_authenticated(self):
-        response = self.client.get(self.list_url)
-        self.assertEqual(response.status_code, status.HTTP_200_OK)
-
-    def test_profile_list_unauthenticated(self):
-        self.client.force_authenticate(user=None)
-        response = self.client.get(self.list_url)
-        self.assertEqual(response.status_code, status.HTTP_403_FORBIDDEN)
-
-    def test_profile_detail_retrieve(self):
-        response = self.client.get(reverse("profile-detail"), kwargs={"pk": 1})
-        self.assertEqual(response.status_code, status.HTTP_200_OK)
-        self.assertEqual(response.data["user"], "davinci")
-
-    def test_profile_update_by_owner(self):
-        response = self.client.put(reverse("profile-detail"), kwargs={"pk": 1}, {"city": "Anchiano", "bio": "Renaissance Genius"})
-        self.assertEqual(response.status_code, status.HTTP_200_OK)
-        self.assertEqual(json.loads(response.content), {
-                         "id": 1, "user": "davinci", "bio": "Renaissance Genius", "city": "Anchiano", "avatar": None})
-
-    def test_profile_update_by_random_user(self):
-        random_user = User.objects.create_user(
-            username="random", password="strong_password_123")
-        self.client.force_authenticate(user=random_user)
-        response = self.client.put(reverse("profile-detail"), kwargs={"pk": 1}, {"city": "Hacked!!"})
-        self.assertEqual(response.status_code, status.HTTP_403_FORBIDDEN)
-'''

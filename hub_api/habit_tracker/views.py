@@ -1,5 +1,7 @@
 from datetime import date, timedelta
+import calendar
 
+from rest_framework.authentication import SessionAuthentication, BasicAuthentication
 from rest_framework import permissions, renderers, viewsets
 from rest_framework.decorators import api_view
 from rest_framework.response import Response
@@ -54,6 +56,7 @@ class TodoViewSet(viewsets.ModelViewSet):
     """
     serializer_class = TodoSerializer
     permission_classes = is_authenticated_and_owner_classes
+    authentication_classes = [SessionAuthentication, BasicAuthentication]
 
     def get_queryset(self):
         return Todo.objects.filter(user=self.request.user)
@@ -74,6 +77,7 @@ class HabitViewSet(viewsets.ModelViewSet):
     """
     serializer_class = HabitSerializer
     permission_classes = is_authenticated_and_owner_classes
+    authentication_classes = [SessionAuthentication, BasicAuthentication]
 
     def get_queryset(self):
         return Habit.objects.filter(user=self.request.user)
@@ -88,16 +92,16 @@ class HabitViewSet(viewsets.ModelViewSet):
             return self.update(request, *args, **kwargs)
 
 
-def beginning_of_week(year, isoCalendarMonth):
-    return date.fromisocalendar(year, isoCalendarMonth, 1) - timedelta(days=1)
+def week__range(year, isoCalendarMonth):
+    return (date.fromisocalendar(year, isoCalendarMonth, 1) - timedelta(days=1), date.fromisocalendar(year, isoCalendarMonth, 1) + timedelta(days=5))
 
 
-def beginning_of_month(year, month):
-    return date(year, month, 1)
+def month_range(year, month):
+    return (date(year, month, 1), date(year, month, calendar.monthrange(year, month)[1]))
 
 
-def beginning_of_year(year):
-    return date(year, 1, 1)
+def year_range(year):
+    return (date(year, 1, 1), date(year, 12, 31))
 
 
 class DailyViewSet(viewsets.ModelViewSet):
@@ -106,6 +110,7 @@ class DailyViewSet(viewsets.ModelViewSet):
     """
     serializer_class = DailySerializer
     permission_classes = is_authenticated_and_owner_classes
+    authentication_classes = [SessionAuthentication, BasicAuthentication]
 
     def get_queryset(self):
         user = self.request.user
@@ -115,21 +120,22 @@ class DailyViewSet(viewsets.ModelViewSet):
             Daily.objects.get_or_create(
                 habit=habit, date=date.today(), user=user)
 
-        print(dir(self.request))
-        print(self.request.query_params)
         if 'timeframe' in self.request.query_params:  # week, month, year
             obj_date = get_date(self.request.query_params)
 
             if self.request.query_params['timeframe'] == 'week':
                 isocalendar = obj_date.isocalendar()
+                week_dates = week__range(obj_date.year, isocalendar[1])
                 queryset = Daily.objects.filter(user=self.request.user, date__range=(
-                    beginning_of_week(year=obj_date.year, isoCalendarMonth=isocalendar[1]), date.today()))
+                    week_dates[0], week_dates[1]))
             elif self.request.query_params['timeframe'] == 'month':
+                month_dates = month_range(obj_date.year, obj_date.month)
                 queryset = Daily.objects.filter(user=self.request.user, date__range=(
-                    beginning_of_month(year=obj_date.year, month=obj_date.month), date.today()))
+                    month_dates[0], month_dates[1]))
             elif self.request.query_params['timeframe'] == 'year':
+                year_dates = year_range(obj_date.year)
                 queryset = Daily.objects.filter(user=self.request.user,
-                                                date__range=(beginning_of_year(year=obj_date.year), date.today()))
+                                                date__range=(year_dates[0], year_dates[1]))
             else:
                 queryset = Daily.objects.filter(
                     user=self.request.user, date=date.today())

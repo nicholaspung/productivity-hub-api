@@ -32,10 +32,6 @@ class DailySerializer(serializers.ModelSerializer):
 
 
 class UserSerializer(serializers.ModelSerializer):
-    habits = HabitSerializer(many=True, read_only=True)
-    todos = TodoSerializer(many=True, read_only=True)
-    dailies = DailySerializer(many=True, read_only=True)
-
     class Meta:
         model = User
-        fields = ['id', 'username', 'url', 'habits', 'todos', 'dailies']
+        fields = ['id', 'username']
