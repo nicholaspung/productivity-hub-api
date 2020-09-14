@@ -1,6 +1,7 @@
-from rest_framework import serializers
-from .models import Todo, Habit, Daily, ENUM_PRIORITY_CHOICES
 from django.contrib.auth.models import User
+from rest_framework import serializers
+
+from .models import ENUM_PRIORITY_CHOICES, Daily, Habit, Todo
 
 
 class TodoSerializer(serializers.ModelSerializer):

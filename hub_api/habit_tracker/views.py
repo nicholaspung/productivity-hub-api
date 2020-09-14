@@ -1,18 +1,19 @@
-from datetime import date, timedelta
 import calendar
+from datetime import date, timedelta
 
-from rest_framework.authentication import SessionAuthentication, BasicAuthentication
+from django.contrib.auth.models import User
 from rest_framework import permissions, renderers, viewsets
+from rest_framework.authentication import SessionAuthentication
 from rest_framework.decorators import api_view
 from rest_framework.response import Response
 from rest_framework.reverse import reverse
 
-from django.contrib.auth.models import User
+from firebase_auth.authentication import FirebaseAuthentication
 
-from .models import Todo, Habit, Daily
-from .serializers import TodoSerializer, HabitSerializer, DailySerializer, UserSerializer
+from .models import Daily, Habit, Todo
 from .permissions import IsOwnerOrReadOnly
-
+from .serializers import (DailySerializer, HabitSerializer, TodoSerializer,
+                          UserSerializer)
 
 is_authenticated_and_owner_classes = [
     permissions.IsAuthenticated, IsOwnerOrReadOnly]
@@ -47,7 +48,10 @@ class UserViewSet(viewsets.ReadOnlyModelViewSet):
     This viewset automatically provides `list` and `detail` actions.
     """
     serializer_class = UserSerializer
-    queryset = User.objects.all()
+    authentication_classes = [SessionAuthentication, FirebaseAuthentication]
+
+    def get_queryset(self):
+        return User.objects.filter(user=self.request.user)
 
 
 class TodoViewSet(viewsets.ModelViewSet):
@@ -56,7 +60,7 @@ class TodoViewSet(viewsets.ModelViewSet):
     """
     serializer_class = TodoSerializer
     permission_classes = is_authenticated_and_owner_classes
-    authentication_classes = [SessionAuthentication, BasicAuthentication]
+    authentication_classes = [SessionAuthentication, FirebaseAuthentication]
 
     def get_queryset(self):
         return Todo.objects.filter(user=self.request.user)
@@ -77,7 +81,7 @@ class HabitViewSet(viewsets.ModelViewSet):
     """
     serializer_class = HabitSerializer
     permission_classes = is_authenticated_and_owner_classes
-    authentication_classes = [SessionAuthentication, BasicAuthentication]
+    authentication_classes = [SessionAuthentication, FirebaseAuthentication]
 
     def get_queryset(self):
         return Habit.objects.filter(user=self.request.user)
@@ -92,7 +96,10 @@ class HabitViewSet(viewsets.ModelViewSet):
             return self.update(request, *args, **kwargs)
 
 
-def week__range(year, isoCalendarMonth):
+def week__range(year, isoCalendar):
+    isoCalendarMonth = isoCalendar[1]
+    if isoCalendar[2] == 7:
+        isoCalendarMonth += 1
     return (date.fromisocalendar(year, isoCalendarMonth, 1) - timedelta(days=1), date.fromisocalendar(year, isoCalendarMonth, 1) + timedelta(days=5))
 
 
@@ -110,7 +117,7 @@ class DailyViewSet(viewsets.ModelViewSet):
     """
     serializer_class = DailySerializer
     permission_classes = is_authenticated_and_owner_classes
-    authentication_classes = [SessionAuthentication, BasicAuthentication]
+    authentication_classes = [SessionAuthentication, FirebaseAuthentication]
 
     def get_queryset(self):
         user = self.request.user
@@ -125,7 +132,7 @@ class DailyViewSet(viewsets.ModelViewSet):
 
             if self.request.query_params['timeframe'] == 'week':
                 isocalendar = obj_date.isocalendar()
-                week_dates = week__range(obj_date.year, isocalendar[1])
+                week_dates = week__range(obj_date.year, isocalendar)
                 queryset = Daily.objects.filter(user=self.request.user, date__range=(
                     week_dates[0], week_dates[1]))
             elif self.request.query_params['timeframe'] == 'month':
@@ -144,13 +151,3 @@ class DailyViewSet(viewsets.ModelViewSet):
                 user=self.request.user, date=date.today())
 
         return queryset
-
-
-@api_view(['GET'])
-def api_root(request, format=None):
-    return Response({
-        'users': reverse('user-list', request=request, format=format),
-        'todos': reverse('snippet-list', request=request, format=format),
-        'habits': reverse('habit-list', request=request, format=format),
-        'dailies': reverse('daily-list', request=request, format=format)
-    })

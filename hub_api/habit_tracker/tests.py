@@ -5,7 +5,7 @@ from rest_framework import status
 from rest_framework.authtoken.models import Token
 from rest_framework.test import APITestCase
 
-from .models import Daily, Habit, Todo, ENUM_PRIORITY_CHOICES
+from .models import ENUM_PRIORITY_CHOICES, Daily, Habit, Todo
 from .serializers import (DailySerializer, HabitSerializer, TodoSerializer,
                           UserSerializer)
 from .views import get_date
@@ -105,7 +105,7 @@ class TodoTestCase(APITestCase):
     def test_unauthenticated(self):
         self.client.force_authenticate(user=None)
         response = self.client.get(self.base_url)
-        self.assertEqual(response.status_code, status.HTTP_403_FORBIDDEN)
+        self.assertEqual(response.status_code, status.HTTP_401_UNAUTHORIZED)
 
 
 class HabitTestCase(APITestCase):
@@ -194,7 +194,7 @@ class HabitTestCase(APITestCase):
     def test_unauthenticated(self):
         self.client.force_authenticate(user=None)
         response = self.client.get(self.base_url)
-        self.assertEqual(response.status_code, status.HTTP_403_FORBIDDEN)
+        self.assertEqual(response.status_code, status.HTTP_401_UNAUTHORIZED)
 
 
 def create_sample_habit(name="new habit", description="new description"):
@@ -324,4 +324,4 @@ class DailyTestCase(APITestCase):
     def test_unauthenticated(self):
         self.client.force_authenticate(user=None)
         response = self.client.get(self.base_url)
-        self.assertEqual(response.status_code, status.HTTP_403_FORBIDDEN)
+        self.assertEqual(response.status_code, status.HTTP_401_UNAUTHORIZED)

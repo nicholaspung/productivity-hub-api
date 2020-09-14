@@ -4,14 +4,13 @@ import firebase_admin
 from django.conf import settings
 from django.contrib.auth.models import User
 from django.utils import timezone
-from firebase_admin import auth
-from firebase_admin import credentials
-from rest_framework import authentication
-from rest_framework import exceptions
+from dotenv import load_dotenv
+from firebase_admin import auth, credentials
+from rest_framework import authentication, exceptions
 
-from .exceptions import FirebaseError
-from .exceptions import InvalidAuthToken
-from .exceptions import NoAuthToken
+from .exceptions import FirebaseError, InvalidAuthToken, NoAuthToken
+
+load_dotenv()
 
 cred = credentials.Certificate(
     {
@@ -54,6 +53,5 @@ class FirebaseAuthentication(authentication.BaseAuthentication):
             raise FirebaseError()
 
         user, created = User.objects.get_or_create(username=uid)
-        user.profile.last_activity = timezone.localtime()
 
         return (user, None)
