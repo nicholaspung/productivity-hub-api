@@ -8,6 +8,7 @@ from dotenv import load_dotenv
 from firebase_admin import auth, credentials
 from rest_framework import authentication, exceptions
 
+from .models import Profile
 from .exceptions import FirebaseError, InvalidAuthToken, NoAuthToken
 
 load_dotenv()
@@ -49,9 +50,14 @@ class FirebaseAuthentication(authentication.BaseAuthentication):
 
         try:
             uid = decoded_token.get("uid")
+            is_anonymous = False
+            if 'provider_id' in decoded_token:
+                is_anonymous = decoded_token.get('provider_id') == 'anonymous'
         except Exception:
             raise FirebaseError()
 
         user, created = User.objects.get_or_create(username=uid)
+        Profile.objects.get_or_create(
+            user=user, is_anonymous=is_anonymous)
 
         return (user, None)

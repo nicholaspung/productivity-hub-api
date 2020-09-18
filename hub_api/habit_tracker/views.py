@@ -1,7 +1,6 @@
 import calendar
 from datetime import date, timedelta
 
-from django.contrib.auth.models import User
 from rest_framework import permissions, renderers, viewsets
 from rest_framework.authentication import SessionAuthentication
 from rest_framework.decorators import api_view
@@ -12,8 +11,7 @@ from firebase_auth.authentication import FirebaseAuthentication
 
 from .models import Daily, Habit, Todo
 from .permissions import IsOwnerOrReadOnly
-from .serializers import (DailySerializer, HabitSerializer, TodoSerializer,
-                          UserSerializer)
+from .serializers import (DailySerializer, HabitSerializer, TodoSerializer)
 
 is_authenticated_and_owner_classes = [
     permissions.IsAuthenticated, IsOwnerOrReadOnly]
@@ -43,17 +41,6 @@ def reorder(self, Model, ModelSerializer, id):
     return Response([serializer1.data, serializer2.data])
 
 
-class UserViewSet(viewsets.ReadOnlyModelViewSet):
-    """
-    This viewset automatically provides `list` and `detail` actions.
-    """
-    serializer_class = UserSerializer
-    authentication_classes = [SessionAuthentication, FirebaseAuthentication]
-
-    def get_queryset(self):
-        return User.objects.filter(user=self.request.user)
-
-
 class TodoViewSet(viewsets.ModelViewSet):
     """
     This viewset automatically provides `list`, `create`, `retrieve`, `update`, and `destroy` actions.
@@ -69,7 +56,7 @@ class TodoViewSet(viewsets.ModelViewSet):
         serializer.save(user=self.request.user)
 
     def partial_update(self, request, *args, **kwargs):
-        if 'reorder' in request.data:
+        if 'reorder' in request.data:  # reorder: todo_id
             return reorder(self, Todo, TodoSerializer, request.data['reorder'])
         else:
             return self.update(request, *args, **kwargs)
@@ -90,7 +77,7 @@ class HabitViewSet(viewsets.ModelViewSet):
         serializer.save(user=self.request.user)
 
     def partial_update(self, request, *args, **kwargs):
-        if 'reorder' in request.data:
+        if 'reorder' in request.data:  # reorder: habit_id
             return reorder(self, Habit, HabitSerializer, request.data['reorder'])
         else:
             return self.update(request, *args, **kwargs)

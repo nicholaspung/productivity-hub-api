@@ -1,4 +1,3 @@
-from django.contrib.auth.models import User
 from rest_framework import serializers
 
 from .models import ENUM_PRIORITY_CHOICES, Daily, Habit, Todo
@@ -30,9 +29,3 @@ class DailySerializer(serializers.ModelSerializer):
         model = Daily
         fields = ['id', 'date', 'finished', 'user', 'habit']
         read_only_fields = ['user']
-
-
-class UserSerializer(serializers.ModelSerializer):
-    class Meta:
-        model = User
-        fields = ['id', 'username']

@@ -31,6 +31,7 @@ ALLOWED_HOSTS = []
 # Application definition
 
 INSTALLED_APPS = [
+    # Default
     'django.contrib.admin',
     'django.contrib.auth',
     'django.contrib.contenttypes',
@@ -39,6 +40,7 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
     # Third Party
     'rest_framework',
+    'corsheaders',
     # Internal
     'firebase_auth.apps.FirebaseAuthConfig',
     'habit_tracker.apps.HabitTrackerConfig',
@@ -46,6 +48,9 @@ INSTALLED_APPS = [
 ]
 
 MIDDLEWARE = [
+    # Third Party
+    'corsheaders.middleware.CorsMiddleware',
+    # Default
     'django.middleware.security.SecurityMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.common.CommonMiddleware',
@@ -131,3 +136,8 @@ REST_FRAMEWORK = {
         'firebase_auth.authentication.FirebaseAuthentication',
     ),
 }
+
+CORS_ALLOWED_ORIGINS = [
+    "http://127.0.0.1:3000",
+    "http://localhost:3000",
+]
