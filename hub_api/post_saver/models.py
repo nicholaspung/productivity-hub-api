@@ -9,11 +9,13 @@ class Post(models.Model):
 
 class Title(models.Model):
     title = models.CharField(max_length=200, unique=True)
-    user = models.ForeignKey('auth.User', on_delete=models.CASCADE)
+    user = models.ForeignKey(
+        'auth.User', on_delete=models.CASCADE, related_name='titles')
 
 
 class SavedPost(models.Model):
     title = models.CharField(max_length=200, unique=True)
     url = models.TextField(blank=True, null=True)
     seen = models.BooleanField(default=False)
-    user = models.ForeignKey('auth.User', on_delete=models.CASCADE)
+    user = models.ForeignKey(
+        'auth.User', on_delete=models.CASCADE, related_name='savedposts')

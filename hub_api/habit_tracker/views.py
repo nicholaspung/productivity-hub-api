@@ -11,7 +11,7 @@ from firebase_auth.authentication import FirebaseAuthentication
 
 from .models import Daily, Habit, Todo
 from .permissions import IsOwnerOrReadOnly
-from .serializers import (DailySerializer, HabitSerializer, TodoSerializer)
+from .serializers import DailySerializer, HabitSerializer, TodoSerializer
 
 is_authenticated_and_owner_classes = [
     permissions.IsAuthenticated, IsOwnerOrReadOnly]

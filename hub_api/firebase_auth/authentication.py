@@ -8,8 +8,8 @@ from dotenv import load_dotenv
 from firebase_admin import auth, credentials
 from rest_framework import authentication, exceptions
 
-from .models import Profile
 from .exceptions import FirebaseError, InvalidAuthToken, NoAuthToken
+from .models import Profile, APPS
 
 load_dotenv()
 
@@ -57,7 +57,12 @@ class FirebaseAuthentication(authentication.BaseAuthentication):
             raise FirebaseError()
 
         user, created = User.objects.get_or_create(username=uid)
-        Profile.objects.get_or_create(
-            user=user, is_anonymous=is_anonymous)
+        if created:
+            apps = [APPS["HABIT_TRACKER"]]
+            Profile.objects.get_or_create(
+                user=user, is_anonymous=is_anonymous, apps=apps)
+        else:
+            Profile.objects.get_or_create(
+                user=user, is_anonymous=is_anonymous)
 
         return (user, None)

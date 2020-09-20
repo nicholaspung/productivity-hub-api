@@ -6,8 +6,7 @@ from rest_framework.authtoken.models import Token
 from rest_framework.test import APITestCase
 
 from .models import ENUM_PRIORITY_CHOICES, Daily, Habit, Todo
-from .serializers import (DailySerializer, HabitSerializer, TodoSerializer,
-                          UserSerializer)
+from .serializers import DailySerializer, HabitSerializer, TodoSerializer
 from .views import get_date
 
 test_username = "testcase"
@@ -16,7 +15,7 @@ test_password = "strong_password_123"
 
 # Integration Tests with API
 class TodoTestCase(APITestCase):
-    base_url = "/todos/"
+    base_url = "/api/todos/"
     sample_todo = {"name": "new todo", "description": "new description"}
 
     def setUp(self):
@@ -109,7 +108,7 @@ class TodoTestCase(APITestCase):
 
 
 class HabitTestCase(APITestCase):
-    base_url = "/habits/"
+    base_url = "/api/habits/"
     sample_habit = {"name": "new habit", "description": "new description"}
 
     def setUp(self):
@@ -209,8 +208,8 @@ def create_sample_daily(habit, user, date):
 
 
 class DailyTestCase(APITestCase):
-    base_url = "/dailies/"
-    habit_url = '/habits/'
+    base_url = "/api/dailies/"
+    habit_url = '/api/habits/'
 
     def setUp(self):
         self.user = User.objects.create_user(
