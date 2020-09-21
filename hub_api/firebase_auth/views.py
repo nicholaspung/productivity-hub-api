@@ -20,6 +20,11 @@ class UserViewSet(viewsets.ReadOnlyModelViewSet):
         return User.objects.filter(username=self.request.user)
 
     def list(self, request):
+        user = User.objects.get(username=self.request.user)
+        serialized = UserSerializer(user)
+        return Response(serialized.data, status=status.HTTP_200_OK)
+
+    def retrieve(self, request, pk=None):
         response = {'message': 'List function is not offered in this path.'}
         return Response(response, status=status.HTTP_405_METHOD_NOT_ALLOWED)
 
@@ -35,5 +40,10 @@ class ProfileViewSet(viewsets.ReadOnlyModelViewSet):
         return Profile.objects.filter(user=self.request.user)
 
     def list(self, request):
+        profile = Profile.objects.get(user=self.request.user)
+        serialized = ProfileSerializer(profile)
+        return Response(serialized.data, status=status.HTTP_200_OK)
+
+    def retrieve(self, request, pk=None):
         response = {'message': 'List function is not offered in this path.'}
         return Response(response, status=status.HTTP_405_METHOD_NOT_ALLOWED)

@@ -14,11 +14,14 @@ class Profile(models.Model):
     apps = models.TextField(default="")
 
     def save(self, *args, **kwargs):
-        if self.apps:
+        if self._state.adding:
+            default_app = APPS["HABIT_TRACKER"]
+            self.apps = f"{default_app}"
+        elif self.apps:
             apps = self.apps.replace(' ', '').split(',')
             cleaned_apps = []
             for app in apps:
                 if app in APPS:
                     cleaned_apps.append(app)
-            self.apps = cleaned_apps
+            self.apps = ','.join(cleaned_apps)
         super(Profile, self).save(*args, **kwargs)

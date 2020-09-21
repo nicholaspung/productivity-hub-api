@@ -57,12 +57,7 @@ class FirebaseAuthentication(authentication.BaseAuthentication):
             raise FirebaseError()
 
         user, created = User.objects.get_or_create(username=uid)
-        if created:
-            apps = [APPS["HABIT_TRACKER"]]
-            Profile.objects.get_or_create(
-                user=user, is_anonymous=is_anonymous, apps=apps)
-        else:
-            Profile.objects.get_or_create(
-                user=user, is_anonymous=is_anonymous)
+        Profile.objects.get_or_create(
+            user=user, is_anonymous=is_anonymous)
 
         return (user, None)
