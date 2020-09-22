@@ -4,14 +4,11 @@ from .models import ENUM_PRIORITY_CHOICES, Daily, Habit, Todo
 
 
 class TodoSerializer(serializers.ModelSerializer):
-    priority = serializers.ChoiceField(
-        choices=ENUM_PRIORITY_CHOICES, default=ENUM_PRIORITY_CHOICES[0])
-
     class Meta:
         model = Todo
         fields = ['id', 'name', 'description', 'date_created',
                   'date_finished', 'finished', 'priority', 'user', 'order']
-        read_only_fields = ['user']
+        read_only_fields = ['user', 'id', 'date_created', 'date_finished']
 
 
 class HabitSerializer(serializers.ModelSerializer):
@@ -19,7 +16,7 @@ class HabitSerializer(serializers.ModelSerializer):
         model = Habit
         fields = ['id', 'name', 'description',
                   'date_created', 'order', 'user', 'archived']
-        read_only_fields = ['user']
+        read_only_fields = ['user', 'id', 'date_created']
 
 
 class DailySerializer(serializers.ModelSerializer):
@@ -28,4 +25,4 @@ class DailySerializer(serializers.ModelSerializer):
     class Meta:
         model = Daily
         fields = ['id', 'date', 'finished', 'user', 'habit']
-        read_only_fields = ['user']
+        read_only_fields = ['user', 'id', 'date', 'habit']

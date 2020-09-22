@@ -3,11 +3,7 @@ import datetime
 import pytz
 from django.db import models
 
-ENUM_PRIORITY_CHOICES = (
-    ("none", "NONE"),
-    ("high", "HIGH"),
-    ("low", "LOW")
-)
+ENUM_PRIORITY_CHOICES = ['NONE', 'HIGH', 'LOW']
 
 
 class Todo(models.Model):
@@ -17,7 +13,7 @@ class Todo(models.Model):
     date_finished = models.DateTimeField(blank=True, null=True)
     finished = models.BooleanField(default=False)
     priority = models.CharField(
-        max_length=4, choices=ENUM_PRIORITY_CHOICES, default=ENUM_PRIORITY_CHOICES[0])
+        max_length=4, default=ENUM_PRIORITY_CHOICES[0])
     user = models.ForeignKey(
         'auth.User', on_delete=models.CASCADE, related_name='todos')
     order = models.IntegerField(default=1)
@@ -29,6 +25,10 @@ class Todo(models.Model):
                 self.order = last_order
         if self.finished == True:
             self.date_finished = datetime.datetime.now(tz=pytz.UTC)
+        else:
+            self.date_finished = None
+        if self.priority not in ENUM_PRIORITY_CHOICES:
+            self.priority == ENUM_PRIORITY_CHOICES[0]
         super(Todo, self).save(*args, **kwargs)
 
 

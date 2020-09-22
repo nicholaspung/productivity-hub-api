@@ -56,6 +56,7 @@ class TodoTestCase(APITestCase):
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         self.assertEqual(response.data["name"], new_todo["name"])
         self.assertEqual(response.data["description"], new_todo["description"])
+        self.assertEqual(response.data["priority"], ENUM_PRIORITY_CHOICES[0])
         # Edit finish status
         finished_field = {"finished": True, "name": new_todo["name"]}
         response2 = self.client.put(
@@ -70,7 +71,7 @@ class TodoTestCase(APITestCase):
         self.assertEqual(response3.data["finished"],
                          finished_field["finished"])
         # Edit priority
-        priority_field = {"priority": "high", "name": new_todo["name"]}
+        priority_field = {"priority": "HIGH", "name": new_todo["name"]}
         response4 = self.client.put(f"{self.base_url}1/", data=priority_field)
         self.assertEqual(response4.status_code, status.HTTP_200_OK)
         self.assertEqual(response4.data["priority"],
@@ -215,6 +216,22 @@ class DailyTestCase(APITestCase):
         self.user = User.objects.create_user(
             username=test_username, password=test_password)
         self.client.login(username=test_username, password=test_password)
+
+    def test_daily_toggle(self):
+        habit1 = create_sample_habit()
+        habit2 = create_sample_habit()
+        self.client.post(self.habit_url, data=habit1)
+        self.client.post(self.habit_url, data=habit2)
+        response = self.client.get(self.base_url)
+        daily1Id = response.data[0]['id']
+        response2 = self.client.put(
+            f"{self.base_url}{daily1Id}/", data={"finished": True})
+        self.assertEqual(response2.status_code, status.HTTP_200_OK)
+        self.assertEqual(response2.data['finished'], True)
+        response3 = self.client.put(
+            f"{self.base_url}{daily1Id}/", data={"finished": False})
+        self.assertEqual(response3.status_code, status.HTTP_200_OK)
+        self.assertEqual(response3.data['finished'], False)
 
     def test_daily_list_view(self):
         habit1 = create_sample_habit()
