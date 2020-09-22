@@ -1,3 +1,4 @@
+from django.http import Http404
 from django.contrib.auth.models import User
 from rest_framework import viewsets
 from rest_framework.authentication import SessionAuthentication
@@ -25,13 +26,13 @@ class UserViewSet(viewsets.ReadOnlyModelViewSet):
         return Response(serialized.data, status=status.HTTP_200_OK)
 
     def retrieve(self, request, pk=None):
-        response = {'message': 'List function is not offered in this path.'}
+        response = {'message': 'Detail function is not offered in this path.'}
         return Response(response, status=status.HTTP_405_METHOD_NOT_ALLOWED)
 
 
-class ProfileViewSet(viewsets.ReadOnlyModelViewSet):
+class ProfileViewSet(viewsets.ModelViewSet):
     """
-    This viewset automatically provides `list` and `detail` actions.
+    This viewset automatically provides `list`, `create`, `retrieve`, `update`, and `destroy` actions.
     """
     serializer_class = ProfileSerializer
     authentication_classes = [SessionAuthentication, FirebaseAuthentication]
@@ -45,5 +46,15 @@ class ProfileViewSet(viewsets.ReadOnlyModelViewSet):
         return Response(serialized.data, status=status.HTTP_200_OK)
 
     def retrieve(self, request, pk=None):
-        response = {'message': 'List function is not offered in this path.'}
+        response = {'message': 'Detail function is not offered in this path.'}
         return Response(response, status=status.HTTP_405_METHOD_NOT_ALLOWED)
+
+    def partial_update(self, request, *args, **kwargs):
+        try:
+            profile = Profile.objects.get(user=self.request.user)
+            profile.apps = self.request.data["apps"]
+            profile.save()
+            serialized = ProfileSerializer(profile)
+            return Response(serialized.data, status=status.HTTP_202_ACCEPTED)
+        except Exception:
+            raise Http404('Invalid data')
