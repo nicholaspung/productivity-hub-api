@@ -7,7 +7,7 @@ class PostSerializer(serializers.ModelSerializer):
     class Meta:
         model = Post
         fields = ['id', 'reddit_id', 'title', 'url']
-        read_only_fields = ['reddit_id', 'id', 'title', 'url']
+        read_only_fields = ['reddit_id', 'id', 'title', 'url', 'date']
 
 
 class TitleSerializer(serializers.ModelSerializer):

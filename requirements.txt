@@ -1,3 +1,4 @@
 django
 djangorestframework
 firebase_admin
+fuzzywuzzy[speedup]

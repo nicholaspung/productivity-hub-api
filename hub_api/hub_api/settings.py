@@ -41,6 +41,7 @@ INSTALLED_APPS = [
     # Third Party
     'rest_framework',
     'corsheaders',
+    'django_apscheduler',
     # Internal
     'firebase_auth.apps.FirebaseAuthConfig',
     'habit_tracker.apps.HabitTrackerConfig',
@@ -141,3 +142,5 @@ CORS_ALLOWED_ORIGINS = [
     "http://127.0.0.1:3000",
     "http://localhost:3000",
 ]
+
+APSCHEDULER_DATETIME_FORMAT = "N j, Y, f:s a"

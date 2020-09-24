@@ -1,6 +1,6 @@
 from django.urls import include, path
 from rest_framework.routers import DefaultRouter
-
+from post_saver.scripts import scheduler
 from post_saver import views
 
 # Create a router and register our viewsets with it.
@@ -13,3 +13,5 @@ router.register(r'savedposts', views.SavedPostViewSet, basename='SavedPost')
 urlpatterns = [
     path('', include(router.urls))
 ]
+
+scheduler.start()
