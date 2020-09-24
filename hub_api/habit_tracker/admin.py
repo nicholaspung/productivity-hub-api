@@ -1,6 +1,6 @@
 from django.contrib import admin
 
-from .models import Todo, Habit, Daily
+from .models import Daily, Habit, Todo
 
 
 class TodoAdmin(admin.ModelAdmin):

@@ -1,18 +1,17 @@
-from django.http import Http404
 from django.contrib.auth.models import User
-from rest_framework import viewsets
+from django.http import Http404
+from rest_framework import status, viewsets
 from rest_framework.authentication import SessionAuthentication
 from rest_framework.response import Response
-from rest_framework import status
 
 from .authentication import FirebaseAuthentication
-from .serializers import UserSerializer, ProfileSerializer
 from .models import Profile
+from .serializers import ProfileSerializer, UserSerializer
 
 
-class UserViewSet(viewsets.ReadOnlyModelViewSet):
+class UserViewSet(viewsets.ModelViewSet):
     """
-    This viewset automatically provides `list` and `detail` actions.
+    This viewset automatically provides `list`, `create`, `retrieve`, `update`, and `destroy` actions.
     """
     serializer_class = UserSerializer
     authentication_classes = [SessionAuthentication, FirebaseAuthentication]
@@ -26,6 +25,18 @@ class UserViewSet(viewsets.ReadOnlyModelViewSet):
         return Response(serialized.data, status=status.HTTP_200_OK)
 
     def retrieve(self, request, pk=None):
+        response = {'message': 'Detail function is not offered in this path.'}
+        return Response(response, status=status.HTTP_405_METHOD_NOT_ALLOWED)
+
+    def partial_update(self, request, pk=None):
+        response = {'message': 'Detail function is not offered in this path.'}
+        return Response(response, status=status.HTTP_405_METHOD_NOT_ALLOWED)
+
+    def create(self, request, pk=None):
+        response = {'message': 'Detail function is not offered in this path.'}
+        return Response(response, status=status.HTTP_405_METHOD_NOT_ALLOWED)
+
+    def update(self, request, pk=None):
         response = {'message': 'Detail function is not offered in this path.'}
         return Response(response, status=status.HTTP_405_METHOD_NOT_ALLOWED)
 

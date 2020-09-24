@@ -1,11 +1,10 @@
 import calendar
 from datetime import date, timedelta
 
+from firebase_auth.authentication import FirebaseAuthentication
 from rest_framework import permissions, viewsets
 from rest_framework.authentication import SessionAuthentication
 from rest_framework.response import Response
-
-from firebase_auth.authentication import FirebaseAuthentication
 
 from .models import ENUM_PRIORITY_CHOICES, Daily, Habit, Todo
 from .permissions import IsOwnerOrReadOnly

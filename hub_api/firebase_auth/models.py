@@ -1,6 +1,5 @@
-from django.db import models
 from django.contrib.auth.models import User
-
+from django.db import models
 
 APPS = {
     'HABIT_TRACKER': 'HABIT_TRACKER',

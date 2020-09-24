@@ -1,6 +1,6 @@
 from django.contrib import admin
 
-from .models import Post, Title, SavedPost
+from .models import Post, SavedPost, Title
 
 
 class PostAdmin(admin.ModelAdmin):

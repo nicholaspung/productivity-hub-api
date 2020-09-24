@@ -9,7 +9,7 @@ from firebase_admin import auth, credentials
 from rest_framework import authentication, exceptions
 
 from .exceptions import FirebaseError, InvalidAuthToken, NoAuthToken
-from .models import Profile, APPS
+from .models import APPS, Profile
 
 load_dotenv()
 

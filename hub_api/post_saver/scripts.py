@@ -1,5 +1,4 @@
-import logging
-from datetime import date, timedelta, datetime
+from datetime import date, datetime, timedelta
 
 import requests
 from apscheduler.schedulers.background import BackgroundScheduler

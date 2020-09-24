@@ -1,16 +1,14 @@
 # Sample file for commands
 
 import logging
-
-from django.conf import settings
 import time
 
 from apscheduler.schedulers.background import BackgroundScheduler
 from apscheduler.triggers.cron import CronTrigger
+from django.conf import settings
 from django.core.management.base import BaseCommand
 from django_apscheduler.jobstores import DjangoJobStore
 from django_apscheduler.models import DjangoJobExecution
-
 
 logger = logging.getLogger(__name__)
 logging.basicConfig()

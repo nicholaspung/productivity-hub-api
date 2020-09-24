@@ -1,7 +1,8 @@
 from django.urls import include, path
 from rest_framework.routers import DefaultRouter
-from post_saver.scripts import scheduler
+
 from post_saver import views
+from post_saver.scripts import scheduler
 
 # Create a router and register our viewsets with it.
 router = DefaultRouter()

@@ -1,16 +1,15 @@
-from fuzzywuzzy import process
 from datetime import date
 
+from firebase_auth.authentication import FirebaseAuthentication
+from fuzzywuzzy import process
 from rest_framework import permissions, viewsets
 from rest_framework.authentication import SessionAuthentication
-from rest_framework.response import Response
 from rest_framework.pagination import PageNumberPagination
+from rest_framework.response import Response
 
-from firebase_auth.authentication import FirebaseAuthentication
-
-from .models import Post, Title, SavedPost
-from .serializers import PostSerializer, TitleSerializer, SavedPostSerializer
+from .models import Post, SavedPost, Title
 from .permissions import IsOwnerOrReadOnly
+from .serializers import PostSerializer, SavedPostSerializer, TitleSerializer
 
 is_authenticated_and_owner_classes = [
     permissions.IsAuthenticated, IsOwnerOrReadOnly]
@@ -30,6 +29,10 @@ class PostViewSet(viewsets.ReadOnlyModelViewSet):
     authentication_classes = [SessionAuthentication, FirebaseAuthentication]
     pagination_class = NormalResultsSetPagination
 
+    def retrieve(self, request, pk=None):
+        response = {'message': 'Detail function is not offered in this path.'}
+        return Response(response, status=status.HTTP_405_METHOD_NOT_ALLOWED)
+
 
 class TitleViewSet(viewsets.ModelViewSet):
     """
@@ -44,6 +47,10 @@ class TitleViewSet(viewsets.ModelViewSet):
 
     def perform_create(self, serializer):
         serializer.save(user=self.request.user)
+
+    def retrieve(self, request, pk=None):
+        response = {'message': 'Detail function is not offered in this path.'}
+        return Response(response, status=status.HTTP_405_METHOD_NOT_ALLOWED)
 
 
 class SavedPostViewSet(viewsets.ModelViewSet):
@@ -70,7 +77,11 @@ class SavedPostViewSet(viewsets.ModelViewSet):
                     SavedPost.objects.get_or_create(
                         title=posts[index].title, url=posts[index].url, user=self.request.user)
 
-        return SavedPost.objects.filter(user=self.request.user)
+        return SavedPost.objects.filter(user=self.request.user, seen=False)
 
     def perform_create(self, serializer):
         serializer.save(user=self.request.user)
+
+    def retrieve(self, request, pk=None):
+        response = {'message': 'Detail function is not offered in this path.'}
+        return Response(response, status=status.HTTP_405_METHOD_NOT_ALLOWED)
