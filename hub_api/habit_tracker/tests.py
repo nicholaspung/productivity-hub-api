@@ -1,6 +1,5 @@
 from django.contrib.auth.models import User
 from rest_framework import status
-from rest_framework.authtoken.models import Token
 from rest_framework.test import APITestCase
 
 from .models import ENUM_PRIORITY_CHOICES, Daily, Habit, Todo
@@ -220,7 +219,7 @@ class DailyTestCase(APITestCase):
         habit2 = create_sample_habit()
         self.client.post(self.habit_url, data=habit1)
         self.client.post(self.habit_url, data=habit2)
-        response = self.client.get(self.base_url)
+        response = self.client.post(self.base_url)
         daily1Id = response.data[0]['id']
         response2 = self.client.put(
             f"{self.base_url}{daily1Id}/", data={"finished": True})
@@ -236,7 +235,7 @@ class DailyTestCase(APITestCase):
         habit2 = create_sample_habit()
         self.client.post(self.habit_url, data=habit1)
         self.client.post(self.habit_url, data=habit2)
-        response = self.client.get(self.base_url)
+        response = self.client.post(self.base_url)
         self.assertEqual(
             response.data[0]["habit"]["name"], habit1["name"])
         self.assertEqual(
@@ -255,6 +254,7 @@ class DailyTestCase(APITestCase):
                             user=self.user, date="2019-12-29")
         create_sample_daily(habit=habit1_instance,
                             user=self.user, date="2020-01-04")
+        self.client.post(self.base_url)
         response = self.client.get(f"{self.base_url}?timeframe=week")
         self.assertEqual(len(response.data), 2)
         self.assertEqual(response.status_code, status.HTTP_200_OK)
@@ -278,6 +278,7 @@ class DailyTestCase(APITestCase):
                             user=self.user, date="2020-01-16")
         create_sample_daily(habit=habit1_instance,
                             user=self.user, date="2020-01-31")
+        self.client.post(self.base_url)
         response = self.client.get(f"{self.base_url}?timeframe=month")
         self.assertEqual(len(response.data), 2)
         self.assertEqual(response.status_code, status.HTTP_200_OK)
@@ -301,6 +302,7 @@ class DailyTestCase(APITestCase):
                             user=self.user, date="2019-06-01")
         create_sample_daily(habit=habit1_instance,
                             user=self.user, date="2019-11-01")
+        self.client.post(self.base_url)
         response = self.client.get(f"{self.base_url}?timeframe=year")
         self.assertEqual(len(response.data), 2)
         self.assertEqual(response.status_code, status.HTTP_200_OK)
@@ -317,9 +319,8 @@ class DailyTestCase(APITestCase):
         habit2 = create_sample_habit()
         self.client.post(self.habit_url, data=habit1)
         self.client.post(self.habit_url, data=habit2)
-        response = self.client.get(self.base_url)
+        response = self.client.post(self.base_url)
         self.assertEqual(response.status_code, status.HTTP_200_OK)
-
         first_daily_id = response.data[0]["id"]
         # Edit finish status
         response2 = self.client.patch(

@@ -5,7 +5,6 @@ from apscheduler.schedulers.background import BackgroundScheduler
 from bs4 import BeautifulSoup
 from django.conf import settings
 from django_apscheduler.jobstores import DjangoJobStore, register_job
-from django_apscheduler.models import DjangoJobExecution
 
 from post_saver.models import Post, SavedPost
 
@@ -93,7 +92,7 @@ def delete_old_posts():
         thirty_days_ago, one_week_ago)).delete()
 
 
-@register_job(scheduler, 'interval', weeks=1, replace_existing=True)
+@register_job(scheduler, 'interval', weeks=2, replace_existing=True)
 def delete_old_seen_saved_posts():
     '''
     This job deletes old seen saved posts that older than 2 weeks
@@ -102,11 +101,3 @@ def delete_old_seen_saved_posts():
     thirty_days_ago = date.today() - timedelta(days=30)
     SavedPost.objects.filter(date__range=(
         thirty_days_ago, two_weeks_ago)).delete()
-
-
-@register_job(scheduler, 'interval', weeks=1, replace_existing=True)
-def delete_old_job_executions():
-    """
-    This job deletes all apscheduler job executions older than `max_age` from the database.
-    """
-    DjangoJobExecution.objects.delete_old_job_executions(max_age=604_800)

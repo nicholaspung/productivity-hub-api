@@ -2,7 +2,7 @@ import calendar
 from datetime import date, timedelta
 
 from firebase_auth.authentication import FirebaseAuthentication
-from rest_framework import permissions, viewsets
+from rest_framework import permissions, viewsets, status
 from rest_framework.authentication import SessionAuthentication
 from rest_framework.response import Response
 
@@ -35,7 +35,7 @@ def reorder(self, Model, ModelSerializer, id):
     serializer1 = ModelSerializer(model1)
     serializer2 = ModelSerializer(model2)
 
-    return Response([serializer1.data, serializer2.data])
+    return Response([serializer1.data, serializer2.data], status=status.HTTP_200_OK)
 
 
 class TodoViewSet(viewsets.ModelViewSet):
@@ -104,13 +104,6 @@ class DailyViewSet(viewsets.ModelViewSet):
     authentication_classes = [SessionAuthentication, FirebaseAuthentication]
 
     def get_queryset(self):
-        user = self.request.user
-        habits = Habit.objects.filter(user=user)
-
-        for habit in habits:
-            Daily.objects.get_or_create(
-                habit=habit, date=date.today(), user=user)
-
         if 'timeframe' in self.request.query_params:  # week, month, year
             obj_date = get_date(self.request.query_params)
 
@@ -133,5 +126,24 @@ class DailyViewSet(viewsets.ModelViewSet):
         else:
             queryset = Daily.objects.filter(
                 user=self.request.user, date=date.today())
-
         return queryset
+
+    def create(self, serializer):
+        user = self.request.user
+        habits = Habit.objects.filter(user=user)
+
+        for habit in habits:
+            Daily.objects.get_or_create(
+                habit=habit, date=date.today(), user=user)
+
+        queryset = Daily.objects.filter(user=user, date=date.today())
+        serialized = DailySerializer(queryset, many=True)
+        return Response(serialized.data, status=status.HTTP_200_OK)
+
+    def retrieve(self, request, pk=None):
+        response = {'message': 'Detail function is not offered in this path.'}
+        return Response(response, status=status.HTTP_405_METHOD_NOT_ALLOWED)
+
+    def destroy(self, request, pk=None):
+        response = {'message': 'Detail function is not offered in this path.'}
+        return Response(response, status=status.HTTP_405_METHOD_NOT_ALLOWED)

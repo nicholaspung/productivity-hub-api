@@ -156,3 +156,72 @@ Users
   [] Delete account
   [x] Add services
   [x] Delete services
+
+## Current Endpoints
+
+/users/
+
+- Displays current user
+
+/users/{id}
+
+- Allows deletion
+
+/profiles/
+
+- Displays current user profile
+
+/profiles/{id}
+
+- Update a part of user profile
+
+/posts/
+
+- Displays list of posts saved in db
+
+/titles/
+
+- Displays list of user titles
+
+/titles/{id}
+
+- Creates title from auth user
+- Allows update
+- Allows deletion
+
+/savedposts/
+
+- Creates and displays a user's generated savedpost list (probably want to put generation in a task queue so it doesn't block)
+
+/savedposts/{id}
+
+- Allows update
+
+/todos/
+
+- Displays current user's todos
+- Creates a todo with user info
+
+/todos/{id}
+
+- Allows updates
+- Allows deletion
+
+/habits/
+
+- Displays current user's habits
+- Creates a habit with user info
+
+/habits/{id}
+
+- Allows updates
+- Allows deletion
+
+/dailies/
+
+- Displays daily according to query inputs
+- Creates dailies from habits
+
+/dailies/{id}
+
+- Allows update

@@ -80,8 +80,17 @@ class SavedPostViewSet(viewsets.ModelViewSet):
         return SavedPost.objects.filter(user=self.request.user, seen=False)
 
     def perform_create(self, serializer):
-        serializer.save(user=self.request.user)
+        response = {'message': 'Detail function is not offered in this path.'}
+        return Response(response, status=status.HTTP_405_METHOD_NOT_ALLOWED)
 
     def retrieve(self, request, pk=None):
+        response = {'message': 'Detail function is not offered in this path.'}
+        return Response(response, status=status.HTTP_405_METHOD_NOT_ALLOWED)
+
+    def destroy(self, request, pk=None):
+        response = {'message': 'Detail function is not offered in this path.'}
+        return Response(response, status=status.HTTP_405_METHOD_NOT_ALLOWED)
+
+    def partial_update(self, request, pk=None):
         response = {'message': 'Detail function is not offered in this path.'}
         return Response(response, status=status.HTTP_405_METHOD_NOT_ALLOWED)
