@@ -6,6 +6,8 @@ from django_apscheduler.jobstores import DjangoJobStore, register_job
 from django_apscheduler.models import DjangoJobExecution
 from firebase_admin import auth
 
+from .models import Profile
+
 scheduler = BackgroundScheduler(timezone=settings.TIME_ZONE)
 scheduler.add_jobstore(DjangoJobStore(), "default")
 
@@ -24,6 +26,11 @@ def prune_anonymous_users_in_firebase_and_django():
         if user.email is None and logged_within_one_week:
             anonymous_users.append(user.uid)
     result = auth.delete_users(anonymous_users)
+
+    if len(result.errors) == 0:
+        profiles = Profile.objects.filter(is_anonymous=True)
+        for profile in profiles:
+            profile.user.delete()
 
     print('Successfully deleted {0} users'.format(result.success_count))
     print('Failed to delete {0} users'.format(result.failure_count))

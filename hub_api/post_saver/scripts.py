@@ -4,6 +4,7 @@ import requests
 from apscheduler.schedulers.background import BackgroundScheduler
 from bs4 import BeautifulSoup
 from django.conf import settings
+from django.db.utils import IntegrityError
 from django_apscheduler.jobstores import DjangoJobStore, register_job
 
 from post_saver.models import Post, SavedPost
@@ -35,8 +36,11 @@ def subreddit_scraper():
                     'title': post_data['title'],
                     'url': post_data['url']
                 }
-                Post.objects.get_or_create(
-                    reddit_id=post_obj['reddit_id'], title=post_obj['title'], url=post_obj['url'])
+                try:
+                    Post.objects.get_or_create(
+                        reddit_id=post_obj['reddit_id'], title=post_obj['title'], url=post_obj['url'])
+                except IntegrityError as e:
+                    continue
         except requests.exceptions.RequestException as e:
             return
 

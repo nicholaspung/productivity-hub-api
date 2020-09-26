@@ -153,7 +153,7 @@ Users
 
 - Users
 
-  [] Delete account
+  [x] Delete account
   [x] Add services
   [x] Delete services
 
@@ -225,3 +225,9 @@ Users
 /dailies/{id}
 
 - Allows update
+
+Permissions
+
+- Firebase Authentication
+- Session Authentication
+- If user has app in profile
