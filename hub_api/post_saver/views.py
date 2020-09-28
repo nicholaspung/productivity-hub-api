@@ -29,6 +29,9 @@ class PostViewSet(viewsets.ReadOnlyModelViewSet):
     authentication_classes = [SessionAuthentication, FirebaseAuthentication]
     pagination_class = NormalResultsSetPagination
 
+    def get_queryset(self):
+        return Post.objects.filter(date=date.today())
+
     def retrieve(self, request, pk=None):
         response = {'message': 'Detail function is not offered in this path.'}
         return Response(response, status=status.HTTP_405_METHOD_NOT_ALLOWED)
