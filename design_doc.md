@@ -231,3 +231,4 @@ Permissions
 - Firebase Authentication
 - Session Authentication
 - If user has app in profile
+- There's an error in one script - genkan scraper and also a startup error with jobs not working?
