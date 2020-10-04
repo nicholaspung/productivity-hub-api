@@ -75,8 +75,11 @@ def genkan_website_scraper():
                     'title': final_title,
                     'url': url
                 }
-                Post.objects.get_or_create(
-                    title=post_obj['title'], url=post_obj['url'])
+                try:
+                    Post.objects.get_or_create(
+                        title=post_obj['title'], url=post_obj['url'])
+                except IntegrityError as e:
+                    continue
         except requests.exceptions.RequestException as e:
             return
 

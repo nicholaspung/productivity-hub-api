@@ -75,7 +75,7 @@ class SavedPostViewSet(viewsets.ModelViewSet):
         for title in titles:
             similars = process.extract(title, posts_titles, limit=5)
             for similar in similars:  # (title_name, accuracy)
-                if similar[1] > 70:
+                if similar[1] > 80:
                     index = posts_titles.index(similar[0])
                     SavedPost.objects.get_or_create(
                         title=posts[index].title, url=posts[index].url, user=self.request.user)
