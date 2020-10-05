@@ -1,6 +1,7 @@
 from datetime import date, timedelta
 
 from apscheduler.schedulers.background import BackgroundScheduler
+from django import db
 from django.conf import settings
 from django_apscheduler.jobstores import DjangoJobStore, register_job
 from django_apscheduler.models import DjangoJobExecution
@@ -37,6 +38,8 @@ def prune_anonymous_users_in_firebase_and_django():
     for err in result.errors:
         print('error #{0}, reason: {1}'.format(result.index, result.reason))
 
+    db.connections.close_all()
+
 # Executes when server starts
 # prune_anonymous_users_in_firebase_and_django()
 
@@ -47,3 +50,4 @@ def delete_old_job_executions():
     This job deletes all apscheduler job executions older than `max_age` from the database.
     """
     DjangoJobExecution.objects.delete_old_job_executions(max_age=604_800)
+    db.connections.close_all()

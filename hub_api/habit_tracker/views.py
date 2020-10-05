@@ -106,8 +106,10 @@ class DailyViewSet(viewsets.ModelViewSet):
     def get_queryset(self):
         if 'timeframe' in self.request.query_params:  # week, month, year
             obj_date = get_date(self.request.query_params)
-
-            if self.request.query_params['timeframe'] == 'week':
+            if self.request.query_params['timeframe'] == 'day':
+                queryset = Daily.objects.filter(
+                    user=self.request.user, date=obj_date)
+            elif self.request.query_params['timeframe'] == 'week':
                 isocalendar = obj_date.isocalendar()
                 week_dates = week__range(obj_date.year, isocalendar)
                 queryset = Daily.objects.filter(user=self.request.user, date__range=(

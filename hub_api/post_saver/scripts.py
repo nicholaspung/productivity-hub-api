@@ -3,6 +3,7 @@ from datetime import date, datetime, timedelta
 import requests
 from apscheduler.schedulers.background import BackgroundScheduler
 from bs4 import BeautifulSoup
+from django import db
 from django.conf import settings
 from django.db.utils import IntegrityError
 from django_apscheduler.jobstores import DjangoJobStore, register_job
@@ -44,6 +45,8 @@ def subreddit_scraper():
         except requests.exceptions.RequestException as e:
             return
 
+    db.connections.close_all()
+
 
 # Executes when server starts
 # subreddit_scraper()
@@ -83,6 +86,8 @@ def genkan_website_scraper():
         except requests.exceptions.RequestException as e:
             return
 
+    db.connections.close_all()
+
 
 # Executes when server starts
 # genkan_website_scraper()
@@ -98,6 +103,8 @@ def delete_old_posts():
     Post.objects.filter(date__range=(
         thirty_days_ago, one_week_ago)).delete()
 
+    db.connections.close_all()
+
 
 @register_job(scheduler, 'interval', weeks=2, replace_existing=True)
 def delete_old_seen_saved_posts():
@@ -108,3 +115,5 @@ def delete_old_seen_saved_posts():
     thirty_days_ago = date.today() - timedelta(days=30)
     SavedPost.objects.filter(date__range=(
         thirty_days_ago, two_weeks_ago)).delete()
+
+    db.connections.close_all()
