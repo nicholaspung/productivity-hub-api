@@ -12,8 +12,9 @@ SECRET_KEY = os.getenv("SECRET_KEY")
 DEBUG = os.getenv("DEBUG") == 'True'
 
 ALLOWED_HOSTS = []
-
-# Application definition
+if os.getenv("ALLOWED_HOSTS_DOMAIN") and os.getenv("ALLOWED_HOSTS_IP_ADDRESS"):
+    ALLOWED_HOSTS.append(os.getenv("ALLOWED_HOSTS_DOMAIN"))
+    ALLOWED_HOSTS.append(os.getenv("ALLOWED_HOSTS_IP_ADDRESS"))
 
 INSTALLED_APPS = [
     # Default
@@ -77,10 +78,6 @@ DATABASES = {
     }
 }
 
-
-# Password validation
-# https://docs.djangoproject.com/en/3.1/ref/settings/#auth-password-validators
-
 AUTH_PASSWORD_VALIDATORS = [
     {
         'NAME': 'django.contrib.auth.password_validation.UserAttributeSimilarityValidator',
@@ -96,10 +93,6 @@ AUTH_PASSWORD_VALIDATORS = [
     },
 ]
 
-
-# Internationalization
-# https://docs.djangoproject.com/en/3.1/topics/i18n/
-
 LANGUAGE_CODE = 'en-us'
 
 TIME_ZONE = 'UTC'
@@ -110,10 +103,6 @@ USE_L10N = True
 
 USE_TZ = True
 
-
-# Static files (CSS, JavaScript, Images)
-# https://docs.djangoproject.com/en/3.1/howto/static-files/
-
 STATIC_URL = '/static/'
 
 REST_FRAMEWORK = {
@@ -123,9 +112,18 @@ REST_FRAMEWORK = {
     ),
 }
 
-CORS_ALLOWED_ORIGINS = [
-    "http://127.0.0.1:3000",
-    "http://localhost:3000",
-]
+CORS_ALLOWED_ORIGINS = []
+if os.getenv("DEBUG") == 'True':
+    CORS_ALLOWED_ORIGINS.append("http://127.0.0.1:3000")
+    CORS_ALLOWED_ORIGINS.append("http://localhost:3000")
+elif os.getenv("CORS_ALLOWED_ORIGINS"):
+    CORS_ALLOWED_ORIGINS.append(os.getenv("CORS_ALLOWED_ORIGINS"))
 
 APSCHEDULER_DATETIME_FORMAT = "N j, Y, f:s a"
+
+CSRF_COOKIE_SECURE = True
+
+SESSION_COOKIE_SECURE = True
+
+STATIC_URL = '/static/'
+STATIC_ROOT = os.path.join(BASE_DIR, "static")
