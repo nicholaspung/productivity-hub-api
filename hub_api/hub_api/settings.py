@@ -113,7 +113,7 @@ REST_FRAMEWORK = {
 }
 
 CORS_ALLOWED_ORIGINS = []
-if os.getenv("DEBUG") == 'True':
+if DEBUG:
     CORS_ALLOWED_ORIGINS.append("http://127.0.0.1:3000")
     CORS_ALLOWED_ORIGINS.append("http://localhost:3000")
 elif os.getenv("CORS_ALLOWED_ORIGINS"):

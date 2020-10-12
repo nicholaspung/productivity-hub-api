@@ -51,3 +51,6 @@ def delete_old_job_executions():
     """
     DjangoJobExecution.objects.delete_old_job_executions(max_age=604_800)
     db.connections.close_all()
+
+# Executes when server starts
+# delete_old_job_executions()
