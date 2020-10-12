@@ -18,6 +18,7 @@ if os.getenv("ALLOWED_HOSTS_DOMAIN") and os.getenv("ALLOWED_HOSTS_IP_ADDRESS"):
 
 INSTALLED_APPS = [
     # Default
+    'django.contrib.admin',
     'django.contrib.auth',
     'django.contrib.contenttypes',
     'django.contrib.sessions',
@@ -32,9 +33,6 @@ INSTALLED_APPS = [
     'habit_tracker.apps.HabitTrackerConfig',
     'post_saver.apps.PostSaverConfig',
 ]
-
-if DEBUG:
-    INSTALLED_APPS.append('django.contrib.admin')
 
 MIDDLEWARE = [
     # Third Party
