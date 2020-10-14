@@ -17,7 +17,6 @@ Note: to be used in conjunction with [productivity-hub](https://github.com/nicho
 - Beautiful Soup 4
 - APScheduler
 - Dotenv
-- TravisCI
 
 ## Environment Variables
 
@@ -36,10 +35,18 @@ See the project page [here](https://github.com/nicholaspung/productivity-hub-api
 
 ## Project Setup
 
-1. Clone this repo.
-2. Create a Firebase account, create a new project, and enable Firebase Authentication. This account will also be used with [productivity-hub](https://github.com/nicholaspung/productivity-hub).
-3. Add environment variables to .env file using Firebase settings.
+1. Clone this repo
+2. Create a Firebase account, create a new project, and enable Firebase Authentication. This account will also be used with [productivity-hub](https://github.com/nicholaspung/productivity-hub)
+3. Add environment variables to .env file using Firebase settings
 4. `pip install -r requirements.txt`
 5. `cd hub_api && python manage.py runserver`
 
 #### Tested with Python 3.8.5
+
+## Troubleshooting
+
+- On initial `python manage.py migrate`, you'll have to disable `scheduler.start()` lines in `urls.py`
+  - Current files needing changes
+    - `firebase_auth/urls.py` line 17
+    - `post_saver/urls.py` line 18
+- After a successful migration, remember to enable `scheduler.start()` again to run background scripts running on the server
