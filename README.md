@@ -17,6 +17,7 @@ Note: to be used in conjunction with [productivity-hub](https://github.com/nicho
 - Beautiful Soup 4
 - APScheduler
 - Dotenv
+- PostgreSQL
 
 ## Environment Variables
 
