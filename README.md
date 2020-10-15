@@ -38,8 +38,9 @@ See the project page [here](https://github.com/nicholaspung/productivity-hub-api
 1. Clone this repo
 2. Create a Firebase account, create a new project, and enable Firebase Authentication. This account will also be used with [productivity-hub](https://github.com/nicholaspung/productivity-hub)
 3. Add environment variables to .env file using Firebase settings
-4. `pip install -r requirements.txt`
-5. `cd hub_api && python manage.py runserver`
+4. In `/hub_api/hub_api/wsgi.py`, change up the project directory folder to be able to load .env files in your server configuration
+5. `pip install -r requirements.txt`
+6. `cd hub_api && python manage.py runserver`
 
 #### Tested with Python 3.8.5
 
