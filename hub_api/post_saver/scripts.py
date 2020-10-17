@@ -6,15 +6,20 @@ from bs4 import BeautifulSoup
 from django import db
 from django.conf import settings
 from django.db.utils import IntegrityError
-from django_apscheduler.jobstores import DjangoJobStore, register_job
+from django_apscheduler.jobstores import DjangoJobStore, DjangoJob
 
 from post_saver.models import Post, SavedPost
 
-scheduler = BackgroundScheduler(timezone=settings.TIME_ZONE)
+job_defaults = {
+    'max_instances': 1,
+    'replace_existing': True
+}
+scheduler = BackgroundScheduler(
+    timezone=settings.TIME_ZONE, job_defaults=job_defaults)
 scheduler.add_jobstore(DjangoJobStore(), "default")
 
 
-@register_job(scheduler, 'interval', minutes=30, replace_existing=True)
+@scheduler.scheduled_job('interval', id='post_saver.scripts.subreddit_scraper', minutes=30)
 def subreddit_scraper():
     '''
     This job scrapes subreddits to grab posts and put into Post table
@@ -48,11 +53,7 @@ def subreddit_scraper():
     db.connections.close_all()
 
 
-# Executes when server starts
-# subreddit_scraper()
-
-
-@register_job(scheduler, 'interval', hours=3, replace_existing=True)
+@scheduler.scheduled_job('interval', id='post_saver.scripts.genkan_website_scraper', hours=3)
 def genkan_website_scraper():
     '''
     This job scrapes 'genkan' websites to grab titles put into Post table
@@ -89,11 +90,7 @@ def genkan_website_scraper():
     db.connections.close_all()
 
 
-# Executes when server starts
-# genkan_website_scraper()
-
-
-@register_job(scheduler, 'interval', weeks=1, replace_existing=True)
+@scheduler.scheduled_job('interval', id='post_saver.scripts.delete_old_posts', weeks=1)
 def delete_old_posts():
     """
     This job deletes posts that are older than 1 week
@@ -106,7 +103,7 @@ def delete_old_posts():
     db.connections.close_all()
 
 
-@register_job(scheduler, 'interval', weeks=2, replace_existing=True)
+@scheduler.scheduled_job('interval', id='post_saver.scripts.delete_old_seen_saved_posts', weeks=2)
 def delete_old_seen_saved_posts():
     '''
     This job deletes old seen saved posts that older than 2 weeks
@@ -117,3 +114,7 @@ def delete_old_seen_saved_posts():
         thirty_days_ago, two_weeks_ago)).delete()
 
     db.connections.close_all()
+
+# Executes when server starts
+# subreddit_scraper()
+# genkan_website_scraper()

@@ -9,11 +9,16 @@ from firebase_admin import auth
 
 from .models import Profile
 
-scheduler = BackgroundScheduler(timezone=settings.TIME_ZONE)
+job_defaults = {
+    'max_instances': 1,
+    'replace_existing': True
+}
+scheduler = BackgroundScheduler(
+    timezone=settings.TIME_ZONE, job_defaults=job_defaults)
 scheduler.add_jobstore(DjangoJobStore(), "default")
 
 
-@register_job(scheduler, 'interval', weeks=1, replace_existing=True)
+@scheduler.scheduled_job('interval', id='firebase_auth.scripts.prune_anonymous_users_in_firebase_and_django', weeks=1)
 def prune_anonymous_users_in_firebase_and_django():
     """
     This job deletes all anonymous users that haven't used their account in a week from both Firebase and Django
@@ -40,11 +45,8 @@ def prune_anonymous_users_in_firebase_and_django():
 
     db.connections.close_all()
 
-# Executes when server starts
-# prune_anonymous_users_in_firebase_and_django()
 
-
-@register_job(scheduler, 'interval', weeks=1, replace_existing=True)
+@scheduler.scheduled_job('interval', id='firebase_auth.scripts.delete_old_job_executions', weeks=1)
 def delete_old_job_executions():
     """
     This job deletes all apscheduler job executions older than `max_age` from the database.
@@ -53,4 +55,5 @@ def delete_old_job_executions():
     db.connections.close_all()
 
 # Executes when server starts
+# prune_anonymous_users_in_firebase_and_django()
 # delete_old_job_executions()

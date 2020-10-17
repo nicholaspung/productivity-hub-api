@@ -144,8 +144,11 @@ elif os.getenv("CORS_ALLOWED_ORIGINS"):
 APSCHEDULER_DATETIME_FORMAT = "N j, Y, f:s a"
 
 CSRF_COOKIE_SECURE = True
-
 SESSION_COOKIE_SECURE = True
+if DEBUG:
+    CSRF_COOKIE_SECURE = False
+    SESSION_COOKIE_SECURE = False
+
 
 STATIC_URL = '/static/'
 STATIC_ROOT = os.path.join(BASE_DIR, "static")
