@@ -1,25 +1,25 @@
 from datetime import date, datetime, timedelta
 
 import requests
-from apscheduler.schedulers.background import BackgroundScheduler
+# from apscheduler.schedulers.background import BackgroundScheduler
 from bs4 import BeautifulSoup
 from django import db
-from django.conf import settings
+# from django.conf import settings
 from django.db.utils import IntegrityError
-from django_apscheduler.jobstores import DjangoJobStore, DjangoJob
+# from django_apscheduler.jobstores import DjangoJobStore
 
 from post_saver.models import Post, SavedPost
 
-job_defaults = {
-    'max_instances': 1,
-    'replace_existing': True
-}
-scheduler = BackgroundScheduler(
-    timezone=settings.TIME_ZONE, job_defaults=job_defaults)
-scheduler.add_jobstore(DjangoJobStore(), "default")
+# job_defaults = {
+#     'max_instances': 1,
+#     'replace_existing': True
+# }
+# scheduler = BackgroundScheduler(
+#     timezone=settings.TIME_ZONE, job_defaults=job_defaults)
+# scheduler.add_jobstore(DjangoJobStore(), "default")
 
 
-@scheduler.scheduled_job('interval', id='post_saver.scripts.subreddit_scraper', minutes=30)
+# @scheduler.scheduled_job('interval', id='post_saver.scripts.subreddit_scraper', minutes=30)
 def subreddit_scraper():
     '''
     This job scrapes subreddits to grab posts and put into Post table
@@ -53,7 +53,7 @@ def subreddit_scraper():
     db.connections.close_all()
 
 
-@scheduler.scheduled_job('interval', id='post_saver.scripts.genkan_website_scraper', hours=3)
+# @scheduler.scheduled_job('interval', id='post_saver.scripts.genkan_website_scraper', hours=3)
 def genkan_website_scraper():
     '''
     This job scrapes 'genkan' websites to grab titles put into Post table
@@ -90,7 +90,7 @@ def genkan_website_scraper():
     db.connections.close_all()
 
 
-@scheduler.scheduled_job('interval', id='post_saver.scripts.delete_old_posts', weeks=1)
+# @scheduler.scheduled_job('interval', id='post_saver.scripts.delete_old_posts', weeks=1)
 def delete_old_posts():
     """
     This job deletes posts that are older than 1 week
@@ -103,7 +103,7 @@ def delete_old_posts():
     db.connections.close_all()
 
 
-@scheduler.scheduled_job('interval', id='post_saver.scripts.delete_old_seen_saved_posts', weeks=2)
+# @scheduler.scheduled_job('interval', id='post_saver.scripts.delete_old_seen_saved_posts', weeks=2)
 def delete_old_seen_saved_posts():
     '''
     This job deletes old seen saved posts that older than 2 weeks

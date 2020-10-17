@@ -41,13 +41,9 @@ See the project page [here](https://github.com/nicholaspung/productivity-hub-api
 3. Add environment variables to .env file using Firebase settings
 4. In `/hub_api/hub_api/wsgi.py`, change up the project directory folder to be able to load .env files in your server configuration
 5. `pip install -r requirements.txt`
-6. `cd hub_api && python manage.py runserver`
+6. `cd hub_api`
+7. `python manage.py migrate`
+8. `python manage.py runapscheduler` This sets up the background processes needed for application to minimize data saved and for Post Saver to work correctly.
+9. `python manage.py runserver`
 
 #### Tested with Python 3.8.5
-
-## Troubleshooting
-
-- On initial `python manage.py migrate`, you'll have to disable APScheduler start commands in `wsgi.py`
-  - File needing changes
-    - `hub_api/wsgi.py` line 13, 14
-- After a successful migration, remember to enable `FirebaseScheulder.start()`, `PostSaverScheduler.start()` again to run background scripts running on the server
