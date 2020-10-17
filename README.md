@@ -47,8 +47,7 @@ See the project page [here](https://github.com/nicholaspung/productivity-hub-api
 
 ## Troubleshooting
 
-- On initial `python manage.py migrate`, you'll have to disable `scheduler.start()` lines in `urls.py`
-  - Current files needing changes
-    - `firebase_auth/urls.py` line 17
-    - `post_saver/urls.py` line 18
-- After a successful migration, remember to enable `scheduler.start()` again to run background scripts running on the server
+- On initial `python manage.py migrate`, you'll have to disable APScheduler start commands in `wsgi.py`
+  - File needing changes
+    - `hub_api/wsgi.py` line 13, 14
+- After a successful migration, remember to enable `FirebaseScheulder.start()`, `PostSaverScheduler.start()` again to run background scripts running on the server
