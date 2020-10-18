@@ -1,7 +1,7 @@
 from datetime import date, datetime, timedelta
 
 import requests
-from apscheduler.schedulers.blocking import BlockingScheduler
+from apscheduler.schedulers.background import BackgroundScheduler
 from apscheduler.triggers.cron import CronTrigger
 from django.conf import settings
 from django.core.management.base import BaseCommand
@@ -14,7 +14,7 @@ class Command(BaseCommand):
     help = "Runs apscheduler."
 
     def handle(self, *args, **options):
-        scheduler = BlockingScheduler(
+        scheduler = BackgroundScheduler(
             timezone=settings.TIME_ZONE)
         scheduler.add_jobstore(DjangoJobStore(), "default")
 
