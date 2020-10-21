@@ -54,12 +54,12 @@ def delete_old_job_executions():
 
 
 @scheduler.scheduled_job('interval', id='firebase_auth.scripts.prune_anonymous_users_in_firebase_and_django', weeks=1)
-def dev_prune_anonymous_users_in_firebase_and_django:
+def dev_prune_anonymous_users_in_firebase_and_django():
     prune_anonymous_users_in_firebase_and_django()
 
 
 @scheduler.scheduled_job('interval', id='firebase_auth.scripts.delete_old_job_executions', weeks=1)
-def dev_delete_old_job_executions:
+def dev_delete_old_job_executions():
     delete_old_job_executions()
 
 # Executes when server starts
