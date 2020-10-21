@@ -19,7 +19,6 @@ scheduler = BackgroundScheduler(
 scheduler.add_jobstore(DjangoJobStore(), "default")
 
 
-@scheduler.scheduled_job('interval', id='post_saver.scripts.subreddit_scraper', minutes=30)
 def subreddit_scraper():
     '''
     This job scrapes subreddits to grab posts and put into Post table
@@ -53,7 +52,6 @@ def subreddit_scraper():
     db.connections.close_all()
 
 
-@scheduler.scheduled_job('interval', id='post_saver.scripts.genkan_website_scraper', hours=3)
 def genkan_website_scraper():
     '''
     This job scrapes 'genkan' websites to grab titles put into Post table
@@ -90,7 +88,6 @@ def genkan_website_scraper():
     db.connections.close_all()
 
 
-@scheduler.scheduled_job('interval', id='post_saver.scripts.delete_old_posts', weeks=1)
 def delete_old_posts():
     """
     This job deletes posts that are older than 1 week
@@ -103,7 +100,6 @@ def delete_old_posts():
     db.connections.close_all()
 
 
-@scheduler.scheduled_job('interval', id='post_saver.scripts.delete_old_seen_saved_posts', weeks=2)
 def delete_old_seen_saved_posts():
     '''
     This job deletes old seen saved posts that older than 2 weeks
@@ -114,6 +110,26 @@ def delete_old_seen_saved_posts():
         thirty_days_ago, two_weeks_ago)).delete()
 
     db.connections.close_all()
+
+
+@scheduler.scheduled_job('interval', id='post_saver.scripts.subreddit_scraper', minutes=30)
+def dev_subreddit_scraper():
+    subreddit_scraper()
+
+
+@scheduler.scheduled_job('interval', id='post_saver.scripts.genkan_website_scraper', hours=3)
+def dev_genkan_website_scraper():
+    genkan_website_scraper()
+
+
+@scheduler.scheduled_job('interval', id='post_saver.scripts.delete_old_posts', weeks=1)
+def dev_delete_old_posts():
+    delete_old_posts()
+
+
+@scheduler.scheduled_job('interval', id='post_saver.scripts.delete_old_seen_saved_posts', weeks=2)
+def dev_delete_old_seen_saved_posts():
+    delete_old_seen_saved_posts()
 
 # Executes when server starts
 # subreddit_scraper()

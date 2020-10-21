@@ -1,0 +1,10 @@
+#!/usr/bin/bash
+MAILTO=
+
+VIRTUALENVWRAPPER_PYTHON=/usr/bin/python3 ## using virtualenv and virtualenvwrapper
+WORKON_HOME=~virtualenv/directory
+source /usr/local/bin/virtualenvwrapper.sh ## using virtualenv and virtualenvwrapper
+source ~/.bashrc
+workon virtualenv/environment
+cd full/project/directory
+python full/project/directory/manage.py sample
