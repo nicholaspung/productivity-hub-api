@@ -133,12 +133,16 @@ class DailyViewSet(viewsets.ModelViewSet):
     def create(self, serializer):
         user = self.request.user
         habits = Habit.objects.filter(user=user)
+        if 'date' in self.request.query_params:
+            obj_date = self.request.query_params.get('date')
+        else:
+            obj_date = date.today()
 
         for habit in habits:
             Daily.objects.get_or_create(
-                habit=habit, date=date.today(), user=user)
+                habit=habit, date=obj_date, user=user)
 
-        queryset = Daily.objects.filter(user=user, date=date.today())
+        queryset = Daily.objects.filter(user=user, date=obj_date)
         serialized = DailySerializer(queryset, many=True)
         return Response(serialized.data, status=status.HTTP_200_OK)
 
