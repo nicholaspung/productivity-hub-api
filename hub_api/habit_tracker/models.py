@@ -53,7 +53,7 @@ class Habit(models.Model):
 
 
 class Daily(models.Model):
-    date = models.DateField(auto_now_add=True)
+    date = models.DateField(auto_now_add=False)
     habit = models.ForeignKey(
         Habit, on_delete=models.CASCADE, related_name='dailies')
     finished = models.BooleanField(default=False)
