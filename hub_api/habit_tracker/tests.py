@@ -1,3 +1,5 @@
+from datetime import date
+
 from django.contrib.auth.models import User
 from rest_framework import status
 from rest_framework.test import APITestCase
@@ -199,15 +201,14 @@ def create_sample_habit(name="new habit", description="new description"):
 
 
 def create_sample_daily(habit, user, date):
-    daily = Daily(habit=habit, user=user)
-    daily.save()
-    daily.date = get_date({"date": date})
+    daily = Daily(habit=habit, user=user, date=get_date({"date": date}))
     daily.save()
 
 
 class DailyTestCase(APITestCase):
     base_url = "/api/dailies/"
     habit_url = '/api/habits/'
+    today = f"{date.today().year}-{date.today().month}-{date.today().day}"
 
     def setUp(self):
         self.user = User.objects.create_user(
@@ -220,7 +221,7 @@ class DailyTestCase(APITestCase):
         habit2 = create_sample_habit()
         self.client.post(self.habit_url, data=habit1)
         self.client.post(self.habit_url, data=habit2)
-        response = self.client.post(self.base_url)
+        response = self.client.post(f"{self.base_url}?date={self.today}")
         daily1Id = response.data[0]['id']
         response2 = self.client.put(
             f"{self.base_url}{daily1Id}/", data={"finished": True})
@@ -232,18 +233,18 @@ class DailyTestCase(APITestCase):
         self.assertEqual(response3.data['finished'], False)
         # Different day
         response4 = self.client.post(f"{self.base_url}?date=2020-10-10")
-        daily2Id = response.data[0]['id']
-        response4 = self.client.put(
-            f"{self.base_url}{daily2Id}/", data={"finished": True})
-        self.assertEqual(response4.status_code, status.HTTP_200_OK)
-        self.assertEqual(response4.data['finished'], True)
+        daily2Id = response4.data[0]['id']
+        response5 = self.client.put(
+            f"{self.base_url}{daily2Id}/?date=2020-10-10&timeframe=day", data={"finished": True})
+        self.assertEqual(response5.status_code, status.HTTP_200_OK)
+        self.assertEqual(response5.data['finished'], True)
 
     def test_daily_list_view(self):
         habit1 = create_sample_habit()
         habit2 = create_sample_habit()
         self.client.post(self.habit_url, data=habit1)
         self.client.post(self.habit_url, data=habit2)
-        response = self.client.post(self.base_url)
+        response = self.client.post(f"{self.base_url}?date={self.today}")
         self.assertEqual(
             response.data[0]["habit"]["name"], habit1["name"])
         self.assertEqual(
@@ -262,7 +263,7 @@ class DailyTestCase(APITestCase):
                             user=self.user, date="2019-12-29")
         create_sample_daily(habit=habit1_instance,
                             user=self.user, date="2020-01-04")
-        self.client.post(self.base_url)
+        self.client.post(f"{self.base_url}?date={self.today}")
         response = self.client.get(f"{self.base_url}?timeframe=week")
         self.assertEqual(len(response.data), 2)
         self.assertEqual(response.status_code, status.HTTP_200_OK)
@@ -286,7 +287,7 @@ class DailyTestCase(APITestCase):
                             user=self.user, date="2020-01-16")
         create_sample_daily(habit=habit1_instance,
                             user=self.user, date="2020-01-31")
-        self.client.post(self.base_url)
+        self.client.post(f"{self.base_url}?date={self.today}")
         response = self.client.get(f"{self.base_url}?timeframe=month")
         self.assertEqual(len(response.data), 2)
         self.assertEqual(response.status_code, status.HTTP_200_OK)
@@ -310,7 +311,7 @@ class DailyTestCase(APITestCase):
                             user=self.user, date="2019-06-01")
         create_sample_daily(habit=habit1_instance,
                             user=self.user, date="2019-11-01")
-        self.client.post(self.base_url)
+        self.client.post(f"{self.base_url}?date={self.today}")
         response = self.client.get(f"{self.base_url}?timeframe=year")
         self.assertEqual(len(response.data), 2)
         self.assertEqual(response.status_code, status.HTTP_200_OK)
@@ -327,7 +328,7 @@ class DailyTestCase(APITestCase):
         habit2 = create_sample_habit()
         self.client.post(self.habit_url, data=habit1)
         self.client.post(self.habit_url, data=habit2)
-        response = self.client.post(self.base_url)
+        response = self.client.post(f"{self.base_url}?date={self.today}")
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         first_daily_id = response.data[0]["id"]
         # Edit finish status

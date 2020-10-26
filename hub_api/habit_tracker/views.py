@@ -134,7 +134,6 @@ class DailyViewSet(viewsets.ModelViewSet):
         user = self.request.user
         habits = Habit.objects.filter(user=user)
         obj_date = get_date(self.request.query_params)
-        print(obj_date)
 
         for habit in habits:
             Daily.objects.get_or_create(
