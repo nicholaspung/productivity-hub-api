@@ -215,6 +215,7 @@ class DailyTestCase(APITestCase):
         self.client.login(username=test_username, password=test_password)
 
     def test_daily_toggle(self):
+        # Same day
         habit1 = create_sample_habit()
         habit2 = create_sample_habit()
         self.client.post(self.habit_url, data=habit1)
@@ -229,6 +230,13 @@ class DailyTestCase(APITestCase):
             f"{self.base_url}{daily1Id}/", data={"finished": False})
         self.assertEqual(response3.status_code, status.HTTP_200_OK)
         self.assertEqual(response3.data['finished'], False)
+        # Different day
+        response4 = self.client.post(f"{self.base_url}?date=2020-10-10")
+        daily2Id = response.data[0]['id']
+        response4 = self.client.put(
+            f"{self.base_url}{daily2Id}/", data={"finished": True})
+        self.assertEqual(response4.status_code, status.HTTP_200_OK)
+        self.assertEqual(response4.data['finished'], True)
 
     def test_daily_list_view(self):
         habit1 = create_sample_habit()
