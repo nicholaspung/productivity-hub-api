@@ -132,7 +132,7 @@ class DailyViewSet(viewsets.ModelViewSet):
 
     def create(self, serializer):
         user = self.request.user
-        habits = Habit.objects.filter(user=user)
+        habits = Habit.objects.filter(user=user, archived=False)
         obj_date = get_date(self.request.query_params)
 
         for habit in habits:
