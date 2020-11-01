@@ -162,7 +162,7 @@ if DEBUG == False:
             "file": {
                 "level": "ERROR",
                 "class": "logging.FileHandler",
-                "filename": "/Users/nckpn/WebDevelopment/productivity-hub-api/hub_api/info.log",
+                "filename": "path/to/directory/info.log",
                 "formatter": "app",
             },
             "console": {
