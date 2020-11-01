@@ -1,5 +1,7 @@
+import logging
 from datetime import date
 
+from django.db import IntegrityError
 from firebase_auth.authentication import FirebaseAuthentication
 from fuzzywuzzy import process
 from rest_framework import permissions, viewsets
@@ -10,6 +12,8 @@ from rest_framework.response import Response
 from .models import Post, SavedPost, Title
 from .permissions import IsOwnerOrReadOnly
 from .serializers import PostSerializer, SavedPostSerializer, TitleSerializer
+
+logger = logging.getLogger(__file__)
 
 is_authenticated_and_owner_classes = [
     permissions.IsAuthenticated, IsOwnerOrReadOnly]
@@ -77,8 +81,15 @@ class SavedPostViewSet(viewsets.ModelViewSet):
             for similar in similars:  # (title_name, accuracy)
                 if similar[1] > 80:
                     index = posts_titles.index(similar[0])
-                    SavedPost.objects.get_or_create(
-                        title=posts[index].title, url=posts[index].url, user=self.request.user)
+                    try:
+                        SavedPost.objects.get_or_create(
+                            title=posts[index].title, url=posts[index].url, user=self.request.user)
+                    except IntegrityError as e:
+                        logger.error('This is an error.')
+                        continue
+                    except:
+                        logger.exception('This is an unhandled exception.')
+                        continue
 
         return SavedPost.objects.filter(user=self.request.user, seen=False)
 

@@ -64,3 +64,7 @@ See the project page [here](https://github.com/nicholaspung/productivity-hub-api
    - You can also set outputs to files by attaching `>> /path/to/log/sample.log 2>&1`. This is good for debugging why your script isn't running
 
 6. You can also set up a `MAILTO=` in `crontab -e` to be sent an email everytime a cron job is finished
+
+## To auto-generate schema
+
+`python manage.py generateschema --format openapi > schema.yml`
