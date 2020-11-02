@@ -22,3 +22,4 @@ class SavedPostSerializer(serializers.ModelSerializer):
         model = SavedPost
         fields = ['id', 'title', 'url', 'seen', 'user']
         read_only_fields = ['user', 'id', 'title', 'url']
+        ordering = ['id']

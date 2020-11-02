@@ -9,6 +9,8 @@ from firebase_auth.scripts import scheduler
 router = DefaultRouter()
 router.register(r'user', views.UserViewSet, basename="User")
 router.register(r'profile', views.ProfileViewSet, basename="Profile")
+router.register(r'useranalytics', views.UserAnalyticViewSet,
+                basename="UserAnalytic")
 
 # The API URLs are now determined automatically by the router.
 urlpatterns = [

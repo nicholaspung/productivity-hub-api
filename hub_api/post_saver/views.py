@@ -1,5 +1,6 @@
 import logging
 from datetime import date
+from random import random
 
 from django.db import IntegrityError
 from firebase_auth.authentication import FirebaseAuthentication
@@ -85,8 +86,11 @@ class SavedPostViewSet(viewsets.ModelViewSet):
                         SavedPost.objects.get_or_create(
                             title=posts[index].title, url=posts[index].url, user=self.request.user)
                     except IntegrityError as e:
-                        logger.error('This is an error.')
-                        continue
+                        try:
+                            SavedPost.objects.get_or_create(
+                                title=f"{posts[index].title}{str(random())[0:5]}", url=posts[index].url, user=self.request.user)
+                        except:
+                            continue
                     except:
                         logger.exception('This is an unhandled exception.')
                         continue

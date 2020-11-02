@@ -24,3 +24,11 @@ class Profile(models.Model):
                     cleaned_apps.append(app)
             self.apps = ','.join(cleaned_apps)
         super(Profile, self).save(*args, **kwargs)
+
+
+class UserAnalytic(models.Model):
+    user = models.OneToOneField(User, on_delete=models.CASCADE)
+    label = models.CharField(max_length=100)
+    action = models.CharField(max_length=100, default="Click")
+    frequency = models.IntegerField(default=0)
+    date = models.DateField(auto_now_add=True)
