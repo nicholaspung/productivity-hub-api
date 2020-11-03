@@ -60,7 +60,8 @@ def genkan_website_scraper():
             'https://reaperscans.com/latest',
             'https://zeroscans.com/latest',
             'https://skscans.com/latest',
-            'https://methodscans.com/latest']
+            'https://methodscans.com/latest',
+            'https://hatigarmscanz.net/latest']
     for url in urls:
         try:
             html = requests.get(url)

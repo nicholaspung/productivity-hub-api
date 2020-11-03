@@ -2,7 +2,7 @@ import firebase_admin
 from django.contrib.auth.models import User
 from django.http import Http404
 from firebase_admin import auth
-from habit_tracker.views import get_date
+from habit_tracker.views import get_date, week__range
 from rest_framework import status, viewsets
 from rest_framework.authentication import SessionAuthentication
 from rest_framework.response import Response
@@ -15,7 +15,7 @@ from .serializers import (ProfileSerializer, UserAnalyticSerializer,
 
 class UserViewSet(viewsets.ModelViewSet):
     """
-    This viewset automatically provides `list`, `create`, `retrieve`, `update`, and `destroy` actions.
+    This viewset automatically provides `list` and `destroy` actions.
     """
     serializer_class = UserSerializer
     authentication_classes = [SessionAuthentication, FirebaseAuthentication]
@@ -69,7 +69,7 @@ class UserViewSet(viewsets.ModelViewSet):
 
 class ProfileViewSet(viewsets.ModelViewSet):
     """
-    This viewset automatically provides `list`, `create`, `retrieve`, `update`, and `destroy` actions.
+    This viewset automatically provides `list` and `update` actions.
     """
     serializer_class = ProfileSerializer
     authentication_classes = [SessionAuthentication, FirebaseAuthentication]
@@ -107,17 +107,21 @@ class ProfileViewSet(viewsets.ModelViewSet):
 
 class UserAnalyticViewSet(viewsets.ModelViewSet):
     """
-    This viewset automatically provides `list`, `create`, `retrieve`, `update`, and `destroy` actions.
+    This viewset automatically provides `list`, `create`, and `retrieve` actions.
     """
     serializer_class = UserAnalyticSerializer
     authentication_classes = [SessionAuthentication, FirebaseAuthentication]
 
     def get_queryset(self):
-        return UserAnalytic.objects.filter(user=self.request.user)
+        return UserAnalytic.objects.get(user=self.request.user)
 
     def list(self, request):
-        user_analytic = UserAnalytic.objects.get(user=self.request.user)
-        serialized = UserAnalyticSerializer(user_analytic)
+        obj_date = get_date(self.request.query_params)  # 2020-10-10
+        isocalendar = obj_date.isocalendar()
+        week_dates = week__range(obj_date.year, isocalendar)
+        queryset = UserAnalytic.objects.filter(user=self.request.user, date__range=(
+            week_dates[0], week_dates[1]))
+        serialized = UserAnalyticSerializer(queryset, many=True)
         return Response(serialized.data, status=status.HTTP_200_OK)
 
     def create(self, request, pk=None):
@@ -131,7 +135,7 @@ class UserAnalyticViewSet(viewsets.ModelViewSet):
         if label_request:
             obj, created = UserAnalytic.objects.get_or_create(
                 user=self.request.user, label=label_request, date=obj_date)
-            if created:
+            if not created:
                 increment_frequency(obj)
             return Response({'message': 'Analytics created.'}, status=status.HTTP_201_CREATED)
         else:
@@ -141,7 +145,7 @@ class UserAnalyticViewSet(viewsets.ModelViewSet):
                 for label in labels:
                     obj, created = UserAnalytic.objects.get_or_create(
                         user=self.request.user, label=label, date=obj_date)
-                    if created:
+                    if not created:
                         increment_frequency(obj)
                 return Response({'message': 'Analytics created.'}, status=status.HTTP_201_CREATED)
             except Exception:

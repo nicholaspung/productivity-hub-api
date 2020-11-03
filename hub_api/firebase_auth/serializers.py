@@ -19,5 +19,5 @@ class ProfileSerializer(serializers.ModelSerializer):
 class UserAnalyticSerializer(serializers.ModelSerializer):
     class Meta:
         model = UserAnalytic
-        fields = ['user', 'label', 'frequency', 'date_created', 'action']
-        read_only_fields = ['user', 'date_created']
+        fields = ['user', 'label', 'frequency', 'date', 'action']
+        read_only_fields = ['user', 'date', 'label']

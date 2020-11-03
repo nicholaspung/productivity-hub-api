@@ -26,7 +26,7 @@ class NormalResultsSetPagination(PageNumberPagination):
 
 class PostViewSet(viewsets.ReadOnlyModelViewSet):
     """
-    This viewset automatically provides `list` and `detail` actions.
+    This viewset automatically provides `list` actions.
     """
     queryset = Post.objects.all()
     serializer_class = PostSerializer
@@ -35,7 +35,7 @@ class PostViewSet(viewsets.ReadOnlyModelViewSet):
     pagination_class = NormalResultsSetPagination
 
     def get_queryset(self):
-        return Post.objects.filter(date=date.today())
+        return Post.objects.filter(date=date.today()).order_by('id')
 
     def retrieve(self, request, pk=None):
         response = {'message': 'Detail function is not offered in this path.'}
@@ -44,7 +44,7 @@ class PostViewSet(viewsets.ReadOnlyModelViewSet):
 
 class TitleViewSet(viewsets.ModelViewSet):
     """
-    This viewset automatically provides `list`, `create`, `retrieve`, `update`, and `destroy` actions.
+    This viewset automatically provides `list`, `create`, `update`, and `destroy` actions.
     """
     serializer_class = TitleSerializer
     permission_classes = is_authenticated_and_owner_classes
@@ -63,7 +63,7 @@ class TitleViewSet(viewsets.ModelViewSet):
 
 class SavedPostViewSet(viewsets.ModelViewSet):
     """
-    This viewset automatically provides `list`, `create`, `retrieve`, `update`, and `destroy` actions.
+    This viewset automatically provides `list` actions.
     """
     serializer_class = SavedPostSerializer
     permission_classes = is_authenticated_and_owner_classes

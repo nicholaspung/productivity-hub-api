@@ -97,7 +97,7 @@ def year_range(year):
 
 class DailyViewSet(viewsets.ModelViewSet):
     """
-    This viewset automatically provides `list`, `create`, `retrieve`, `update`, and `destroy` actions.
+    This viewset automatically provides `list`, `create`, and `update` actions.
     """
     serializer_class = DailySerializer
     permission_classes = is_authenticated_and_owner_classes

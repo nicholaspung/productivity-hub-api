@@ -1,9 +1,13 @@
+from datetime import date
+
 from django.contrib.auth.models import User
+from habit_tracker.views import get_date, week__range
 from rest_framework import status
 from rest_framework.test import APITestCase
 
 from .models import APPS, Profile, UserAnalytic
-from .serializers import UserSerializer, ProfileSerializer, UserAnalyticSerializer
+from .serializers import (ProfileSerializer, UserAnalyticSerializer,
+                          UserSerializer)
 
 test_username = "testcase"
 test_password = "strong_password_123"
@@ -81,19 +85,48 @@ class UserAnalyticTestCase(APITestCase):
             user=self.user)
         self.client.login(username=test_username, password=test_password)
 
-    def test_profile_list_get(self):
+    def test_user_analytic_create_post(self):
+        response = self.client.post(self.base_url)
+        self.assertEqual(response.data['message'], 'Analytics created.')
+        self.assertEqual(response.status_code, status.HTTP_201_CREATED)
+        analytics = UserAnalytic.objects.filter(user=self.user)
+        self.assertEqual(len(analytics), 5)
+        for analytic in analytics:
+            self.assertEqual(analytic.frequency, 0)
+
+        response2 = self.client.post(f"{self.base_url}?date=2020-10-09")
+        self.assertEqual(response.data['message'], 'Analytics created.')
+        self.assertEqual(response.status_code, status.HTTP_201_CREATED)
+        analytics = UserAnalytic.objects.filter(
+            user=self.user, date=get_date({'date': '2020-10-09'}))
+        self.assertEqual(len(analytics), 5)
+        for analytic in analytics:
+            self.assertEqual(analytic.frequency, 0)
+
+        label = 'Post Saver Nav'
+        response3 = self.client.post(f"{self.base_url}", {'label': label})
+        self.assertEqual(response3.data['message'], 'Analytics created.')
+        self.assertEqual(response3.status_code, status.HTTP_201_CREATED)
+        analytics2 = UserAnalytic.objects.filter(
+            user=self.user, label=label)
+        self.assertEqual(len(analytics2), 2)
+        self.assertEqual(analytics2[0].frequency, 1)
+        self.assertEqual(analytics2[1].frequency, 0)
+
+    def test_user_analytic_list_get(self):
+        self.client.post(self.base_url)
         response = self.client.get(self.base_url)
         self.assertEqual(response.status_code, status.HTTP_200_OK)
-        self.assertEqual(response.data['is_anonymous'], False)
-        self.assertEqual(response.data['apps'], APPS['HABIT_TRACKER'])
+        self.assertEqual(len(response.data), 5)
+        today = date.today()
+        self.assertEqual(
+            get_date({'date': response.data[0]['date']}), date.today())
 
-    def test_profile_detail_update(self):
-        response = self.client.get(self.base_url)
-        apps = f"{response.data['apps']},{APPS['POST_SAVER']}"
-        response2 = self.client.patch(
-            f"{self.base_url}{self.user.id}/", data={'apps': apps})
-        self.assertEqual(response2.status_code, status.HTTP_202_ACCEPTED)
-        self.assertEqual(response2.data['apps'], apps)
+        self.client.post(f"{self.base_url}?date=2020-10-09")
+        response2 = self.client.get(f"{self.base_url}?date=2020-10-09")
+        self.assertEqual(response2.status_code, status.HTTP_200_OK)
+        self.assertEqual(len(response2.data), 5)
+        self.assertEqual(response2.data[0]['date'], '2020-10-09')
 
     def test_unauthenticated(self):
         self.client.force_authenticate(user=None)

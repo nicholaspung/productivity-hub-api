@@ -27,8 +27,9 @@ class Profile(models.Model):
 
 
 class UserAnalytic(models.Model):
-    user = models.OneToOneField(User, on_delete=models.CASCADE)
+    user = models.ForeignKey(
+        'auth.User', on_delete=models.CASCADE, related_name='useranalytics')
     label = models.CharField(max_length=100)
     action = models.CharField(max_length=100, default="Click")
     frequency = models.IntegerField(default=0)
-    date = models.DateField(auto_now_add=True)
+    date = models.DateField(auto_now_add=False)
