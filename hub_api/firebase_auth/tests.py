@@ -121,12 +121,19 @@ class UserAnalyticTestCase(APITestCase):
         today = date.today()
         self.assertEqual(
             get_date({'date': response.data[0]['date']}), date.today())
-
-        self.client.post(f"{self.base_url}?date=2020-10-09")
-        response2 = self.client.get(f"{self.base_url}?date=2020-10-09")
+        self.client.post(self.base_url)
+        response2 = self.client.get(self.base_url)
         self.assertEqual(response2.status_code, status.HTTP_200_OK)
         self.assertEqual(len(response2.data), 5)
-        self.assertEqual(response2.data[0]['date'], '2020-10-09')
+        self.assertEqual(
+            get_date({'date': response2.data[0]['date']}), date.today())
+        self.assertEqual(response2.data[0]['frequency'], 0)
+
+        self.client.post(f"{self.base_url}?date=2020-10-09")
+        response3 = self.client.get(f"{self.base_url}?date=2020-10-09")
+        self.assertEqual(response3.status_code, status.HTTP_200_OK)
+        self.assertEqual(len(response3.data), 5)
+        self.assertEqual(response3.data[0]['date'], '2020-10-09')
 
     def test_unauthenticated(self):
         self.client.force_authenticate(user=None)

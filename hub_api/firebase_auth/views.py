@@ -143,10 +143,8 @@ class UserAnalyticViewSet(viewsets.ModelViewSet):
                 labels = ["Post Saver Nav", "Saved Post Title",
                           "Saved Post Refresh", "All Post Title", "All Post Refresh"]
                 for label in labels:
-                    obj, created = UserAnalytic.objects.get_or_create(
+                    UserAnalytic.objects.get_or_create(
                         user=self.request.user, label=label, date=obj_date)
-                    if not created:
-                        increment_frequency(obj)
                 return Response({'message': 'Analytics created.'}, status=status.HTTP_201_CREATED)
             except Exception:
                 raise Http404('Something went wrong.')
