@@ -122,6 +122,8 @@ class HabitTestCase(APITestCase):
         self.assertEqual(response.data['name'], self.sample_habit['name'])
         self.assertEqual(response.data['description'],
                          self.sample_habit['description'])
+        self.assertEqual(response.data['weekdays'],
+                         "Sun,Mon,Tue,Wed,Thu,Fri,Sat")
 
     def test_habit_list_view(self):
         self.client.post(self.base_url, data=self.sample_habit)
@@ -164,6 +166,19 @@ class HabitTestCase(APITestCase):
         self.assertEqual(response3.status_code, status.HTTP_200_OK)
         self.assertEqual(response3.data["archived"],
                          archived_field["archived"])
+        # Edit weekday status
+        changed_weekday_field = {
+            "weekdays": "Sun,Mon,Tue", "name": self.sample_habit["name"]}
+        response4 = self.client.put(
+            f"{self.base_url}1/", data=changed_weekday_field)
+        self.assertEqual(response4.status_code, status.HTTP_200_OK)
+        self.assertEqual(response4.data["weekdays"],
+                         changed_weekday_field["weekdays"])
+        changed_weekday_field["weekdays"] = "Suuuunnnn,Mon , Tue, We        ,Thu,Fri,Sat"
+        response5 = self.client.put(
+            f"{self.base_url}1/", data=changed_weekday_field)
+        self.assertEqual(response5.status_code, status.HTTP_200_OK)
+        self.assertEqual(response5.data["weekdays"], "Thu,Fri,Sat")
 
     def test_habit_detail_order_switch(self):
         # Patch, data={reorder:id}
@@ -205,10 +220,20 @@ def create_sample_daily(habit, user, date):
     daily.save()
 
 
+def create_today_date(date_obj):
+    month = date_obj.month
+    if len(str(month)) != 2:
+        month = f"0{month}"
+    day = date_obj.day
+    if len(str(day)) != 2:
+        day = f"0{day}"
+    return f"{date_obj.year}-{month}-{day}"
+
+
 class DailyTestCase(APITestCase):
     base_url = "/api/dailies/"
     habit_url = '/api/habits/'
-    today = f"{date.today().year}-{date.today().month}-{date.today().day}"
+    today = create_today_date(date.today())
 
     def setUp(self):
         self.user = User.objects.create_user(

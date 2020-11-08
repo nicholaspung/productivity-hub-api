@@ -1,7 +1,7 @@
 from django.contrib.auth.models import User
 from rest_framework import serializers
 
-from .models import Profile, UserAnalytic
+from .models import Profile, UserAnalytic, ViceThreshold
 
 
 class UserSerializer(serializers.ModelSerializer):
@@ -16,8 +16,18 @@ class ProfileSerializer(serializers.ModelSerializer):
         fields = ['user', 'is_anonymous', 'apps']
 
 
+class ViceThresholdSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = ViceThreshold
+        fields = ['id', 'user', 'label', 'threshold']
+        read_only_fields = ['id', 'user']
+
+
 class UserAnalyticSerializer(serializers.ModelSerializer):
+    threshold = ViceThresholdSerializer(many=False, read_only=True)
+
     class Meta:
         model = UserAnalytic
-        fields = ['id', 'user', 'label', 'frequency', 'date', 'action']
+        fields = ['id', 'user', 'label', 'frequency',
+                  'date', 'action', 'threshold']
         read_only_fields = ['id', 'user', 'date', 'label']

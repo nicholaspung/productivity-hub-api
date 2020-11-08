@@ -1,6 +1,6 @@
 import calendar
 from datetime import date, timedelta
-
+from types import SimpleNamespace
 from firebase_auth.authentication import FirebaseAuthentication
 from rest_framework import permissions, viewsets, status
 from rest_framework.authentication import SessionAuthentication
@@ -74,10 +74,25 @@ class HabitViewSet(viewsets.ModelViewSet):
         serializer.save(user=self.request.user)
 
     def partial_update(self, request, *args, **kwargs):
-        if 'reorder' in request.data:  # reorder: habit_id
+        if request.data.get('reorder'):  # reorder: habit_id
             return reorder(self, Habit, HabitSerializer, request.data['reorder'])
         else:
             return self.update(request, *args, **kwargs)
+
+    def update(self, request, *args, **kwargs):
+        request_data_copy = request.data.copy()
+        if request_data_copy.get('weekdays'):
+            weekday_names = {'Sun': 'Sun', 'Mon': 'Mon', 'Tue': 'Tue',
+                             'Wed': 'Wed', 'Thu': 'Thu', 'Fri': 'Fri', 'Sat': 'Sat'}
+            current_weekdays = request_data_copy['weekdays']
+            filtered_current_weekdays = [
+                day for day in current_weekdays.split(',') if bool(weekday_names.get(day))]
+            request_data_copy['weekdays'] = ','.join(filtered_current_weekdays)
+            request_data_copy = {'data': request_data_copy}
+            ns = SimpleNamespace(**request_data_copy)
+            return super().update(ns, *args, **kwargs)
+        else:
+            return super().update(request, *args, **kwargs)
 
 
 def week__range(year, isoCalendar):

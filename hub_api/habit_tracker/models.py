@@ -43,6 +43,7 @@ class Habit(models.Model):
     user = models.ForeignKey(
         'auth.User', on_delete=models.CASCADE, related_name='habits')
     archived = models.BooleanField(default=False)
+    weekdays = models.TextField(default="Sun,Mon,Tue,Wed,Thu,Fri,Sat")
 
     def save(self, *args, **kwargs):
         if self._state.adding:

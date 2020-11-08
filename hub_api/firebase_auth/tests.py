@@ -5,7 +5,7 @@ from habit_tracker.views import get_date, week__range
 from rest_framework import status
 from rest_framework.test import APITestCase
 
-from .models import APPS, Profile, UserAnalytic
+from .models import APPS, Profile, UserAnalytic, ViceThreshold
 from .serializers import (ProfileSerializer, UserAnalyticSerializer,
                           UserSerializer)
 
@@ -112,6 +112,21 @@ class UserAnalyticTestCase(APITestCase):
         self.assertEqual(len(analytics2), 2)
         self.assertEqual(analytics2[0].frequency, 1)
         self.assertEqual(analytics2[1].frequency, 0)
+
+        self.client.post(f"{self.base_url}?date=2020-10-10")
+        self.client.post(f"{self.base_url}?date=2020-10-11")
+        self.client.post(f"{self.base_url}?date=2020-10-12")
+        self.client.post(f"{self.base_url}?date=2020-10-13")
+        self.client.post(f"{self.base_url}?date=2020-10-14")
+        self.client.post(f"{self.base_url}?date=2020-10-15")
+        self.assertEqual(len(ViceThreshold.objects.filter(user=self.user)), 0)
+        self.client.post(f"{self.base_url}?date=2020-10-16")
+        self.assertEqual(len(ViceThreshold.objects.filter(user=self.user)), 5)
+        self.client.post(f"{self.base_url}?date=2020-10-17")
+        self.assertEqual(UserAnalytic.objects.filter(user=self.user,
+                                                     date=get_date({'date': '2020-10-16'}))[0].threshold, None)
+        self.assertEqual(UserAnalytic.objects.filter(user=self.user,
+                                                     date=get_date({'date': '2020-10-17'}))[0].threshold, ViceThreshold.objects.filter(user=self.user)[0])
 
     def test_user_analytic_list_get(self):
         self.client.post(self.base_url)

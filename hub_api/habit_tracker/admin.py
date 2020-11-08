@@ -10,7 +10,7 @@ class TodoAdmin(admin.ModelAdmin):
 
 class HabitAdmin(admin.ModelAdmin):
     fields = ['name', 'description',
-              'user', 'archived', 'order']
+              'user', 'archived', 'order', 'weekdays']
 
 
 class DailyAdmin(admin.ModelAdmin):

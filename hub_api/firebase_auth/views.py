@@ -8,7 +8,7 @@ from rest_framework.authentication import SessionAuthentication
 from rest_framework.response import Response
 
 from .authentication import FirebaseAuthentication
-from .models import Profile, UserAnalytic
+from .models import Profile, UserAnalytic, ViceThreshold
 from .serializers import (ProfileSerializer, UserAnalyticSerializer,
                           UserSerializer)
 
@@ -120,7 +120,7 @@ class UserAnalyticViewSet(viewsets.ModelViewSet):
         isocalendar = obj_date.isocalendar()
         week_dates = week__range(obj_date.year, isocalendar)
         queryset = UserAnalytic.objects.filter(user=self.request.user, date__range=(
-            week_dates[0], week_dates[1]))
+            week_dates[0], week_dates[1])).order_by('id')
         serialized = UserAnalyticSerializer(queryset, many=True)
         return Response(serialized.data, status=status.HTTP_200_OK)
 
@@ -143,8 +143,26 @@ class UserAnalyticViewSet(viewsets.ModelViewSet):
                 labels = ["Post Saver Nav", "Saved Post Title",
                           "Saved Post Refresh", "All Post Title", "All Post Refresh"]
                 for label in labels:
-                    UserAnalytic.objects.get_or_create(
-                        user=self.request.user, label=label, date=obj_date)
+                    try:
+                        user_analytic_threshold = ViceThreshold.objects.filter(
+                            user=self.request.user, label=label)[0]
+                        UserAnalytic.objects.get_or_create(
+                            user=self.request.user, label=label, date=obj_date, threshold=user_analytic_threshold)
+                    except:
+                        filtered_user_analytics = UserAnalytic.objects.filter(
+                            user=self.request.user, label=label)
+                        number_of_user_analytic_for_label = len(
+                            filtered_user_analytics)
+                        if number_of_user_analytic_for_label > 7:
+                            average_frequency_of_user_analytic = sum(
+                                [analytic.frequency for analytic in filtered_user_analytics])//number_of_user_analytic_for_label
+                            try:
+                                ViceThreshold.objects.get_or_create(
+                                    user=self.request.user, label=label, threshold=average_frequency_of_user_analytic)
+                            except:
+                                pass
+                        UserAnalytic.objects.get_or_create(
+                            user=self.request.user, label=label, date=obj_date)
                 return Response({'message': 'Analytics created.'}, status=status.HTTP_201_CREATED)
             except Exception:
                 raise Http404('Something went wrong.')
