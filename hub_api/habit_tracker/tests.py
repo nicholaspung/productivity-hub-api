@@ -276,6 +276,18 @@ class DailyTestCase(APITestCase):
             response.data[1]["habit"]["name"], habit2["name"])
         self.assertEqual(response.status_code, status.HTTP_200_OK)
 
+        habit3 = create_sample_habit()
+        habit3['weekdays'] = 'Mon,Tue'
+        self.client.post(self.habit_url, data=habit3)
+        # 2020-11-08 is a Sunday
+        response2 = self.client.post(f"{self.base_url}?date=2020-11-08")
+        self.assertEqual(len(response2.data), 2)
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        # 2020-11-09 is a Monday
+        response3 = self.client.post(f"{self.base_url}?date=2020-11-09")
+        self.assertEqual(len(response3.data), 3)
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+
     def test_daily_week_list_view(self):
         habit1 = create_sample_habit()
         habit2 = create_sample_habit()

@@ -116,6 +116,9 @@ class UserAnalyticViewSet(viewsets.ModelViewSet):
         return UserAnalytic.objects.get(user=self.request.user)
 
     def list(self, request):
+        '''
+        timezone = self.request.headers['Timezone']
+        '''
         obj_date = get_date(self.request.query_params)  # 2020-10-10
         isocalendar = obj_date.isocalendar()
         week_dates = week__range(obj_date.year, isocalendar)

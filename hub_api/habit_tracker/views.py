@@ -151,8 +151,12 @@ class DailyViewSet(viewsets.ModelViewSet):
         obj_date = get_date(self.request.query_params)
 
         for habit in habits:
-            Daily.objects.get_or_create(
-                habit=habit, date=obj_date, user=user)
+            weekday_values = {6: 'Sun', 0: 'Mon', 1: 'Tue',
+                              2: 'Wed', 3: 'Thu', 4: 'Fri', 5: 'Sat'}
+            current_weekday = obj_date.weekday()
+            if weekday_values[current_weekday] in habit.weekdays.split(','):
+                Daily.objects.get_or_create(
+                    habit=habit, date=obj_date, user=user)
 
         queryset = Daily.objects.filter(user=user, date=obj_date)
         serialized = DailySerializer(queryset, many=True)
