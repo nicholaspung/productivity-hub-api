@@ -159,6 +159,8 @@ class UserAnalyticViewSet(viewsets.ModelViewSet):
                         if number_of_user_analytic_for_label > 7:
                             average_frequency_of_user_analytic = sum(
                                 [analytic.frequency for analytic in filtered_user_analytics])//number_of_user_analytic_for_label
+                            if average_frequency_of_user_analytic < 5:
+                                average_frequency_of_user_analytic = 5
                             try:
                                 ViceThreshold.objects.get_or_create(
                                     user=self.request.user, label=label, threshold=average_frequency_of_user_analytic)
