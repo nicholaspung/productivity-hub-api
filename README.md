@@ -28,6 +28,15 @@ FIREBASE_PRIVATE_KEY=
 FIREBASE_CLIENT_EMAIL=
 FIREBASE_CLIENT_ID=
 FIREBASE_CLIENT_CERT_URL=
+SECRET_KEY=
+DEBUG=
+ALLOWED_HOSTS_DOMAIN=
+ALLOWED_HOSTS_IP_ADDRESS=
+CORS_ALLOWED_ORIGINS=
+POSTGRES_NAME=
+POSTGRES_USER=
+POSTGRES_PASSWORD=
+FIRST_TIME=
 ```
 
 ### Future Features + Needs Work
@@ -38,13 +47,21 @@ See the project page [here](https://github.com/nicholaspung/productivity-hub-api
 
 1. Clone this repo
 2. Create a Firebase account, create a new project, and enable Firebase Authentication. This account will also be used with [productivity-hub](https://github.com/nicholaspung/productivity-hub)
+   - Go to Settings > Service Accounts > Generate new private key for .env
 3. Add environment variables to .env file using Firebase settings
 4. In `/hub_api/hub_api/wsgi.py`, change up the project directory folder to be able to load .env files in your server configuration
 5. In `/hub_api/hub_api/settings.py`, for logs, change up the project directory folder to your designated log directory.
 6. `pip install -r requirements.txt`
+   - _You may need to install Build Tools for Visual Studio - Microsoft_
 7. `cd hub_api`
 8. `python manage.py migrate`
+   - On first run, set `FIRST_TIME=True` in .env
+   - On subsequent runs, set `FIRST_TIME=False` in .env
 9. `python manage.py runserver`
+
+## For Development
+
+1. In `/hub-api/hub-api`, run `python manage.py createsuperuser`
 
 #### Tested with Python 3.8.5
 
@@ -69,3 +86,26 @@ See the project page [here](https://github.com/nicholaspung/productivity-hub-api
 ## To auto-generate schema
 
 `python manage.py generateschema --format openapi > schema.yml`
+
+## To generate Django Secret Key
+
+- Go into Django shell `python manage.py shell`
+
+`python -c 'from django.core.management.utils import get_random_secret_key; print(get_random_secret_key())'`
+
+## Example of how to move Django models around in apps
+
+Examples that require some downtime when changing models around in apps
+
+- Use `python manage.py sqlmigrate xxxx` to check the generated SQL statements created by Django. Modify if needed
+
+- See `/open_apps/migrations/0001_initial.py` and `/post_saver/migrations/0006_auto_20201129_2151.py` in combination
+
+For a no downtime migration remapping a model to a different table, in `models.py`, for your Model classes, set a
+
+```
+class Meta:
+   db_table = 'xxxxx'
+```
+
+for your tablee to be called 'xxxx'. By explicitly calling the db_table name, you bypass Django's auto-generated table names and gain control over your database naming conventions. (Not sure about any other operations you perform in a database)

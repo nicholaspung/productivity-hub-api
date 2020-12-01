@@ -1,3 +1,4 @@
+# DEPRECATED. SAVED FOR HISTORY
 from django.apps import AppConfig
 
 

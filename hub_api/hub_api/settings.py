@@ -10,11 +10,14 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 SECRET_KEY = os.getenv("SECRET_KEY")
 
 DEBUG = os.getenv("DEBUG") == 'True'
+FIRST_TIME = os.getenv("FIRST_TIME") == 'True'
 
 ALLOWED_HOSTS = []
 if os.getenv("ALLOWED_HOSTS_DOMAIN") and os.getenv("ALLOWED_HOSTS_IP_ADDRESS"):
-    ALLOWED_HOSTS.append(os.getenv("ALLOWED_HOSTS_DOMAIN"))
-    ALLOWED_HOSTS.append(os.getenv("ALLOWED_HOSTS_IP_ADDRESS"))
+    ALLOWED_HOSTS += [
+        os.getenv("ALLOWED_HOSTS_DOMAIN"),
+        os.getenv("ALLOWED_HOSTS_IP_ADDRESS")
+    ]
 
 INSTALLED_APPS = [
     # Default
@@ -29,10 +32,14 @@ INSTALLED_APPS = [
     'corsheaders',
     'django_apscheduler',
     # Internal
-    'firebase_auth.apps.FirebaseAuthConfig',
-    'habit_tracker.apps.HabitTrackerConfig',
-    'post_saver.apps.PostSaverConfig',
+    'open_apps.apps.OpenAppsConfig'
 ]
+if FIRST_TIME:
+    INSTALLED_APPS += [
+        'firebase_auth.apps.FirebaseAuthConfig',
+        'habit_tracker.apps.HabitTrackerConfig',
+        'post_saver.apps.PostSaverConfig'
+    ]
 
 MIDDLEWARE = [
     # Third Party
@@ -77,7 +84,6 @@ DATABASES = {
         'NAME': BASE_DIR / 'db.sqlite3',
     }
 }
-
 if not DEBUG:
     DATABASES = {
         'default': {
@@ -90,70 +96,6 @@ if not DEBUG:
         }
     }
 
-AUTH_PASSWORD_VALIDATORS = [
-    {
-        'NAME': 'django.contrib.auth.password_validation.UserAttributeSimilarityValidator',
-    },
-    {
-        'NAME': 'django.contrib.auth.password_validation.MinimumLengthValidator',
-    },
-    {
-        'NAME': 'django.contrib.auth.password_validation.CommonPasswordValidator',
-    },
-    {
-        'NAME': 'django.contrib.auth.password_validation.NumericPasswordValidator',
-    },
-]
-
-LANGUAGE_CODE = 'en-us'
-
-TIME_ZONE = 'UTC'
-
-USE_I18N = True
-
-USE_L10N = True
-
-USE_TZ = True
-
-STATIC_URL = '/static/'
-
-DEFAULT_RENDERER_CLASSES = (
-    'rest_framework.renderers.JSONRenderer',
-)
-
-if DEBUG:
-    DEFAULT_RENDERER_CLASSES += (
-        'rest_framework.renderers.BrowsableAPIRenderer',
-    )
-
-REST_FRAMEWORK = {
-    'DEFAULT_AUTHENTICATION_CLASSES': (
-        'rest_framework.authentication.SessionAuthentication',
-        'firebase_auth.authentication.FirebaseAuthentication',
-    ),
-    'DEFAULT_RENDERER_CLASSES': DEFAULT_RENDERER_CLASSES
-}
-
-CORS_ALLOWED_ORIGINS = []
-if DEBUG:
-    CORS_ALLOWED_ORIGINS.append("http://127.0.0.1:3000")
-    CORS_ALLOWED_ORIGINS.append("http://localhost:3000")
-elif os.getenv("CORS_ALLOWED_ORIGINS"):
-    CORS_ALLOWED_ORIGINS.append(os.getenv("CORS_ALLOWED_ORIGINS"))
-
-APSCHEDULER_DATETIME_FORMAT = "N j, Y, f:s a"
-
-CSRF_COOKIE_SECURE = True
-SESSION_COOKIE_SECURE = True
-if DEBUG:
-    CSRF_COOKIE_SECURE = False
-    SESSION_COOKIE_SECURE = False
-
-
-STATIC_URL = '/static/'
-STATIC_ROOT = os.path.join(BASE_DIR, "static")
-
-if DEBUG == False:
     LOGGING = {
         "version": 1,
         "disable_existing_loggers": False,
@@ -186,3 +128,68 @@ if DEBUG == False:
             },
         },
     }
+
+
+AUTH_PASSWORD_VALIDATORS = [
+    {
+        'NAME': 'django.contrib.auth.password_validation.UserAttributeSimilarityValidator',
+    },
+    {
+        'NAME': 'django.contrib.auth.password_validation.MinimumLengthValidator',
+    },
+    {
+        'NAME': 'django.contrib.auth.password_validation.CommonPasswordValidator',
+    },
+    {
+        'NAME': 'django.contrib.auth.password_validation.NumericPasswordValidator',
+    },
+]
+
+LANGUAGE_CODE = 'en-us'
+
+TIME_ZONE = 'UTC'
+
+USE_I18N = True
+
+USE_L10N = True
+
+USE_TZ = True
+
+STATIC_URL = '/static/'
+
+DEFAULT_RENDERER_CLASSES = (
+    'rest_framework.renderers.JSONRenderer',
+)
+if DEBUG:
+    DEFAULT_RENDERER_CLASSES += (
+        'rest_framework.renderers.BrowsableAPIRenderer',
+    )
+
+REST_FRAMEWORK = {
+    'DEFAULT_AUTHENTICATION_CLASSES': (
+        'rest_framework.authentication.SessionAuthentication',
+        'open_apps.authentication.FirebaseAuthentication',
+    ),
+    'DEFAULT_RENDERER_CLASSES': DEFAULT_RENDERER_CLASSES
+}
+
+CORS_ALLOWED_ORIGINS = []
+if DEBUG:
+    CORS_ALLOWED_ORIGINS += [
+        "http://127.0.0.1:3000",
+        "http://localhost:3000"
+    ]
+elif os.getenv("CORS_ALLOWED_ORIGINS"):
+    CORS_ALLOWED_ORIGINS.append(os.getenv("CORS_ALLOWED_ORIGINS"))
+
+APSCHEDULER_DATETIME_FORMAT = "N j, Y, f:s a"
+
+CSRF_COOKIE_SECURE = True
+SESSION_COOKIE_SECURE = True
+if DEBUG:
+    CSRF_COOKIE_SECURE = False
+    SESSION_COOKIE_SECURE = False
+
+
+STATIC_URL = '/static/'
+STATIC_ROOT = os.path.join(BASE_DIR, "static")
