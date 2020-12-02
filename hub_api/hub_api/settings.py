@@ -104,7 +104,7 @@ if not DEBUG:
             "file": {
                 "level": "ERROR",
                 "class": "logging.FileHandler",
-                "filename": "path/to/directory/info.log",
+                "filename": os.path.expanduser(f"~/{os.getenv("LOG_FILE_DIR")}"),
                 "formatter": "app",
             },
             "console": {

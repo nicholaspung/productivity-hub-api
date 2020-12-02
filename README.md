@@ -15,9 +15,10 @@ Note: to be used in conjunction with [productivity-hub](https://github.com/nicho
 - Firebase Admin
 - Fuzzywuzzy
 - Beautiful Soup 4
-- APScheduler
+- APScheduler (development only)
 - Dotenv
 - PostgreSQL
+- Cron
 
 ## Environment Variables
 
@@ -95,7 +96,7 @@ See the project page [here](https://github.com/nicholaspung/productivity-hub-api
 
 ## Example of how to move Django models around in apps
 
-Examples that require some downtime when changing models around in apps
+Examples that require database downtime when changing models around in apps
 
 - Use `python manage.py sqlmigrate xxxx` to check the generated SQL statements created by Django. Modify if needed
 
@@ -108,4 +109,4 @@ class Meta:
    db_table = 'xxxxx'
 ```
 
-for your tablee to be called 'xxxx'. By explicitly calling the db_table name, you bypass Django's auto-generated table names and gain control over your database naming conventions. (Not sure about any other operations you perform in a database)
+for your table to be called 'xxxx'. By explicitly calling the db_table name, you bypass Django's auto-generated table names and gain control over your database naming conventions. (Not sure about any other operations you perform in a database)
