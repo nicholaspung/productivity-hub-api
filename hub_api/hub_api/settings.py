@@ -32,14 +32,12 @@ INSTALLED_APPS = [
     'corsheaders',
     'django_apscheduler',
     # Internal
-    'open_apps.apps.OpenAppsConfig'
+    'open_apps.apps.OpenAppsConfig',
+    # Deprecated
+    'firebase_auth.apps.FirebaseAuthConfig',
+    'habit_tracker.apps.HabitTrackerConfig',
+    'post_saver.apps.PostSaverConfig'
 ]
-if FIRST_TIME:
-    INSTALLED_APPS += [
-        'firebase_auth.apps.FirebaseAuthConfig',
-        'habit_tracker.apps.HabitTrackerConfig',
-        'post_saver.apps.PostSaverConfig'
-    ]
 
 MIDDLEWARE = [
     # Third Party
