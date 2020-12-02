@@ -96,6 +96,10 @@ if not DEBUG:
         }
     }
 
+    LOG_FILE_DIR = os.getenv("LOG_FILE_DIR")
+    if LOG_FILE_DIR is None:
+        raise Exception
+    log_file_path = os.path.expanduser(f"~/{LOG_FILE_DIR}")
     LOGGING = {
         "version": 1,
         "disable_existing_loggers": False,
@@ -104,7 +108,7 @@ if not DEBUG:
             "file": {
                 "level": "ERROR",
                 "class": "logging.FileHandler",
-                "filename": os.path.expanduser(f"~/{os.getenv("LOG_FILE_DIR")}"),
+                "filename": log_file_path,
                 "formatter": "app",
             },
             "console": {
