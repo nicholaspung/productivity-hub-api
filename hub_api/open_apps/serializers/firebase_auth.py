@@ -8,12 +8,14 @@ class UserSerializer(serializers.ModelSerializer):
     class Meta:
         model = User
         fields = ['id', 'username']
+        read_only_fields = ['id']
 
 
 class ProfileSerializer(serializers.ModelSerializer):
     class Meta:
         model = Profile
         fields = ['user', 'is_anonymous', 'apps']
+        read_only_fields = ['id']
 
 
 class ViceThresholdSerializer(serializers.ModelSerializer):

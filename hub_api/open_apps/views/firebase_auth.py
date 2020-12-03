@@ -1,5 +1,3 @@
-import firebase_admin
-from django.contrib.auth.models import User
 from django.http import Http404
 from firebase_admin import auth
 from open_apps.authentication import FirebaseAuthentication
@@ -9,62 +7,33 @@ from open_apps.serializers.firebase_auth import (ProfileSerializer,
                                                  UserSerializer)
 from open_apps.views.habit_tracker import get_date, week__range
 from rest_framework import status, viewsets
+from rest_framework.generics import DestroyAPIView
 from rest_framework.authentication import SessionAuthentication
 from rest_framework.response import Response
 
 
-class UserViewSet(viewsets.ModelViewSet):
+class UserViewSet(DestroyAPIView):
     """
-    This viewset automatically provides `list` and `destroy` actions.
+    This viewset automatically provides `destroy` actions.
     """
     serializer_class = UserSerializer
     authentication_classes = [SessionAuthentication, FirebaseAuthentication]
 
-    def get_queryset(self):
-        return User.objects.filter(username=self.request.user)
-
-    def list(self, request):
-        user = User.objects.get(username=self.request.user)
-        serialized = UserSerializer(user)
-        return Response(serialized.data, status=status.HTTP_200_OK)
-
-    def retrieve(self, request, pk=None):
-        response = {'message': 'Detail function is not offered in this path.'}
-        return Response(response, status=status.HTTP_405_METHOD_NOT_ALLOWED)
-
-    def partial_update(self, request, pk=None):
-        response = {'message': 'Detail function is not offered in this path.'}
-        return Response(response, status=status.HTTP_405_METHOD_NOT_ALLOWED)
-
-    def create(self, request, pk=None):
-        response = {'message': 'Detail function is not offered in this path.'}
-        return Response(response, status=status.HTTP_405_METHOD_NOT_ALLOWED)
-
-    def update(self, request, pk=None):
-        response = {'message': 'Detail function is not offered in this path.'}
-        return Response(response, status=status.HTTP_405_METHOD_NOT_ALLOWED)
-
-    def destroy(self, request, pk=None):
+    def destroy(self, request, *args, **kwargs):
         firebase_uid = self.request.user.username
+        error = None
         try:
             firebase_user = auth.get_user(firebase_uid)
             if firebase_user:
-                result = auth.delete_user(firebase_user.uid)
-        except firebase_admin._auth_utils.UserNotFoundError as err:
-            result = None
+                auth.delete_user(firebase_user.uid)
+        except auth.UserNotFoundError as err:
+            error = err
 
-        user = User.objects.filter(username=self.request.user)
-        if len(user):
-            user = user[0]
-            user.delete()
+        response = super().destroy(self, request, *args, **kwargs)
 
-        response = {'message': 'All user data has been deleted.'}
-        if result is not None:
-            response = {'error': []}
-            for err in result.errors:
-                response['error'].append(err)
-
-        return Response(response, status=status.HTTP_200_OK)
+        if error is not None:
+            response = {'error': error.default_message}
+        return response
 
 
 class ProfileViewSet(viewsets.ModelViewSet):

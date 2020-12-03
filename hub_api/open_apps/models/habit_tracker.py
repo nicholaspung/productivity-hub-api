@@ -28,7 +28,7 @@ class Todo(models.Model):
         else:
             self.date_finished = None
         if self.priority not in ENUM_PRIORITY_CHOICES:
-            self.priority == ENUM_PRIORITY_CHOICES[0]
+            self.priority = ENUM_PRIORITY_CHOICES[0]
         super(Todo, self).save(*args, **kwargs)
 
 

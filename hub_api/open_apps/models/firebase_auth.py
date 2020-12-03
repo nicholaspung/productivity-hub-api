@@ -1,29 +1,11 @@
-from django.contrib.auth.models import User
 from django.db import models
-
-APPS = {
-    'HABIT_TRACKER': 'HABIT_TRACKER',
-    'POST_SAVER': 'POST_SAVER'
-}
+from open_apps.models.apps import Apps
 
 
 class Profile(models.Model):
-    user = models.OneToOneField(User, on_delete=models.CASCADE)
+    user = models.OneToOneField('auth.User', on_delete=models.CASCADE)
     is_anonymous = models.BooleanField(default=False)
-    apps = models.TextField(default="")
-
-    def save(self, *args, **kwargs):
-        if self._state.adding:
-            default_app = APPS["HABIT_TRACKER"]
-            self.apps = f"{default_app}"
-        elif self.apps:
-            apps = self.apps.replace(' ', '').split(',')
-            cleaned_apps = []
-            for app in apps:
-                if app in APPS:
-                    cleaned_apps.append(app)
-            self.apps = ','.join(cleaned_apps)
-        super(Profile, self).save(*args, **kwargs)
+    apps = models.ManyToManyField(Apps)
 
 
 class UserAnalytic(models.Model):
