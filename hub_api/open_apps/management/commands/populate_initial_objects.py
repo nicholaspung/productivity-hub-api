@@ -1,5 +1,5 @@
 from django.core.management.base import BaseCommand
-from open_apps.scripts.populate_apps_to_db import populate_apps
+from open_apps.scripts.populate_db import populate_apps
 
 
 class Command(BaseCommand):

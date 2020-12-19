@@ -1,7 +1,7 @@
 from apscheduler.schedulers.background import BackgroundScheduler
 from django.conf import settings
 from django_apscheduler.jobstores import DjangoJobStore
-from open_apps.scripts.firebase_auth import (
+from open_apps.scripts.firebase_auth_scripts import (
     delete_old_job_executions, prune_anonymous_users_in_firebase_and_django)
 
 job_defaults = {

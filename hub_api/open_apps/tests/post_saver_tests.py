@@ -1,13 +1,14 @@
-from django.contrib.auth.models import User
+from django.contrib.auth import get_user_model
 from open_apps.models.post_saver import Post, SavedPost, Title
-from open_apps.serializers.post_saver import (PostSerializer,
-                                              SavedPostSerializer,
-                                              TitleSerializer)
+from open_apps.serializers.post_saver_serializers import (PostSerializer,
+                                                          SavedPostSerializer,
+                                                          TitleSerializer)
 from rest_framework import status
 from rest_framework.test import APITestCase
 
-test_username = "testcase"
-test_password = "strong_password_123"
+User = get_user_model()
+TEST_USERNAME = "testcase"
+TEST_PASSWORD = "strong_password_123"
 
 
 # Integration Tests with API
@@ -17,8 +18,8 @@ class PostTestCase(APITestCase):
 
     def setUp(self):
         self.user = User.objects.create_user(
-            username=test_username, password=test_password)
-        self.client.login(username=test_username, password=test_password)
+            username=TEST_USERNAME, password=TEST_PASSWORD)
+        self.client.login(username=TEST_USERNAME, password=TEST_PASSWORD)
 
     def test_post_list_view(self):
         post1 = Post(
@@ -52,8 +53,8 @@ class TitleTestCase(APITestCase):
 
     def setUp(self):
         self.user = User.objects.create_user(
-            username=test_username, password=test_password)
-        self.client.login(username=test_username, password=test_password)
+            username=TEST_USERNAME, password=TEST_PASSWORD)
+        self.client.login(username=TEST_USERNAME, password=TEST_PASSWORD)
 
     def test_title_create_view(self):
         response = self.client.post(self.base_url, data=self.sample_title)
@@ -106,8 +107,8 @@ class SavedPostTestCase(APITestCase):
 
     def setUp(self):
         self.user = User.objects.create_user(
-            username=test_username, password=test_password)
-        self.client.login(username=test_username, password=test_password)
+            username=TEST_USERNAME, password=TEST_PASSWORD)
+        self.client.login(username=TEST_USERNAME, password=TEST_PASSWORD)
         post1 = Post(
             title=self.sample_saved_post['title'], url=self.sample_saved_post['url'])
         post1.save()

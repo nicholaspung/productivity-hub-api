@@ -1,15 +1,18 @@
 from datetime import date
 
-from django.contrib.auth.models import User
+from django.contrib.auth import get_user_model
+from open_apps.models.habit_tracker import (ENUM_PRIORITY_CHOICES, Daily,
+                                            Habit, Todo)
+from open_apps.serializers.habit_tracker_serializers import (DailySerializer,
+                                                             HabitSerializer,
+                                                             TodoSerializer)
+from open_apps.utils.date_utils import get_date
 from rest_framework import status
 from rest_framework.test import APITestCase
 
-from open_apps.models.habit_tracker import ENUM_PRIORITY_CHOICES, Daily, Habit, Todo
-from open_apps.serializers.habit_tracker import DailySerializer, HabitSerializer, TodoSerializer
-from open_apps.views.habit_tracker import get_date
-
-test_username = "testcase"
-test_password = "strong_password_123"
+User = get_user_model()
+TEST_USERNAME = "testcase"
+TEST_PASSWORD = "strong_password_123"
 
 
 # Integration Tests with API
@@ -19,8 +22,8 @@ class TodoTestCase(APITestCase):
 
     def setUp(self):
         self.user = User.objects.create_user(
-            username=test_username, password=test_password)
-        self.client.login(username=test_username, password=test_password)
+            username=TEST_USERNAME, password=TEST_PASSWORD)
+        self.client.login(username=TEST_USERNAME, password=TEST_PASSWORD)
 
     def test_todo_create_view(self):
         response = self.client.post(self.base_url, data=self.sample_todo)
@@ -113,8 +116,8 @@ class HabitTestCase(APITestCase):
 
     def setUp(self):
         self.user = User.objects.create_user(
-            username=test_username, password=test_password)
-        self.client.login(username=test_username, password=test_password)
+            username=TEST_USERNAME, password=TEST_PASSWORD)
+        self.client.login(username=TEST_USERNAME, password=TEST_PASSWORD)
 
     def test_habit_create_view(self):
         response = self.client.post(self.base_url, data=self.sample_habit)
@@ -237,8 +240,8 @@ class DailyTestCase(APITestCase):
 
     def setUp(self):
         self.user = User.objects.create_user(
-            username=test_username, password=test_password)
-        self.client.login(username=test_username, password=test_password)
+            username=TEST_USERNAME, password=TEST_PASSWORD)
+        self.client.login(username=TEST_USERNAME, password=TEST_PASSWORD)
 
     def test_daily_toggle(self):
         # Same day
@@ -274,7 +277,7 @@ class DailyTestCase(APITestCase):
             response.data[0]["habit"]["name"], habit1["name"])
         self.assertEqual(
             response.data[1]["habit"]["name"], habit2["name"])
-        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        self.assertEqual(response.status_code, status.HTTP_201_CREATED)
 
         habit3 = create_sample_habit()
         habit3['weekdays'] = 'Mon,Tue'
@@ -282,11 +285,11 @@ class DailyTestCase(APITestCase):
         # 2020-11-08 is a Sunday
         response2 = self.client.post(f"{self.base_url}?date=2020-11-08")
         self.assertEqual(len(response2.data), 2)
-        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        self.assertEqual(response2.status_code, status.HTTP_201_CREATED)
         # 2020-11-09 is a Monday
         response3 = self.client.post(f"{self.base_url}?date=2020-11-09")
         self.assertEqual(len(response3.data), 3)
-        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        self.assertEqual(response3.status_code, status.HTTP_201_CREATED)
 
     def test_daily_week_list_view(self):
         habit1 = create_sample_habit()
@@ -366,7 +369,7 @@ class DailyTestCase(APITestCase):
         self.client.post(self.habit_url, data=habit1)
         self.client.post(self.habit_url, data=habit2)
         response = self.client.post(f"{self.base_url}?date={self.today}")
-        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        self.assertEqual(response.status_code, status.HTTP_201_CREATED)
         first_daily_id = response.data[0]["id"]
         # Edit finish status
         response2 = self.client.patch(

@@ -1,10 +1,10 @@
 from apscheduler.schedulers.background import BackgroundScheduler
 from django.conf import settings
 from django_apscheduler.jobstores import DjangoJobStore
-from open_apps.scripts.post_saver import (delete_old_posts,
-                                          delete_old_seen_saved_posts,
-                                          genkan_website_scraper,
-                                          subreddit_scraper)
+from open_apps.scripts.post_saver_scripts import (delete_old_posts,
+                                                  delete_old_seen_saved_posts,
+                                                  genkan_website_scraper,
+                                                  subreddit_scraper)
 
 job_defaults = {
     'max_instances': 1,

@@ -1,11 +1,11 @@
 from django.db import models
-from open_apps.models.apps import Apps
+from open_apps.models.app import App
 
 
 class Profile(models.Model):
     user = models.OneToOneField('auth.User', on_delete=models.CASCADE)
     is_anonymous = models.BooleanField(default=False)
-    apps = models.ManyToManyField(Apps)
+    apps = models.ManyToManyField(App, related_name="profile")
 
 
 class UserAnalytic(models.Model):
