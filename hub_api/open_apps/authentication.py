@@ -56,12 +56,10 @@ class FirebaseAuthentication(authentication.BaseAuthentication):
         except Exception:
             raise FirebaseError() from None
 
-        user_data = {
-            "username": uid,
-        }
+        user, _ = User.objects.get_or_create(username=uid)
         if email:
-            user_data["email"] = email
-        user, _ = User.objects.get_or_create(**user_data)
+            user.email = email
+            user.save()
 
         # Default app added is Habit Tracker (1)
         _, created = Profile.objects.get_or_create(
