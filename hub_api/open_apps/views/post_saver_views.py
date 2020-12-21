@@ -11,7 +11,7 @@ from open_apps.serializers.post_saver_serializers import (PostSerializer,
 from open_apps.utils.api_utils import unused_method
 from open_apps.utils.post_saver_utils import generate_saved_posts
 from rest_framework import permissions, viewsets
-from rest_framework.generics import ListAPIView, UpdateAPIView
+from rest_framework.generics import ListAPIView
 
 logger = logging.getLogger(__file__)
 

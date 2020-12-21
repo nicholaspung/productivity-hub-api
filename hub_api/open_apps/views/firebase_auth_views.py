@@ -8,10 +8,11 @@ from open_apps.utils.firebase_auth_utils import (
     create_user_analytic, create_vice_threshold, delete_firebase_user,
     increment_user_analytic_frequency)
 from open_apps.utils.date_utils import get_date, get_week_range
-from rest_framework import status
+from rest_framework import status, viewsets
 from rest_framework.generics import DestroyAPIView, RetrieveUpdateAPIView, ListCreateAPIView
 from rest_framework.response import Response
 from django.contrib.auth import get_user_model
+from open_apps.utils.api_utils import unused_method
 
 User = get_user_model()
 
@@ -32,9 +33,9 @@ class UserAPIView(DestroyAPIView):
         return super().destroy(self, request, *args, **kwargs)
 
 
-class ProfileAPIView(RetrieveUpdateAPIView):
+class ProfileViewSet(viewsets.ModelViewSet):
     """
-    This view provides the `retrieve` and `partial_update` actions.
+    This view provides the `list` and `partial_update` actions.
     """
     serializer_class = ProfileSerializer
     permission_classes = IsAuthenticatedAndOwner
@@ -42,6 +43,20 @@ class ProfileAPIView(RetrieveUpdateAPIView):
 
     def get_queryset(self):
         return Profile.objects.filter(user=self.request.user)
+
+    def list(self, request):
+        profile = Profile.objects.get(user=self.request.user)
+        serialized = ProfileSerializer(profile)
+        return Response(serialized.data, status=status.HTTP_200_OK)
+
+    def retrieve(self, request):
+        return unused_method()
+
+    def destroy(self, request):
+        return unused_method()
+
+    def create(self, request, *args, **kwargs):
+        return unused_method()
 
 
 class UserAnalyticAPIView(ListCreateAPIView):

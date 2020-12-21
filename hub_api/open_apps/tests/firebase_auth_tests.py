@@ -41,17 +41,18 @@ class ProfileTestCase(APITestCase):
     base_url = "/api/profile/"
 
     def setUp(self):
+        populate_apps()
+        app = App.objects.all()[0]
         self.user = User.objects.create_user(
             username=TEST_USERNAME, password=TEST_PASSWORD)
-        Profile.objects.get_or_create(
-            user=self.user)
+        Profile.objects.get_or_create(user=self.user)
+        self.user.profile.apps.add(app)
         self.client.login(username=TEST_USERNAME, password=TEST_PASSWORD)
-        populate_apps()
 
     def test_profile_detail_list(self):
-        response = self.client.get(f"{self.base_url}{self.user.id}/")
+        response = self.client.get(self.base_url)
         self.assertEqual(response.status_code, status.HTTP_200_OK)
-        self.assertEqual(response.data['apps'], [])
+        self.assertEqual(response.data['apps'], [1])
 
     def test_profile_detail_update(self):
         apps = [app.id for app in App.objects.all()[:3]]
@@ -60,9 +61,15 @@ class ProfileTestCase(APITestCase):
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         self.assertEqual(response.data['apps'], apps)
 
+        apps2 = [app.id for app in App.objects.all()[:1]]
+        response2 = self.client.patch(
+            f"{self.base_url}{self.user.id}/", data={"apps": apps2})
+        self.assertEqual(response2.status_code, status.HTTP_200_OK)
+        self.assertEqual(response2.data['apps'], apps2)
+
     def test_unauthenticated(self):
         self.client.force_authenticate(user=None)
-        response = self.client.get(f"{self.base_url}{self.user.id}/")
+        response = self.client.get(self.base_url)
         self.assertEqual(response.status_code, status.HTTP_401_UNAUTHORIZED)
 
 

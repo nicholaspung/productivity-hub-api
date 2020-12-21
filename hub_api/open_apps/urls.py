@@ -15,11 +15,11 @@ router.register(r'savedposts', ps_views.SavedPostViewSet, basename='SavedPost')
 router.register(r'habits', ht_views.HabitViewSet, basename='Habit')
 router.register(r'todos', ht_views.TodoViewSet, basename='Todo')
 router.register(r'dailies', ht_views.DailyViewSet, basename='Daily')
+router.register(r'profile', fba_views.ProfileViewSet, basename='Profile')
 
 urlpatterns = [
     path('', include(router.urls)),
     path('user/<int:pk>/', fba_views.UserAPIView.as_view(), name="user-delete"),
-    path('profile/<int:pk>/', fba_views.ProfileAPIView.as_view(), name="profile-view"),
     path('posts/', ps_views.PostAPIView.as_view(), name="posts-view"),
     path('useranalytics/', fba_views.UserAnalyticAPIView.as_view(),
          name="useranalytics-view"),

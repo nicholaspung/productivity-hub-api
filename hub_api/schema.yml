@@ -3,11 +3,397 @@ info:
   title: ''
   version: ''
 paths:
+  /api/titles/:
+    get:
+      operationId: listTitles
+      description: This viewset provides `list`, `create`, `update`, and `destroy`
+        actions.
+      parameters: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  properties:
+                    id:
+                      type: integer
+                      readOnly: true
+                    title:
+                      type: string
+                      maxLength: 200
+                    user:
+                      type: string
+                      readOnly: true
+                  required:
+                  - title
+          description: ''
+    post:
+      operationId: createTitle
+      description: This viewset provides `list`, `create`, `update`, and `destroy`
+        actions.
+      parameters: []
+      requestBody:
+        content:
+          application/json:
+            schema: &id001
+              properties:
+                title:
+                  type: string
+                  maxLength: 200
+              required:
+              - title
+          application/x-www-form-urlencoded:
+            schema: *id001
+          multipart/form-data:
+            schema: *id001
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                properties:
+                  id:
+                    type: integer
+                    readOnly: true
+                  title:
+                    type: string
+                    maxLength: 200
+                  user:
+                    type: string
+                    readOnly: true
+                required:
+                - title
+          description: ''
+  /api/titles/{id}/:
+    get:
+      operationId: retrieveTitle
+      description: This viewset provides `list`, `create`, `update`, and `destroy`
+        actions.
+      parameters:
+      - name: id
+        in: path
+        required: true
+        description: ''
+        schema:
+          type: string
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                properties:
+                  id:
+                    type: integer
+                    readOnly: true
+                  title:
+                    type: string
+                    maxLength: 200
+                  user:
+                    type: string
+                    readOnly: true
+                required:
+                - title
+          description: ''
+    put:
+      operationId: updateTitle
+      description: This viewset provides `list`, `create`, `update`, and `destroy`
+        actions.
+      parameters:
+      - name: id
+        in: path
+        required: true
+        description: ''
+        schema:
+          type: string
+      requestBody:
+        content:
+          application/json:
+            schema: &id002
+              properties:
+                title:
+                  type: string
+                  maxLength: 200
+              required:
+              - title
+          application/x-www-form-urlencoded:
+            schema: *id002
+          multipart/form-data:
+            schema: *id002
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                properties:
+                  id:
+                    type: integer
+                    readOnly: true
+                  title:
+                    type: string
+                    maxLength: 200
+                  user:
+                    type: string
+                    readOnly: true
+                required:
+                - title
+          description: ''
+    patch:
+      operationId: partial_updateTitle
+      description: This viewset provides `list`, `create`, `update`, and `destroy`
+        actions.
+      parameters:
+      - name: id
+        in: path
+        required: true
+        description: ''
+        schema:
+          type: string
+      requestBody:
+        content:
+          application/json:
+            schema: &id003
+              properties:
+                title:
+                  type: string
+                  maxLength: 200
+          application/x-www-form-urlencoded:
+            schema: *id003
+          multipart/form-data:
+            schema: *id003
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                properties:
+                  id:
+                    type: integer
+                    readOnly: true
+                  title:
+                    type: string
+                    maxLength: 200
+                  user:
+                    type: string
+                    readOnly: true
+                required:
+                - title
+          description: ''
+    delete:
+      operationId: destroyTitle
+      description: This viewset provides `list`, `create`, `update`, and `destroy`
+        actions.
+      parameters:
+      - name: id
+        in: path
+        required: true
+        description: ''
+        schema:
+          type: string
+      responses:
+        '204':
+          description: ''
+  /api/savedposts/:
+    get:
+      operationId: listSavedPosts
+      description: This view provides `list` and `update` actions.
+      parameters: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  properties:
+                    id:
+                      type: integer
+                      readOnly: true
+                    title:
+                      type: string
+                      readOnly: true
+                    url:
+                      type: string
+                      readOnly: true
+                    seen:
+                      type: boolean
+                    user:
+                      type: string
+                      readOnly: true
+          description: ''
+    post:
+      operationId: createSavedPost
+      description: This view provides `list` and `update` actions.
+      parameters: []
+      requestBody:
+        content:
+          application/json:
+            schema: &id004
+              properties:
+                seen:
+                  type: boolean
+          application/x-www-form-urlencoded:
+            schema: *id004
+          multipart/form-data:
+            schema: *id004
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                properties:
+                  id:
+                    type: integer
+                    readOnly: true
+                  title:
+                    type: string
+                    readOnly: true
+                  url:
+                    type: string
+                    readOnly: true
+                  seen:
+                    type: boolean
+                  user:
+                    type: string
+                    readOnly: true
+          description: ''
+  /api/savedposts/{id}/:
+    get:
+      operationId: retrieveSavedPost
+      description: This view provides `list` and `update` actions.
+      parameters:
+      - name: id
+        in: path
+        required: true
+        description: ''
+        schema:
+          type: string
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                properties:
+                  id:
+                    type: integer
+                    readOnly: true
+                  title:
+                    type: string
+                    readOnly: true
+                  url:
+                    type: string
+                    readOnly: true
+                  seen:
+                    type: boolean
+                  user:
+                    type: string
+                    readOnly: true
+          description: ''
+    put:
+      operationId: updateSavedPost
+      description: This view provides `list` and `update` actions.
+      parameters:
+      - name: id
+        in: path
+        required: true
+        description: ''
+        schema:
+          type: string
+      requestBody:
+        content:
+          application/json:
+            schema: &id005
+              properties:
+                seen:
+                  type: boolean
+          application/x-www-form-urlencoded:
+            schema: *id005
+          multipart/form-data:
+            schema: *id005
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                properties:
+                  id:
+                    type: integer
+                    readOnly: true
+                  title:
+                    type: string
+                    readOnly: true
+                  url:
+                    type: string
+                    readOnly: true
+                  seen:
+                    type: boolean
+                  user:
+                    type: string
+                    readOnly: true
+          description: ''
+    patch:
+      operationId: partial_updateSavedPost
+      description: This view provides `list` and `update` actions.
+      parameters:
+      - name: id
+        in: path
+        required: true
+        description: ''
+        schema:
+          type: string
+      requestBody:
+        content:
+          application/json:
+            schema: &id006
+              properties:
+                seen:
+                  type: boolean
+          application/x-www-form-urlencoded:
+            schema: *id006
+          multipart/form-data:
+            schema: *id006
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                properties:
+                  id:
+                    type: integer
+                    readOnly: true
+                  title:
+                    type: string
+                    readOnly: true
+                  url:
+                    type: string
+                    readOnly: true
+                  seen:
+                    type: boolean
+                  user:
+                    type: string
+                    readOnly: true
+          description: ''
+    delete:
+      operationId: destroySavedPost
+      description: This view provides `list` and `update` actions.
+      parameters:
+      - name: id
+        in: path
+        required: true
+        description: ''
+        schema:
+          type: string
+      responses:
+        '204':
+          description: ''
   /api/habits/:
     get:
       operationId: listHabits
-      description: This viewset automatically provides `list`, `create`, `retrieve`,
-        `update`, and `destroy` actions.
+      description: 'This viewset provides `list`, `create`, `retrieve`, `partial_update`,
+        `update`,
+
+        and `destroy` actions.'
       parameters: []
       responses:
         '200':
@@ -36,18 +422,22 @@ paths:
                       readOnly: true
                     archived:
                       type: boolean
+                    weekdays:
+                      type: string
                   required:
                   - name
           description: ''
     post:
       operationId: createHabit
-      description: This viewset automatically provides `list`, `create`, `retrieve`,
-        `update`, and `destroy` actions.
+      description: 'This viewset provides `list`, `create`, `retrieve`, `partial_update`,
+        `update`,
+
+        and `destroy` actions.'
       parameters: []
       requestBody:
         content:
           application/json:
-            schema: &id001
+            schema: &id007
               properties:
                 name:
                   type: string
@@ -58,12 +448,14 @@ paths:
                   type: integer
                 archived:
                   type: boolean
+                weekdays:
+                  type: string
               required:
               - name
           application/x-www-form-urlencoded:
-            schema: *id001
+            schema: *id007
           multipart/form-data:
-            schema: *id001
+            schema: *id007
       responses:
         '200':
           content:
@@ -89,14 +481,18 @@ paths:
                     readOnly: true
                   archived:
                     type: boolean
+                  weekdays:
+                    type: string
                 required:
                 - name
           description: ''
   /api/habits/{id}/:
     get:
       operationId: retrieveHabit
-      description: This viewset automatically provides `list`, `create`, `retrieve`,
-        `update`, and `destroy` actions.
+      description: 'This viewset provides `list`, `create`, `retrieve`, `partial_update`,
+        `update`,
+
+        and `destroy` actions.'
       parameters:
       - name: id
         in: path
@@ -129,13 +525,17 @@ paths:
                     readOnly: true
                   archived:
                     type: boolean
+                  weekdays:
+                    type: string
                 required:
                 - name
           description: ''
     put:
       operationId: updateHabit
-      description: This viewset automatically provides `list`, `create`, `retrieve`,
-        `update`, and `destroy` actions.
+      description: 'This viewset provides `list`, `create`, `retrieve`, `partial_update`,
+        `update`,
+
+        and `destroy` actions.'
       parameters:
       - name: id
         in: path
@@ -146,7 +546,7 @@ paths:
       requestBody:
         content:
           application/json:
-            schema: &id002
+            schema: &id008
               properties:
                 name:
                   type: string
@@ -157,12 +557,14 @@ paths:
                   type: integer
                 archived:
                   type: boolean
+                weekdays:
+                  type: string
               required:
               - name
           application/x-www-form-urlencoded:
-            schema: *id002
+            schema: *id008
           multipart/form-data:
-            schema: *id002
+            schema: *id008
       responses:
         '200':
           content:
@@ -188,13 +590,17 @@ paths:
                     readOnly: true
                   archived:
                     type: boolean
+                  weekdays:
+                    type: string
                 required:
                 - name
           description: ''
     patch:
       operationId: partial_updateHabit
-      description: This viewset automatically provides `list`, `create`, `retrieve`,
-        `update`, and `destroy` actions.
+      description: 'This viewset provides `list`, `create`, `retrieve`, `partial_update`,
+        `update`,
+
+        and `destroy` actions.'
       parameters:
       - name: id
         in: path
@@ -205,7 +611,7 @@ paths:
       requestBody:
         content:
           application/json:
-            schema: &id003
+            schema: &id009
               properties:
                 name:
                   type: string
@@ -216,10 +622,12 @@ paths:
                   type: integer
                 archived:
                   type: boolean
+                weekdays:
+                  type: string
           application/x-www-form-urlencoded:
-            schema: *id003
+            schema: *id009
           multipart/form-data:
-            schema: *id003
+            schema: *id009
       responses:
         '200':
           content:
@@ -245,13 +653,17 @@ paths:
                     readOnly: true
                   archived:
                     type: boolean
+                  weekdays:
+                    type: string
                 required:
                 - name
           description: ''
     delete:
       operationId: destroyHabit
-      description: This viewset automatically provides `list`, `create`, `retrieve`,
-        `update`, and `destroy` actions.
+      description: 'This viewset provides `list`, `create`, `retrieve`, `partial_update`,
+        `update`,
+
+        and `destroy` actions.'
       parameters:
       - name: id
         in: path
@@ -265,8 +677,10 @@ paths:
   /api/todos/:
     get:
       operationId: listTodos
-      description: This viewset automatically provides `list`, `create`, `retrieve`,
-        `update`, and `destroy` actions.
+      description: 'This viewset provides `list`, `create`, `retrieve`, `partial_update`,
+        `update`,
+
+        and `destroy` actions.'
       parameters: []
       responses:
         '200':
@@ -307,13 +721,15 @@ paths:
           description: ''
     post:
       operationId: createTodo
-      description: This viewset automatically provides `list`, `create`, `retrieve`,
-        `update`, and `destroy` actions.
+      description: 'This viewset provides `list`, `create`, `retrieve`, `partial_update`,
+        `update`,
+
+        and `destroy` actions.'
       parameters: []
       requestBody:
         content:
           application/json:
-            schema: &id004
+            schema: &id010
               properties:
                 name:
                   type: string
@@ -330,9 +746,9 @@ paths:
               required:
               - name
           application/x-www-form-urlencoded:
-            schema: *id004
+            schema: *id010
           multipart/form-data:
-            schema: *id004
+            schema: *id010
       responses:
         '200':
           content:
@@ -371,8 +787,10 @@ paths:
   /api/todos/{id}/:
     get:
       operationId: retrieveTodo
-      description: This viewset automatically provides `list`, `create`, `retrieve`,
-        `update`, and `destroy` actions.
+      description: 'This viewset provides `list`, `create`, `retrieve`, `partial_update`,
+        `update`,
+
+        and `destroy` actions.'
       parameters:
       - name: id
         in: path
@@ -417,8 +835,10 @@ paths:
           description: ''
     put:
       operationId: updateTodo
-      description: This viewset automatically provides `list`, `create`, `retrieve`,
-        `update`, and `destroy` actions.
+      description: 'This viewset provides `list`, `create`, `retrieve`, `partial_update`,
+        `update`,
+
+        and `destroy` actions.'
       parameters:
       - name: id
         in: path
@@ -429,7 +849,7 @@ paths:
       requestBody:
         content:
           application/json:
-            schema: &id005
+            schema: &id011
               properties:
                 name:
                   type: string
@@ -446,9 +866,9 @@ paths:
               required:
               - name
           application/x-www-form-urlencoded:
-            schema: *id005
+            schema: *id011
           multipart/form-data:
-            schema: *id005
+            schema: *id011
       responses:
         '200':
           content:
@@ -486,8 +906,10 @@ paths:
           description: ''
     patch:
       operationId: partial_updateTodo
-      description: This viewset automatically provides `list`, `create`, `retrieve`,
-        `update`, and `destroy` actions.
+      description: 'This viewset provides `list`, `create`, `retrieve`, `partial_update`,
+        `update`,
+
+        and `destroy` actions.'
       parameters:
       - name: id
         in: path
@@ -498,7 +920,7 @@ paths:
       requestBody:
         content:
           application/json:
-            schema: &id006
+            schema: &id012
               properties:
                 name:
                   type: string
@@ -513,9 +935,9 @@ paths:
                 order:
                   type: integer
           application/x-www-form-urlencoded:
-            schema: *id006
+            schema: *id012
           multipart/form-data:
-            schema: *id006
+            schema: *id012
       responses:
         '200':
           content:
@@ -553,8 +975,10 @@ paths:
           description: ''
     delete:
       operationId: destroyTodo
-      description: This viewset automatically provides `list`, `create`, `retrieve`,
-        `update`, and `destroy` actions.
+      description: 'This viewset provides `list`, `create`, `retrieve`, `partial_update`,
+        `update`,
+
+        and `destroy` actions.'
       parameters:
       - name: id
         in: path
@@ -568,21 +992,9 @@ paths:
   /api/dailies/:
     get:
       operationId: listDailys
-      description: This viewset automatically provides `list`, `create`, `retrieve`,
-        `update`, and `destroy` actions.
-      parameters:
-      - name: date
-        in: query
-        required: false
-        description: ''
-        schema:
-          type: string
-      - name: timeframe
-        in: query
-        required: false
-        description: ''
-        schema:
-          type: string
+      description: This viewset provides `list`, `create`, `partial_update`, and `update`
+        actions.
+      parameters: []
       responses:
         '200':
           content:
@@ -624,6 +1036,8 @@ paths:
                           readOnly: true
                         archived:
                           type: boolean
+                        weekdays:
+                          type: string
                       required:
                       - name
                       type: object
@@ -631,15 +1045,20 @@ paths:
           description: ''
     post:
       operationId: createDaily
-      description: This viewset automatically provides `list`, `create`, `retrieve`,
-        `update`, and `destroy` actions.
-      parameters: 
-      - name: date
-        in: query
-        required: false
-        description: ''
-        schema:
-          type: string
+      description: This viewset provides `list`, `create`, `partial_update`, and `update`
+        actions.
+      parameters: []
+      requestBody:
+        content:
+          application/json:
+            schema: &id013
+              properties:
+                finished:
+                  type: boolean
+          application/x-www-form-urlencoded:
+            schema: *id013
+          multipart/form-data:
+            schema: *id013
       responses:
         '200':
           content:
@@ -679,6 +1098,8 @@ paths:
                         readOnly: true
                       archived:
                         type: boolean
+                      weekdays:
+                        type: string
                     required:
                     - name
                     type: object
@@ -687,8 +1108,8 @@ paths:
   /api/dailies/{id}/:
     get:
       operationId: retrieveDaily
-      description: This viewset automatically provides `list`, `create`, `retrieve`,
-        `update`, and `destroy` actions.
+      description: This viewset provides `list`, `create`, `partial_update`, and `update`
+        actions.
       parameters:
       - name: id
         in: path
@@ -735,6 +1156,8 @@ paths:
                         readOnly: true
                       archived:
                         type: boolean
+                      weekdays:
+                        type: string
                     required:
                     - name
                     type: object
@@ -742,8 +1165,8 @@ paths:
           description: ''
     put:
       operationId: updateDaily
-      description: This viewset automatically provides `list`, `create`, `retrieve`,
-        `update`, and `destroy` actions.
+      description: This viewset provides `list`, `create`, `partial_update`, and `update`
+        actions.
       parameters:
       - name: id
         in: path
@@ -754,14 +1177,14 @@ paths:
       requestBody:
         content:
           application/json:
-            schema: &id008
+            schema: &id014
               properties:
                 finished:
                   type: boolean
           application/x-www-form-urlencoded:
-            schema: *id008
+            schema: *id014
           multipart/form-data:
-            schema: *id008
+            schema: *id014
       responses:
         '200':
           content:
@@ -801,6 +1224,8 @@ paths:
                         readOnly: true
                       archived:
                         type: boolean
+                      weekdays:
+                        type: string
                     required:
                     - name
                     type: object
@@ -808,8 +1233,8 @@ paths:
           description: ''
     patch:
       operationId: partial_updateDaily
-      description: This viewset automatically provides `list`, `create`, `retrieve`,
-        `update`, and `destroy` actions.
+      description: This viewset provides `list`, `create`, `partial_update`, and `update`
+        actions.
       parameters:
       - name: id
         in: path
@@ -820,14 +1245,14 @@ paths:
       requestBody:
         content:
           application/json:
-            schema: &id009
+            schema: &id015
               properties:
                 finished:
                   type: boolean
           application/x-www-form-urlencoded:
-            schema: *id009
+            schema: *id015
           multipart/form-data:
-            schema: *id009
+            schema: *id015
       responses:
         '200':
           content:
@@ -867,6 +1292,8 @@ paths:
                         readOnly: true
                       archived:
                         type: boolean
+                      weekdays:
+                        type: string
                     required:
                     - name
                     type: object
@@ -874,208 +1301,8 @@ paths:
           description: ''
     delete:
       operationId: destroyDaily
-      description: This viewset automatically provides `list`, `create`, `retrieve`,
-        `update`, and `destroy` actions.
-      parameters:
-      - name: id
-        in: path
-        required: true
-        description: ''
-        schema:
-          type: string
-      responses:
-        '204':
-          description: ''
-  /api/user/:
-    get:
-      operationId: listUsers
-      description: This viewset automatically provides `list`, `create`, `retrieve`,
-        `update`, and `destroy` actions.
-      parameters: []
-      responses:
-        '200':
-          content:
-            application/json:
-              schema:
-                type: array
-                items:
-                  properties:
-                    id:
-                      type: integer
-                      readOnly: true
-                    username:
-                      type: string
-                      description: Required. 150 characters or fewer. Letters, digits
-                        and @/./+/-/_ only.
-                      pattern: ^[\w.@+-]+\Z
-                      maxLength: 150
-                  required:
-                  - username
-          description: ''
-    post:
-      operationId: createUser
-      description: This viewset automatically provides `list`, `create`, `retrieve`,
-        `update`, and `destroy` actions.
-      parameters: []
-      requestBody:
-        content:
-          application/json:
-            schema: &id010
-              properties:
-                username:
-                  type: string
-                  description: Required. 150 characters or fewer. Letters, digits
-                    and @/./+/-/_ only.
-                  pattern: ^[\w.@+-]+\Z
-                  maxLength: 150
-              required:
-              - username
-          application/x-www-form-urlencoded:
-            schema: *id010
-          multipart/form-data:
-            schema: *id010
-      responses:
-        '200':
-          content:
-            application/json:
-              schema:
-                properties:
-                  id:
-                    type: integer
-                    readOnly: true
-                  username:
-                    type: string
-                    description: Required. 150 characters or fewer. Letters, digits
-                      and @/./+/-/_ only.
-                    pattern: ^[\w.@+-]+\Z
-                    maxLength: 150
-                required:
-                - username
-          description: ''
-  /api/user/{id}/:
-    get:
-      operationId: retrieveUser
-      description: This viewset automatically provides `list`, `create`, `retrieve`,
-        `update`, and `destroy` actions.
-      parameters:
-      - name: id
-        in: path
-        required: true
-        description: ''
-        schema:
-          type: string
-      responses:
-        '200':
-          content:
-            application/json:
-              schema:
-                properties:
-                  id:
-                    type: integer
-                    readOnly: true
-                  username:
-                    type: string
-                    description: Required. 150 characters or fewer. Letters, digits
-                      and @/./+/-/_ only.
-                    pattern: ^[\w.@+-]+\Z
-                    maxLength: 150
-                required:
-                - username
-          description: ''
-    put:
-      operationId: updateUser
-      description: This viewset automatically provides `list`, `create`, `retrieve`,
-        `update`, and `destroy` actions.
-      parameters:
-      - name: id
-        in: path
-        required: true
-        description: ''
-        schema:
-          type: string
-      requestBody:
-        content:
-          application/json:
-            schema: &id011
-              properties:
-                username:
-                  type: string
-                  description: Required. 150 characters or fewer. Letters, digits
-                    and @/./+/-/_ only.
-                  pattern: ^[\w.@+-]+\Z
-                  maxLength: 150
-              required:
-              - username
-          application/x-www-form-urlencoded:
-            schema: *id011
-          multipart/form-data:
-            schema: *id011
-      responses:
-        '200':
-          content:
-            application/json:
-              schema:
-                properties:
-                  id:
-                    type: integer
-                    readOnly: true
-                  username:
-                    type: string
-                    description: Required. 150 characters or fewer. Letters, digits
-                      and @/./+/-/_ only.
-                    pattern: ^[\w.@+-]+\Z
-                    maxLength: 150
-                required:
-                - username
-          description: ''
-    patch:
-      operationId: partial_updateUser
-      description: This viewset automatically provides `list`, `create`, `retrieve`,
-        `update`, and `destroy` actions.
-      parameters:
-      - name: id
-        in: path
-        required: true
-        description: ''
-        schema:
-          type: string
-      requestBody:
-        content:
-          application/json:
-            schema: &id012
-              properties:
-                username:
-                  type: string
-                  description: Required. 150 characters or fewer. Letters, digits
-                    and @/./+/-/_ only.
-                  pattern: ^[\w.@+-]+\Z
-                  maxLength: 150
-          application/x-www-form-urlencoded:
-            schema: *id012
-          multipart/form-data:
-            schema: *id012
-      responses:
-        '200':
-          content:
-            application/json:
-              schema:
-                properties:
-                  id:
-                    type: integer
-                    readOnly: true
-                  username:
-                    type: string
-                    description: Required. 150 characters or fewer. Letters, digits
-                      and @/./+/-/_ only.
-                    pattern: ^[\w.@+-]+\Z
-                    maxLength: 150
-                required:
-                - username
-          description: ''
-    delete:
-      operationId: destroyUser
-      description: This viewset automatically provides `list`, `create`, `retrieve`,
-        `update`, and `destroy` actions.
+      description: This viewset provides `list`, `create`, `partial_update`, and `update`
+        actions.
       parameters:
       - name: id
         in: path
@@ -1089,8 +1316,7 @@ paths:
   /api/profile/:
     get:
       operationId: listProfiles
-      description: This viewset automatically provides `list`, `create`, `retrieve`,
-        `update`, and `destroy` actions.
+      description: This view provides the `list` and `partial_update` actions.
       parameters: []
       responses:
         '200':
@@ -1105,32 +1331,37 @@ paths:
                     is_anonymous:
                       type: boolean
                     apps:
-                      type: string
+                      type: array
+                      items:
+                        type: integer
                   required:
                   - user
+                  - apps
           description: ''
     post:
       operationId: createProfile
-      description: This viewset automatically provides `list`, `create`, `retrieve`,
-        `update`, and `destroy` actions.
+      description: This view provides the `list` and `partial_update` actions.
       parameters: []
       requestBody:
         content:
           application/json:
-            schema: &id013
+            schema: &id016
               properties:
                 user:
                   type: integer
                 is_anonymous:
                   type: boolean
                 apps:
-                  type: string
+                  type: array
+                  items:
+                    type: integer
               required:
               - user
+              - apps
           application/x-www-form-urlencoded:
-            schema: *id013
+            schema: *id016
           multipart/form-data:
-            schema: *id013
+            schema: *id016
       responses:
         '200':
           content:
@@ -1142,15 +1373,17 @@ paths:
                   is_anonymous:
                     type: boolean
                   apps:
-                    type: string
+                    type: array
+                    items:
+                      type: integer
                 required:
                 - user
+                - apps
           description: ''
   /api/profile/{id}/:
     get:
       operationId: retrieveProfile
-      description: This viewset automatically provides `list`, `create`, `retrieve`,
-        `update`, and `destroy` actions.
+      description: This view provides the `list` and `partial_update` actions.
       parameters:
       - name: id
         in: path
@@ -1169,14 +1402,16 @@ paths:
                   is_anonymous:
                     type: boolean
                   apps:
-                    type: string
+                    type: array
+                    items:
+                      type: integer
                 required:
                 - user
+                - apps
           description: ''
     put:
       operationId: updateProfile
-      description: This viewset automatically provides `list`, `create`, `retrieve`,
-        `update`, and `destroy` actions.
+      description: This view provides the `list` and `partial_update` actions.
       parameters:
       - name: id
         in: path
@@ -1187,20 +1422,23 @@ paths:
       requestBody:
         content:
           application/json:
-            schema: &id014
+            schema: &id017
               properties:
                 user:
                   type: integer
                 is_anonymous:
                   type: boolean
                 apps:
-                  type: string
+                  type: array
+                  items:
+                    type: integer
               required:
               - user
+              - apps
           application/x-www-form-urlencoded:
-            schema: *id014
+            schema: *id017
           multipart/form-data:
-            schema: *id014
+            schema: *id017
       responses:
         '200':
           content:
@@ -1212,14 +1450,16 @@ paths:
                   is_anonymous:
                     type: boolean
                   apps:
-                    type: string
+                    type: array
+                    items:
+                      type: integer
                 required:
                 - user
+                - apps
           description: ''
     patch:
       operationId: partial_updateProfile
-      description: This viewset automatically provides `list`, `create`, `retrieve`,
-        `update`, and `destroy` actions.
+      description: This view provides the `list` and `partial_update` actions.
       parameters:
       - name: id
         in: path
@@ -1230,18 +1470,20 @@ paths:
       requestBody:
         content:
           application/json:
-            schema: &id015
+            schema: &id018
               properties:
                 user:
                   type: integer
                 is_anonymous:
                   type: boolean
                 apps:
-                  type: string
+                  type: array
+                  items:
+                    type: integer
           application/x-www-form-urlencoded:
-            schema: *id015
+            schema: *id018
           multipart/form-data:
-            schema: *id015
+            schema: *id018
       responses:
         '200':
           content:
@@ -1253,14 +1495,16 @@ paths:
                   is_anonymous:
                     type: boolean
                   apps:
-                    type: string
+                    type: array
+                    items:
+                      type: integer
                 required:
                 - user
+                - apps
           description: ''
     delete:
       operationId: destroyProfile
-      description: This viewset automatically provides `list`, `create`, `retrieve`,
-        `update`, and `destroy` actions.
+      description: This view provides the `list` and `partial_update` actions.
       parameters:
       - name: id
         in: path
@@ -1274,7 +1518,7 @@ paths:
   /api/posts/:
     get:
       operationId: listPosts
-      description: This viewset automatically provides `list` and `detail` actions.
+      description: This view provides `list` actions.
       parameters:
       - name: page
         required: false
@@ -1315,41 +1559,10 @@ paths:
                           type: string
                           readOnly: true
           description: ''
-  /api/posts/{id}/:
+  /api/useranalytics/:
     get:
-      operationId: retrievePost
-      description: This viewset automatically provides `list` and `detail` actions.
-      parameters:
-      - name: id
-        in: path
-        required: true
-        description: A unique integer value identifying this post.
-        schema:
-          type: string
-      responses:
-        '200':
-          content:
-            application/json:
-              schema:
-                properties:
-                  id:
-                    type: integer
-                    readOnly: true
-                  reddit_id:
-                    type: string
-                    readOnly: true
-                  title:
-                    type: string
-                    readOnly: true
-                  url:
-                    type: string
-                    readOnly: true
-          description: ''
-  /api/titles/:
-    get:
-      operationId: listTitles
-      description: This viewset automatically provides `list`, `create`, `retrieve`,
-        `update`, and `destroy` actions.
+      operationId: listUserAnalytics
+      description: This viewset provides `list`, `create` actions.
       parameters: []
       responses:
         '200':
@@ -1362,221 +1575,54 @@ paths:
                     id:
                       type: integer
                       readOnly: true
-                    title:
-                      type: string
-                      maxLength: 200
                     user:
                       type: string
                       readOnly: true
-                  required:
-                  - title
-          description: ''
-    post:
-      operationId: createTitle
-      description: This viewset automatically provides `list`, `create`, `retrieve`,
-        `update`, and `destroy` actions.
-      parameters: []
-      requestBody:
-        content:
-          application/json:
-            schema: &id016
-              properties:
-                title:
-                  type: string
-                  maxLength: 200
-              required:
-              - title
-          application/x-www-form-urlencoded:
-            schema: *id016
-          multipart/form-data:
-            schema: *id016
-      responses:
-        '200':
-          content:
-            application/json:
-              schema:
-                properties:
-                  id:
-                    type: integer
-                    readOnly: true
-                  title:
-                    type: string
-                    maxLength: 200
-                  user:
-                    type: string
-                    readOnly: true
-                required:
-                - title
-          description: ''
-  /api/titles/{id}/:
-    get:
-      operationId: retrieveTitle
-      description: This viewset automatically provides `list`, `create`, `retrieve`,
-        `update`, and `destroy` actions.
-      parameters:
-      - name: id
-        in: path
-        required: true
-        description: ''
-        schema:
-          type: string
-      responses:
-        '200':
-          content:
-            application/json:
-              schema:
-                properties:
-                  id:
-                    type: integer
-                    readOnly: true
-                  title:
-                    type: string
-                    maxLength: 200
-                  user:
-                    type: string
-                    readOnly: true
-                required:
-                - title
-          description: ''
-    put:
-      operationId: updateTitle
-      description: This viewset automatically provides `list`, `create`, `retrieve`,
-        `update`, and `destroy` actions.
-      parameters:
-      - name: id
-        in: path
-        required: true
-        description: ''
-        schema:
-          type: string
-      requestBody:
-        content:
-          application/json:
-            schema: &id017
-              properties:
-                title:
-                  type: string
-                  maxLength: 200
-              required:
-              - title
-          application/x-www-form-urlencoded:
-            schema: *id017
-          multipart/form-data:
-            schema: *id017
-      responses:
-        '200':
-          content:
-            application/json:
-              schema:
-                properties:
-                  id:
-                    type: integer
-                    readOnly: true
-                  title:
-                    type: string
-                    maxLength: 200
-                  user:
-                    type: string
-                    readOnly: true
-                required:
-                - title
-          description: ''
-    patch:
-      operationId: partial_updateTitle
-      description: This viewset automatically provides `list`, `create`, `retrieve`,
-        `update`, and `destroy` actions.
-      parameters:
-      - name: id
-        in: path
-        required: true
-        description: ''
-        schema:
-          type: string
-      requestBody:
-        content:
-          application/json:
-            schema: &id018
-              properties:
-                title:
-                  type: string
-                  maxLength: 200
-          application/x-www-form-urlencoded:
-            schema: *id018
-          multipart/form-data:
-            schema: *id018
-      responses:
-        '200':
-          content:
-            application/json:
-              schema:
-                properties:
-                  id:
-                    type: integer
-                    readOnly: true
-                  title:
-                    type: string
-                    maxLength: 200
-                  user:
-                    type: string
-                    readOnly: true
-                required:
-                - title
-          description: ''
-    delete:
-      operationId: destroyTitle
-      description: This viewset automatically provides `list`, `create`, `retrieve`,
-        `update`, and `destroy` actions.
-      parameters:
-      - name: id
-        in: path
-        required: true
-        description: ''
-        schema:
-          type: string
-      responses:
-        '204':
-          description: ''
-  /api/savedposts/:
-    get:
-      operationId: listSavedPosts
-      description: This viewset automatically provides `list`, `create`, `retrieve`,
-        `update`, and `destroy` actions.
-      parameters: []
-      responses:
-        '200':
-          content:
-            application/json:
-              schema:
-                type: array
-                items:
-                  properties:
-                    id:
+                    label:
+                      type: string
+                      readOnly: true
+                    frequency:
                       type: integer
-                      readOnly: true
-                    title:
+                    date:
                       type: string
+                      format: date
                       readOnly: true
-                    url:
+                    action:
                       type: string
-                      readOnly: true
-                    seen:
-                      type: boolean
-                    user:
-                      type: string
+                      maxLength: 100
+                    threshold:
+                      properties:
+                        id:
+                          type: integer
+                          readOnly: true
+                        user:
+                          type: string
+                          readOnly: true
+                        label:
+                          type: string
+                          maxLength: 100
+                        threshold:
+                          type: integer
+                      required:
+                      - label
+                      - threshold
+                      type: object
                       readOnly: true
           description: ''
     post:
-      operationId: createSavedPost
-      description: This viewset automatically provides `list`, `create`, `retrieve`,
-        `update`, and `destroy` actions.
+      operationId: CreateUserAnalytic
+      description: This viewset provides `list`, `create` actions.
       parameters: []
       requestBody:
         content:
           application/json:
             schema: &id019
               properties:
-                seen:
-                  type: boolean
+                frequency:
+                  type: integer
+                action:
+                  type: string
+                  maxLength: 100
           application/x-www-form-urlencoded:
             schema: *id019
           multipart/form-data:
@@ -1590,141 +1636,44 @@ paths:
                   id:
                     type: integer
                     readOnly: true
-                  title:
-                    type: string
-                    readOnly: true
-                  url:
-                    type: string
-                    readOnly: true
-                  seen:
-                    type: boolean
                   user:
                     type: string
                     readOnly: true
-          description: ''
-  /api/savedposts/{id}/:
-    get:
-      operationId: retrieveSavedPost
-      description: This viewset automatically provides `list`, `create`, `retrieve`,
-        `update`, and `destroy` actions.
-      parameters:
-      - name: id
-        in: path
-        required: true
-        description: ''
-        schema:
-          type: string
-      responses:
-        '200':
-          content:
-            application/json:
-              schema:
-                properties:
-                  id:
+                  label:
+                    type: string
+                    readOnly: true
+                  frequency:
                     type: integer
-                    readOnly: true
-                  title:
+                  date:
                     type: string
+                    format: date
                     readOnly: true
-                  url:
+                  action:
                     type: string
-                    readOnly: true
-                  seen:
-                    type: boolean
-                  user:
-                    type: string
+                    maxLength: 100
+                  threshold:
+                    properties:
+                      id:
+                        type: integer
+                        readOnly: true
+                      user:
+                        type: string
+                        readOnly: true
+                      label:
+                        type: string
+                        maxLength: 100
+                      threshold:
+                        type: integer
+                    required:
+                    - label
+                    - threshold
+                    type: object
                     readOnly: true
           description: ''
-    put:
-      operationId: updateSavedPost
-      description: This viewset automatically provides `list`, `create`, `retrieve`,
-        `update`, and `destroy` actions.
-      parameters:
-      - name: id
-        in: path
-        required: true
-        description: ''
-        schema:
-          type: string
-      requestBody:
-        content:
-          application/json:
-            schema: &id020
-              properties:
-                seen:
-                  type: boolean
-          application/x-www-form-urlencoded:
-            schema: *id020
-          multipart/form-data:
-            schema: *id020
-      responses:
-        '200':
-          content:
-            application/json:
-              schema:
-                properties:
-                  id:
-                    type: integer
-                    readOnly: true
-                  title:
-                    type: string
-                    readOnly: true
-                  url:
-                    type: string
-                    readOnly: true
-                  seen:
-                    type: boolean
-                  user:
-                    type: string
-                    readOnly: true
-          description: ''
-    patch:
-      operationId: partial_updateSavedPost
-      description: This viewset automatically provides `list`, `create`, `retrieve`,
-        `update`, and `destroy` actions.
-      parameters:
-      - name: id
-        in: path
-        required: true
-        description: ''
-        schema:
-          type: string
-      requestBody:
-        content:
-          application/json:
-            schema: &id021
-              properties:
-                seen:
-                  type: boolean
-          application/x-www-form-urlencoded:
-            schema: *id021
-          multipart/form-data:
-            schema: *id021
-      responses:
-        '200':
-          content:
-            application/json:
-              schema:
-                properties:
-                  id:
-                    type: integer
-                    readOnly: true
-                  title:
-                    type: string
-                    readOnly: true
-                  url:
-                    type: string
-                    readOnly: true
-                  seen:
-                    type: boolean
-                  user:
-                    type: string
-                    readOnly: true
-          description: ''
+  /api/user/{id}/:
     delete:
-      operationId: destroySavedPost
-      description: This viewset automatically provides `list`, `create`, `retrieve`,
-        `update`, and `destroy` actions.
+      operationId: DestroyUser
+      description: This view provides the `destroy` action.
       parameters:
       - name: id
         in: path

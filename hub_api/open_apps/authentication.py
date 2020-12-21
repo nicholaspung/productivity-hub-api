@@ -9,6 +9,7 @@ from rest_framework.authentication import SessionAuthentication
 
 from open_apps.exceptions import FirebaseError, InvalidAuthToken, NoAuthToken
 from open_apps.models.firebase_auth import Profile
+from open_apps.models.app import App, APPS
 
 User = get_user_model()
 
@@ -49,22 +50,25 @@ class FirebaseAuthentication(authentication.BaseAuthentication):
 
         try:
             uid = decoded_token.get("uid")
-            email = decoded_token.get("email")
-            is_anonymous = False
-            if 'provider_id' in decoded_token:
-                is_anonymous = decoded_token.get('provider_id') == 'anonymous'
+            email = decoded_token.get("email", None)
+            is_anonymous = decoded_token.get(
+                'provider_id', None) == 'anonymous'
         except Exception:
             raise FirebaseError() from None
 
-        try:
-            user, _ = User.objects.get_or_create(username=uid, email=email)
-        except IntegrityError:
-            user = User.objects.get(username=uid)
-            user.email = email
-            user.save()
+        user_data = {
+            "username": uid,
+        }
+        if email:
+            user_data["email"] = email
+        user, _ = User.objects.get_or_create(**user_data)
 
-        Profile.objects.get_or_create(
+        # Default app added is Habit Tracker (1)
+        _, created = Profile.objects.get_or_create(
             user=user, is_anonymous=is_anonymous)
+        if created:
+            app = App.objects.get(title=APPS[0])
+            user.profile.apps.add(app)
 
         return (user, None)
 
