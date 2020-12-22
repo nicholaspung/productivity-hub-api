@@ -24,17 +24,19 @@ def subreddit_scraper():
             post_list = subreddit_data['data']['children']
             for post in post_list:
                 post_data = post['data']
+                title = post_data['title']
+                if len(title) > 150:
+                    title = title[:150]
                 post_obj = {
                     'reddit_id': post_data['id'],
                     'title': post_data['title'],
                     'url': post_data['url']
                 }
                 try:
-                    Post.objects.get_or_create(
-                        reddit_id=post_obj['reddit_id'], title=post_obj['title'], url=post_obj['url'])
-                except IntegrityError as e:
+                    Post.objects.get_or_create(**post_obj)
+                except IntegrityError:
                     continue
-        except requests.exceptions.RequestException as e:
+        except requests.exceptions.RequestException:
             return
 
     db.connections.close_all()

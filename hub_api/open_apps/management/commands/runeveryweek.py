@@ -1,6 +1,6 @@
 from django.core.management.base import BaseCommand, CommandError
-from open_apps.scripts.firebase_auth import prune_anonymous_users_in_firebase_and_django
-from open_apps.scripts.post_saver import delete_old_posts
+from open_apps.scripts.firebase_auth_scripts import prune_anonymous_users_in_firebase_and_django
+from open_apps.scripts.post_saver_scripts import delete_old_posts
 
 
 class Command(BaseCommand):

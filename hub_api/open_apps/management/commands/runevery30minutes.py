@@ -1,5 +1,5 @@
 from django.core.management.base import BaseCommand, CommandError
-from open_apps.scripts.post_saver import subreddit_scraper
+from open_apps.scripts.post_saver_scripts import subreddit_scraper
 
 
 class Command(BaseCommand):

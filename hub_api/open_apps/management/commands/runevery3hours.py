@@ -1,5 +1,5 @@
 from django.core.management.base import BaseCommand, CommandError
-from open_apps.scripts.post_saver import genkan_website_scraper
+from open_apps.scripts.post_saver_scripts import genkan_website_scraper
 
 
 class Command(BaseCommand):
