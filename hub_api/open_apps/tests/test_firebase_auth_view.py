@@ -1,8 +1,9 @@
 from datetime import date
 
 from django.contrib.auth import get_user_model
-from open_apps.models.app import App
-from open_apps.models.firebase_auth import Profile, UserAnalytic, ViceThreshold
+from open_apps.models.app import DEFAULT_APPS, App
+from open_apps.models.firebase_auth import (LABELS, Profile, UserAnalytic,
+                                            ViceThreshold)
 from open_apps.scripts.populate_db import populate_apps
 from open_apps.utils.date_utils import get_date
 from rest_framework import status
@@ -52,7 +53,8 @@ class ProfileTestCase(APITestCase):
     def test_profile_detail_list(self):
         response = self.client.get(self.base_url)
         self.assertEqual(response.status_code, status.HTTP_200_OK)
-        self.assertEqual(response.data['apps'], [1])
+        apps = [app.id for app in App.objects.filter(title=DEFAULT_APPS[0])]
+        self.assertEqual(response.data['apps'], apps)
 
     def test_profile_detail_update(self):
         apps = [app.id for app in App.objects.all()[:3]]
@@ -148,6 +150,56 @@ class UserAnalyticTestCase(APITestCase):
         self.assertEqual(response3.status_code, status.HTTP_200_OK)
         self.assertEqual(len(response3.data), 5)
         self.assertEqual(response3.data[0]['date'], '2020-10-09')
+
+    def test_unauthenticated(self):
+        self.client.force_authenticate(user=None)
+        response = self.client.get(self.base_url)
+        self.assertEqual(response.status_code, status.HTTP_401_UNAUTHORIZED)
+
+
+class ViceThresholdTestCase(APITestCase):
+    base_url = "/api/vicethreshold/"
+    user_analytic_url = '/api/useranalytics/'
+
+    def setUp(self):
+        self.user = User.objects.create_user(
+            username=TEST_USERNAME, password=TEST_PASSWORD)
+        Profile.objects.get_or_create(
+            user=self.user)
+        self.client.login(username=TEST_USERNAME, password=TEST_PASSWORD)
+
+    def test_vice_threshold_list_create(self):
+        response = self.client.post(
+            self.base_url, data={'label': LABELS[0], 'threshold': 1})
+        self.assertEqual('Unable to attach' in response.data["message"], True)
+        self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
+
+        response2 = self.client.post(
+            self.base_url, data={'label': 'Fake label', 'threshold': 1})
+        self.assertEqual('Label not found' in response2.data["message"], True)
+        self.assertEqual(response2.status_code, status.HTTP_400_BAD_REQUEST)
+
+        self.client.post(self.user_analytic_url)
+        response3 = self.client.post(
+            self.base_url, data={'label': LABELS[0], 'threshold': 1})
+        self.assertEqual(
+            'Label Already Exists' in response3.data['label'][0].title(), True)
+        self.assertEqual(response3.status_code, status.HTTP_400_BAD_REQUEST)
+
+        response4 = self.client.post(
+            self.base_url, data={'label': LABELS[1], 'threshold': 1})
+        self.assertEqual(response4.data['label'], LABELS[1])
+        self.assertEqual(response4.status_code, status.HTTP_201_CREATED)
+        self.assertEqual(response4.data['id'], UserAnalytic.objects.filter(
+            label=LABELS[1])[0].threshold.id)
+
+    def test_vice_threshold_detail_update(self):
+        response = self.client.post(
+            self.base_url, data={'label': LABELS[1], 'threshold': 1})
+        threshold = 5
+        response1 = self.client.patch(
+            f"{self.base_url}{response.data['id']}/", {'threshold': threshold})
+        self.assertEqual(response1.data['threshold'], threshold)
 
     def test_unauthenticated(self):
         self.client.force_authenticate(user=None)

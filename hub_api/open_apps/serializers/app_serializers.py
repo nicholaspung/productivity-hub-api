@@ -8,5 +8,5 @@ class AppSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = App
-        fields = ['title']
-        read_only_fields = ['id', 'title']
+        fields = ['title', 'users', 'id']
+        read_only_fields = ['id', 'title', 'users']

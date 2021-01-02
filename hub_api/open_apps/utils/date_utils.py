@@ -11,11 +11,13 @@ def get_date(data):
     return date.today()
 
 
-def get_week_range(year, iso_calendar):
-    iso_calendar_month = iso_calendar[1]
+def get_week_range(iso_calendar):
+    iso_calendar_year = iso_calendar[0]
+    iso_calendar_week = iso_calendar[1]
     if iso_calendar[2] == 7:
-        iso_calendar_month += 1
-    beginning_of_week = date.fromisocalendar(year, iso_calendar_month, 1)
+        iso_calendar_week += 1
+    beginning_of_week = date.fromisocalendar(
+        iso_calendar_year, iso_calendar_week, 1)
     return (beginning_of_week - timedelta(days=1), beginning_of_week + timedelta(days=5))
 
 

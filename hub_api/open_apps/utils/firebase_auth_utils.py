@@ -40,6 +40,7 @@ def create_vice_threshold(user, label):
         vice_threshold, _ = ViceThreshold.objects.get_or_create(
             user=user, label=label, threshold=avg_frequency_of_ua)
         return vice_threshold
+    return None
 
 
 def create_user_analytic(user, label, obj_date, threshold):

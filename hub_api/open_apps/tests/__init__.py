@@ -1,3 +1,4 @@
-from open_apps.tests.firebase_auth_tests import *
-from open_apps.tests.post_saver_tests import *
-from open_apps.tests.habit_tracker_tests import *
+from open_apps.tests.test_firebase_auth_view import *
+from open_apps.tests.test_post_saver_view import *
+from open_apps.tests.test_habit_tracker_view import *
+from open_apps.tests.test_app_view import *

@@ -53,7 +53,7 @@ def get_timeframe_queryset(request):
         qs = Daily.objects.filter(user=user, date=obj_date)
     elif timeframe == 'week':
         isocalendar = obj_date.isocalendar()
-        week_dates = get_week_range(obj_date.year, isocalendar)
+        week_dates = get_week_range(isocalendar)
         qs = Daily.objects.filter(
             user=user, date__range=(week_dates[0], week_dates[1]))
     elif timeframe == 'month':

@@ -2,10 +2,15 @@ from django.db import models
 from open_apps.models.app import App
 
 
+LABELS = ["Post Saver Nav", "Saved Post Title",
+          "Saved Post Refresh", "All Post Title", "All Post Refresh"]
+
+
 class Profile(models.Model):
     user = models.OneToOneField('auth.User', on_delete=models.CASCADE)
     is_anonymous = models.BooleanField(default=False)
     apps = models.ManyToManyField(App, related_name="profile")
+    email = models.CharField(max_length=100, blank=True, null=True)
 
 
 class UserAnalytic(models.Model):
