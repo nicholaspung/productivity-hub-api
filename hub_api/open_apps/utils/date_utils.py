@@ -16,6 +16,9 @@ def get_week_range(iso_calendar):
     iso_calendar_week = iso_calendar[1]
     if iso_calendar[2] == 7:
         iso_calendar_week += 1
+    if iso_calendar_week == 54:
+        iso_calendar_year += 1
+        iso_calendar_week = 1
     beginning_of_week = date.fromisocalendar(
         iso_calendar_year, iso_calendar_week, 1)
     return (beginning_of_week - timedelta(days=1), beginning_of_week + timedelta(days=5))

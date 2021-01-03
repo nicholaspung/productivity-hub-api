@@ -1,4 +1,5 @@
 from types import SimpleNamespace
+from datetime import date
 
 from open_apps.models.habit_tracker import Daily, Habit
 from open_apps.utils.date_utils import (get_date, get_month_range,
@@ -47,7 +48,7 @@ def create_dailies_according_to_weekdays(user, obj_date):
 
 def get_timeframe_queryset(request):
     obj_date = get_date(request.query_params)
-    timeframe = request.query_params['timeframe']
+    timeframe = request.query_params.get('timeframe', None)
     user = request.user
     if timeframe == 'day':
         qs = Daily.objects.filter(user=user, date=obj_date)

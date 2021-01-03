@@ -33,9 +33,6 @@ class Todo(models.Model):
 
 
 class Habit(models.Model):
-    def grabLastNumberInUnfinishedHabits():
-        return Habit.objects.filter(user='auth.User').count()
-
     name = models.CharField(max_length=280)
     description = models.TextField(blank=True, default="")
     date_created = models.DateTimeField(auto_now_add=True)

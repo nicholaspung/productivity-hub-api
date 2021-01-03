@@ -31,7 +31,7 @@ class UserAPIView(DestroyAPIView):
         return User.objects.filter(username=self.request.user)
 
     def destroy(self, request, *args, **kwargs):
-        delete_firebase_user(self)
+        delete_firebase_user(self.request.user)
         return super().destroy(request, *args, **kwargs)
 
 
@@ -97,7 +97,7 @@ class UserAnalyticAPIView(ListCreateAPIView):
                     raise Http404('Something went wrong.') from None
             create_user_analytic(user=user, label=label,
                                  obj_date=obj_date, threshold=ua_threshold)
-        incremented = increment_user_analytic_frequency(self)
+        incremented = increment_user_analytic_frequency(self.request)
         if incremented:
             return Response({'message': 'Analytics incremented.'}, status=status.HTTP_200_OK)
         return Response({'message': 'Analytics created.'}, status=status.HTTP_201_CREATED)

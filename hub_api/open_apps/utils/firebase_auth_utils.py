@@ -5,8 +5,8 @@ from rest_framework import status
 from rest_framework.response import Response
 
 
-def delete_firebase_user(self):
-    firebase_uid = self.request.user.username
+def delete_firebase_user(user):
+    firebase_uid = user.username
     try:
         firebase_user = auth.get_user(firebase_uid)
         if firebase_user:
@@ -16,12 +16,12 @@ def delete_firebase_user(self):
                         status=status.HTTP_404_NOT_FOUND)
 
 
-def increment_user_analytic_frequency(self):
-    obj_date = get_date(self.request.query_params)  # 2020-10-10
-    label_request = self.request.data.get('label', None)
+def increment_user_analytic_frequency(request):
+    obj_date = get_date(request.query_params)  # 2020-10-10
+    label_request = request.data.get('label', None)
     if label_request:
         obj, created = UserAnalytic.objects.get_or_create(
-            user=self.request.user, label=label_request, date=obj_date)
+            user=request.user, label=label_request, date=obj_date)
         if not created:
             obj.frequency += 1
             obj.save()

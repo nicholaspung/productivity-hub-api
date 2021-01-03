@@ -15,7 +15,7 @@ def generate_saved_posts(self, logger):
     for item in titles:
         similars = process.extract(item.title, posts_titles, limit=5)
         for title_name, accuracy in similars:
-            if accuracy > 85:
+            if accuracy > 89:
                 index = posts_titles.index(title_name)
                 try:
                     SavedPost.objects.get_or_create(
