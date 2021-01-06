@@ -61,14 +61,18 @@ class FirebaseAuthentication(authentication.BaseAuthentication):
             user.email = email
             user.save()
 
-        # Default app added is Habit Tracker (1)
         profile, created = Profile.objects.get_or_create(
-            user=user, is_anonymous=is_anonymous)
+            user=user)
+
+        if profile.is_anonymous != is_anonymous:
+            profile.is_anonymous = is_anonymous
+            profile.save()
 
         if email and not profile.email:
             profile.email = email
             profile.save()
 
+        # Default app added is Habit Tracker (1)
         if created:
             app = App.objects.get(title=APPS[0])
             user.profile.apps.add(app)

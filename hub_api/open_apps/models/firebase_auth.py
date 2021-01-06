@@ -1,5 +1,4 @@
 from django.db import models
-from open_apps.models.app import App
 
 
 LABELS = ["Post Saver Nav", "Saved Post Title",
@@ -9,7 +8,7 @@ LABELS = ["Post Saver Nav", "Saved Post Title",
 class Profile(models.Model):
     user = models.OneToOneField('auth.User', on_delete=models.CASCADE)
     is_anonymous = models.BooleanField(default=False)
-    apps = models.ManyToManyField(App, related_name="profile")
+    apps = models.ManyToManyField('App', related_name="profile")
     email = models.CharField(max_length=100, blank=True, null=True)
 
 
@@ -26,6 +25,6 @@ class UserAnalytic(models.Model):
 
 class ViceThreshold(models.Model):
     user = models.ForeignKey(
-        'auth.User', on_delete=models.CASCADE, related_name='vicethreshold')
+        'auth.User', on_delete=models.CASCADE, related_name='vicethresholds')
     label = models.CharField(max_length=100, unique=True)
     threshold = models.IntegerField()
