@@ -3,7 +3,7 @@ from datetime import date
 from django.contrib.auth import get_user_model
 from open_apps.models.app import DEFAULT_APPS, App
 from open_apps.models.firebase_auth import (LABELS, Profile, UserAnalytic,
-                                            ViceThreshold)
+                                            UserAnalyticThreshold)
 from open_apps.scripts.populate_db import populate_apps
 from open_apps.utils.date_utils import get_date
 from rest_framework import status
@@ -85,7 +85,7 @@ class UserAnalyticTestCase(APITestCase):
             user=self.user)
         self.client.login(username=TEST_USERNAME, password=TEST_PASSWORD)
 
-    def test_user_analytic_create_post(self):
+    def test_user_analytic_create(self):
         response = self.client.post(self.base_url)
         self.assertEqual(response.data['message'], 'Analytics created.')
         self.assertEqual(response.status_code, status.HTTP_201_CREATED)
@@ -120,16 +120,18 @@ class UserAnalyticTestCase(APITestCase):
         self.client.post(f"{self.base_url}?date=2020-10-13")
         self.client.post(f"{self.base_url}?date=2020-10-14")
         self.client.post(f"{self.base_url}?date=2020-10-15")
-        self.assertEqual(len(ViceThreshold.objects.filter(user=self.user)), 0)
+        self.assertEqual(
+            len(UserAnalyticThreshold.objects.filter(user=self.user)), 0)
         self.client.post(f"{self.base_url}?date=2020-10-16")
-        self.assertEqual(len(ViceThreshold.objects.filter(user=self.user)), 5)
+        self.assertEqual(
+            len(UserAnalyticThreshold.objects.filter(user=self.user)), 5)
         self.client.post(f"{self.base_url}?date=2020-10-17")
         self.assertEqual(UserAnalytic.objects.filter(user=self.user,
                                                      date=get_date({'date': '2020-10-15'}))[0].threshold, None)
         self.assertEqual(UserAnalytic.objects.filter(user=self.user,
-                                                     date=get_date({'date': '2020-10-17'}))[0].threshold, ViceThreshold.objects.filter(user=self.user)[0])
+                                                     date=get_date({'date': '2020-10-17'}))[0].threshold, UserAnalyticThreshold.objects.filter(user=self.user)[0])
 
-    def test_user_analytic_list_get(self):
+    def test_user_analytic_list(self):
         self.client.post(self.base_url)
         response = self.client.get(self.base_url)
         self.assertEqual(response.status_code, status.HTTP_200_OK)
@@ -157,8 +159,8 @@ class UserAnalyticTestCase(APITestCase):
         self.assertEqual(response.status_code, status.HTTP_401_UNAUTHORIZED)
 
 
-class ViceThresholdTestCase(APITestCase):
-    base_url = "/api/vicethreshold/"
+class UserAnalyticThresholdTestCase(APITestCase):
+    base_url = "/api/useranalyticthresholds/"
     user_analytic_url = '/api/useranalytics/'
 
     def setUp(self):
@@ -168,7 +170,7 @@ class ViceThresholdTestCase(APITestCase):
             user=self.user)
         self.client.login(username=TEST_USERNAME, password=TEST_PASSWORD)
 
-    def test_vice_threshold_list_create(self):
+    def test_user_analytic_threshold_create(self):
         response = self.client.post(
             self.base_url, data={'label': LABELS[0], 'threshold': 1})
         self.assertEqual('Unable to attach' in response.data["message"], True)
@@ -193,7 +195,7 @@ class ViceThresholdTestCase(APITestCase):
         self.assertEqual(response4.data['id'], UserAnalytic.objects.filter(
             label=LABELS[1])[0].threshold.id)
 
-    def test_vice_threshold_detail_update(self):
+    def test_user_analytic_threshold_detail_update(self):
         response = self.client.post(
             self.base_url, data={'label': LABELS[1], 'threshold': 1})
         threshold = 5

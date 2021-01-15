@@ -11,7 +11,7 @@ class AppTestCase(APITestCase):
     def setUp(self):
         populate_apps()
 
-    def test_app_detail_list(self):
+    def test_app_list(self):
         apps = App.objects.all()
         response = self.client.get(self.base_url)
         self.assertEqual(response.status_code, status.HTTP_200_OK)

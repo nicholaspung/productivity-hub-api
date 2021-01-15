@@ -21,7 +21,7 @@ class PostTestCase(APITestCase):
             username=TEST_USERNAME, password=TEST_PASSWORD)
         self.client.login(username=TEST_USERNAME, password=TEST_PASSWORD)
 
-    def test_post_list_view(self):
+    def test_post_list(self):
         post1 = Post(
             title=self.sample_post['title'], url=self.sample_post['url'])
         post1.save()
@@ -56,12 +56,12 @@ class TitleTestCase(APITestCase):
             username=TEST_USERNAME, password=TEST_PASSWORD)
         self.client.login(username=TEST_USERNAME, password=TEST_PASSWORD)
 
-    def test_title_create_view(self):
+    def test_title_create(self):
         response = self.client.post(self.base_url, data=self.sample_title)
         self.assertEqual(response.status_code, status.HTTP_201_CREATED)
         self.assertEqual(response.data['title'], self.sample_title['title'])
 
-    def test_title_list_view(self):
+    def test_title_list(self):
         self.client.post(self.base_url, data=self.sample_title)
         title2 = {'title': 'new habit 2'}
         self.client.post(self.base_url, data=title2)
@@ -71,7 +71,7 @@ class TitleTestCase(APITestCase):
         self.assertEqual(response.data[0]['title'], self.sample_title['title'])
         self.assertEqual(response.data[1]['title'], title2['title'])
 
-    def test_title_detail_edit(self):
+    def test_title_detail_update(self):
         self.client.post(self.base_url, data=self.sample_title)
 
         updated_title = {"title": "updated title"}
@@ -121,7 +121,7 @@ class SavedPostTestCase(APITestCase):
         title1 = Title(title=self.sample_title['title'], user=self.user)
         title1.save()
 
-    def test_saved_post_list_view(self):
+    def test_saved_post_list(self):
         response = self.client.get(self.base_url)
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         self.assertEqual(response.data[0]['title'],
@@ -130,7 +130,7 @@ class SavedPostTestCase(APITestCase):
                          self.sample_saved_post2['title'])
         self.assertEqual(len(response.data), 2)
 
-    def test_saved_post_detail_edit(self):
+    def test_saved_post_detail_update(self):
         response = self.client.get(self.base_url)
         post = response.data[0]
 

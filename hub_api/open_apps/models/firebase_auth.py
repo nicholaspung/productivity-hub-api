@@ -20,11 +20,11 @@ class UserAnalytic(models.Model):
     frequency = models.IntegerField(default=0)
     date = models.DateField(auto_now_add=False)
     threshold = models.ForeignKey(
-        'ViceThreshold', on_delete=models.CASCADE, related_name='useranalytics', blank=True, null=True)
+        'UserAnalyticThreshold', on_delete=models.CASCADE, related_name='useranalytics', blank=True, null=True)
 
 
-class ViceThreshold(models.Model):
+class UserAnalyticThreshold(models.Model):
     user = models.ForeignKey(
-        'auth.User', on_delete=models.CASCADE, related_name='vicethresholds')
+        'auth.User', on_delete=models.CASCADE, related_name='useranalyticthresholds')
     label = models.CharField(max_length=100, unique=True)
-    threshold = models.IntegerField()
+    threshold = models.IntegerField(default=0)

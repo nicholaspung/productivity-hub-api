@@ -1,8 +1,10 @@
 from django.contrib import admin
+from django.contrib.auth import get_user_model
 from django.contrib.auth.admin import UserAdmin as BaseUserAdmin
-from django.contrib.auth.models import User
+from open_apps.models.firebase_auth import (Profile, UserAnalytic,
+                                            UserAnalyticThreshold)
 
-from open_apps.models.firebase_auth import Profile, UserAnalytic, ViceThreshold
+User = get_user_model()
 
 
 class ProfileInline(admin.StackedInline):
@@ -22,7 +24,7 @@ class UserAnalyticAdmin(admin.ModelAdmin):
     fields = ['user', 'label', 'action', 'frequency', 'date', 'threshold']
 
 
-class ViceThresholdAdmin(admin.ModelAdmin):
+class UserAnalyticThresholdAdmin(admin.ModelAdmin):
     fields = ['user', 'label', 'threshold']
 
 
@@ -30,4 +32,4 @@ admin.site.unregister(User)
 admin.site.register(User, UserAdmin)
 admin.site.register(Profile, ProfileAdmin)
 admin.site.register(UserAnalytic, UserAnalyticAdmin)
-admin.site.register(ViceThreshold, ViceThresholdAdmin)
+admin.site.register(UserAnalyticThreshold, UserAnalyticThresholdAdmin)

@@ -1,5 +1,6 @@
 from django.contrib.auth import get_user_model
-from open_apps.models.firebase_auth import Profile, UserAnalytic, ViceThreshold
+from open_apps.models.firebase_auth import (Profile, UserAnalytic,
+                                            UserAnalyticThreshold)
 from rest_framework import serializers
 
 User = get_user_model()
@@ -19,15 +20,15 @@ class ProfileSerializer(serializers.ModelSerializer):
         read_only_fields = ['id', 'user', 'email']
 
 
-class ViceThresholdSerializer(serializers.ModelSerializer):
+class UserAnalyticThresholdSerializer(serializers.ModelSerializer):
     class Meta:
-        model = ViceThreshold
+        model = UserAnalyticThreshold
         fields = ['id', 'user', 'label', 'threshold']
         read_only_fields = ['id', 'user']
 
 
 class UserAnalyticSerializer(serializers.ModelSerializer):
-    threshold = ViceThresholdSerializer(many=False, read_only=True)
+    threshold = UserAnalyticThresholdSerializer(many=False, read_only=True)
 
     class Meta:
         model = UserAnalytic

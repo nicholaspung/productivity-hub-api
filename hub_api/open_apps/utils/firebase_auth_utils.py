@@ -1,5 +1,5 @@
 from firebase_admin import auth
-from open_apps.models.firebase_auth import UserAnalytic, ViceThreshold
+from open_apps.models.firebase_auth import UserAnalytic, UserAnalyticThreshold
 from open_apps.utils.date_utils import get_date
 from rest_framework import status
 from rest_framework.response import Response
@@ -29,7 +29,7 @@ def increment_user_analytic_frequency(request):
     return False
 
 
-def create_vice_threshold(user, label):
+def create_user_analytic_threshold(user, label):
     filtered_ua = UserAnalytic.objects.filter(user=user, label=label)
     num_of_ua_for_label = len(filtered_ua)
     if num_of_ua_for_label > 7:
@@ -37,9 +37,9 @@ def create_vice_threshold(user, label):
             [analytic.frequency for analytic in filtered_ua]) // num_of_ua_for_label
         if avg_frequency_of_ua < 5:
             avg_frequency_of_ua = 5
-        vice_threshold, _ = ViceThreshold.objects.get_or_create(
+        ua_threshold, _ = UserAnalyticThreshold.objects.get_or_create(
             user=user, label=label, threshold=avg_frequency_of_ua)
-        return vice_threshold
+        return ua_threshold
     return None
 
 

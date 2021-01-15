@@ -25,14 +25,14 @@ class TodoTestCase(APITestCase):
             username=TEST_USERNAME, password=TEST_PASSWORD)
         self.client.login(username=TEST_USERNAME, password=TEST_PASSWORD)
 
-    def test_todo_create_view(self):
+    def test_todo_create(self):
         response = self.client.post(self.base_url, data=self.sample_todo)
         self.assertEqual(response.status_code, status.HTTP_201_CREATED)
         self.assertEqual(response.data['name'], self.sample_todo['name'])
         self.assertEqual(response.data['description'],
                          self.sample_todo['description'])
 
-    def test_todo_list_view(self):
+    def test_todo_list(self):
         self.client.post(self.base_url, data=self.sample_todo)
         todo2 = {"name": "new todo 2", "description": "new description 2"}
         self.client.post(self.base_url, data=todo2)
@@ -50,7 +50,7 @@ class TodoTestCase(APITestCase):
         response = self.client.delete(f"{self.base_url}1/")
         self.assertEqual(response.status_code, status.HTTP_204_NO_CONTENT)
 
-    def test_todo_detail_edit(self):
+    def test_todo_detail_update(self):
         self.client.post(self.base_url, data=self.sample_todo)
         # Edit name, description
         new_todo = {"name": "updated", "description": "updated"}
@@ -79,7 +79,7 @@ class TodoTestCase(APITestCase):
         self.assertEqual(response4.data["priority"],
                          priority_field["priority"])
 
-    def test_todo_detail_order_switch(self):
+    def test_todo_detail_update_order_switch(self):
         # Patch, data={reorder:id}
         self.client.post(self.base_url, data=self.sample_todo)
         todo = {"name": "yello", "description": "black"}

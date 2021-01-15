@@ -2,15 +2,15 @@ from django.contrib.auth import get_user_model
 from django.http import Http404
 from open_apps.authentication import GeneralAuthentication
 from open_apps.models.firebase_auth import (LABELS, Profile, UserAnalytic,
-                                            ViceThreshold)
+                                            UserAnalyticThreshold)
 from open_apps.permissions import IsAuthenticatedAndOwner
 from open_apps.serializers.firebase_auth_serializers import (
-    ProfileSerializer, UserAnalyticSerializer, UserSerializer,
-    ViceThresholdSerializer)
+    ProfileSerializer, UserAnalyticSerializer, UserAnalyticThresholdSerializer,
+    UserSerializer)
 from open_apps.utils.api_utils import unused_method
 from open_apps.utils.date_utils import get_date, get_week_range
 from open_apps.utils.firebase_auth_utils import (
-    create_user_analytic, create_vice_threshold, delete_firebase_user,
+    create_user_analytic, create_user_analytic_threshold, delete_firebase_user,
     increment_user_analytic_frequency)
 from rest_framework import status, viewsets
 from rest_framework.generics import DestroyAPIView, ListCreateAPIView
@@ -87,11 +87,11 @@ class UserAnalyticAPIView(ListCreateAPIView):
         user = self.request.user
         for label in LABELS:
             try:
-                ua_threshold = ViceThreshold.objects.get(
+                ua_threshold = UserAnalyticThreshold.objects.get(
                     user=user, label=label)
-            except ViceThreshold.DoesNotExist:
+            except UserAnalyticThreshold.DoesNotExist:
                 try:
-                    ua_threshold = create_vice_threshold(
+                    ua_threshold = create_user_analytic_threshold(
                         user=user, label=label)
                 except Exception:
                     raise Http404('Something went wrong.') from None
@@ -103,7 +103,7 @@ class UserAnalyticAPIView(ListCreateAPIView):
         return Response({'message': 'Analytics created.'}, status=status.HTTP_201_CREATED)
 
 
-class ViceThresholdViewset(viewsets.ModelViewSet):
+class UserAnalyticThresholdViewSet(viewsets.ModelViewSet):
     """
     This viewset provides `create` and `update` action.
 
@@ -111,12 +111,12 @@ class ViceThresholdViewset(viewsets.ModelViewSet):
         'threshold': int
         'label': str
     """
-    serializer_class = ViceThresholdSerializer
+    serializer_class = UserAnalyticThresholdSerializer
     permission_classes = IsAuthenticatedAndOwner
     authentication_classes = GeneralAuthentication
 
     def get_queryset(self):
-        return ViceThreshold.objects.filter(user=self.request.user)
+        return UserAnalyticThreshold.objects.filter(user=self.request.user)
 
     def perform_create(self, serializer):
         serializer.save(user=self.request.user)
@@ -134,13 +134,13 @@ class ViceThresholdViewset(viewsets.ModelViewSet):
             u_a_objs = UserAnalytic.objects.filter(
                 label=label, user=user).order_by('-date')
             u_a = u_a_objs[0]  # Latest user analytic
-            new_v_t = ViceThreshold.objects.get(pk=response.data["id"])
-            u_a.threshold = new_v_t
+            new_u_a_t = UserAnalyticThreshold.objects.get(
+                pk=response.data["id"])
+            u_a.threshold = new_u_a_t
             u_a.save()
         except:
-            response.data['message'] = 'Unable to attach newly created ViceThreshold to UserAnalytic.'
+            response.data['message'] = 'Unable to attach newly created UserAnalyticThreshold to UserAnalytic.'
             response.status_code = status.HTTP_400_BAD_REQUEST
-            return response
 
         return response
 

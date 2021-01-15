@@ -37,9 +37,10 @@ class FirebaseAuthUtilTestCase(TestCase):
             request)
         self.assertEqual(response2, True)
 
-    def test_create_vice_threshold(self):
+    def test_create_user_analytic_threshold(self):
         label = LABELS[0]
-        response = firebase_auth_utils.create_vice_threshold(self.user, label)
+        response = firebase_auth_utils.create_user_analytic_threshold(
+            self.user, label)
         self.assertEqual(response, None)
 
         firebase_auth_utils.create_user_analytic(
@@ -59,7 +60,8 @@ class FirebaseAuthUtilTestCase(TestCase):
         firebase_auth_utils.create_user_analytic(
             self.user, label, date(2020, 1, 8), None)
 
-        response2 = firebase_auth_utils.create_vice_threshold(self.user, label)
+        response2 = firebase_auth_utils.create_user_analytic_threshold(
+            self.user, label)
         self.assertEqual(response2.threshold, 5)
         self.assertEqual(response2.label, label)
 
