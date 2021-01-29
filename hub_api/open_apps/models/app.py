@@ -1,7 +1,7 @@
 from django.db import models
 
 
-APPS = ['Habit Tracker', 'Post Saver']
+APPS = ['Habit Tracker', 'Post Saver', 'Vices']
 DEFAULT_APPS = [APPS[0]]
 
 

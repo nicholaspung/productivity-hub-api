@@ -1,4 +1,4 @@
-from open_apps.models.vice import Vice, ViceAnalytic, ViceThreshold
+from open_apps.models.vice import Vice, ViceAnalytic
 from rest_framework import serializers
 
 
@@ -13,13 +13,6 @@ class ViceAnalyticSerializer(serializers.ModelSerializer):
     class Meta:
         model = ViceAnalytic
         fields = ['id', 'frequency', 'date',
-                  'vice', 'threshold', 'last_updated']
-        read_only_fields = ['id', 'user', 'threshold', 'vice']
+                  'vice', 'last_updated', 'time_between']
+        read_only_fields = ['id', 'user', 'vice']
         depth = 1
-
-
-class ViceThresholdSerializer(serializers.ModelSerializer):
-    class Meta:
-        model = ViceThreshold
-        fields = ['id', 'user', 'name', 'threshold']
-        read_only_fields = ['id', 'user']

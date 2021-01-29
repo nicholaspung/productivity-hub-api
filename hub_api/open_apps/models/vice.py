@@ -1,3 +1,5 @@
+from datetime import time
+
 from django.db import models
 
 
@@ -16,13 +18,6 @@ class ViceAnalytic(models.Model):
     date = models.DateField(auto_now_add=False)
     vice = models.ForeignKey(
         'Vice', on_delete=models.CASCADE, related_name='viceanalytics')
-    threshold = models.ForeignKey(
-        'ViceThreshold', on_delete=models.CASCADE, related_name='viceanalytics', blank=True, null=True)
     last_updated = models.DateTimeField(auto_now=True)
-
-
-class ViceThreshold(models.Model):
-    user = models.ForeignKey(
-        'auth.User', on_delete=models.CASCADE, related_name='vicethresholds')
-    name = models.CharField(max_length=100, unique=True)
-    threshold = models.IntegerField(default=8)
+    time_between = models.TimeField(
+        auto_now=False, auto_now_add=False, default=time(hour=1))

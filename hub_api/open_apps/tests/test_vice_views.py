@@ -91,7 +91,6 @@ class ViceAnalyticTestCase(APITestCase):
         self.assertEqual(
             get_date({"date": response.data[0]["date"]}), date.today())
         self.assertEqual(response.data[0]["frequency"], 0)
-        self.assertEqual(response.data[0]["threshold"], None)
         self.assertEqual(response.status_code, status.HTTP_201_CREATED)
 
         response2 = self.client.post(self.base_url)
@@ -127,50 +126,4 @@ class ViceAnalyticTestCase(APITestCase):
     def test_unauthenticated(self):
         self.client.force_authenticate(user=None)
         response = self.client.get(self.base_url)
-        self.assertEqual(response.status_code, status.HTTP_401_UNAUTHORIZED)
-
-
-class ViceThresholdTestCase(APITestCase):
-    base_url = "/api/vicethresholds/"
-    vice_url = "/api/vices/"
-    vice_analytic_url = "/api/viceanalytics/"
-    sample_vice = {"name": "sample vice", "link": "https://this.link"}
-
-    def setUp(self):
-        self.user = User.objects.create_user(
-            username=TEST_USERNAME, password=TEST_PASSWORD)
-        self.client.login(username=TEST_USERNAME, password=TEST_PASSWORD)
-
-    def test_vice_threshold_create(self):
-        self.client.post(self.vice_url, data=self.sample_vice)
-        self.client.post(self.vice_analytic_url)
-        self.client.post(f"{self.vice_analytic_url}?date=2021-01-12")
-
-        vice_threshold = {"name": self.sample_vice["name"]}
-        response = self.client.post(self.base_url, data=vice_threshold)
-        self.assertEqual(response.data["name"], self.sample_vice["name"])
-        self.assertEqual(response.data["threshold"], 8)
-        self.assertEqual(response.status_code, status.HTTP_201_CREATED)
-        response2 = self.client.get(self.vice_analytic_url)
-        self.assertEqual(response2.data[0]["vice"]
-                         ["name"], self.sample_vice["name"])
-
-    def test_vice_threshold_detail_update(self):
-        self.client.post(self.vice_url, data=self.sample_vice)
-        self.client.post(self.vice_analytic_url)
-        self.client.post(f"{self.vice_analytic_url}?date=2021-01-12")
-
-        vice_threshold = {"name": self.sample_vice["name"]}
-        response = self.client.post(self.base_url, data=vice_threshold)
-        id_1 = response.data["id"]
-
-        new_threshold = {"threshold": 20}
-        response2 = self.client.patch(
-            f"{self.base_url}{id_1}/", data=new_threshold)
-        self.assertEqual(
-            response2.data["threshold"], new_threshold["threshold"])
-
-    def test_unauthenticated(self):
-        self.client.force_authenticate(user=None)
-        response = self.client.post(self.base_url)
         self.assertEqual(response.status_code, status.HTTP_401_UNAUTHORIZED)

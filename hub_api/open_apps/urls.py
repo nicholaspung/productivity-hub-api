@@ -23,9 +23,6 @@ router.register(r'useranalyticthresholds', fba_views.UserAnalyticThresholdViewSe
 router.register(r'vices', v_views.ViceViewSet, basename='Vice')
 router.register(r'viceanalytics', v_views.ViceAnalyticViewSet,
                 basename='ViceAnalytic')
-router.register(r'vicethresholds',
-                v_views.ViceThresholdViewSet, basename='ViceThreshold')
-
 
 urlpatterns = [
     path('', include(router.urls)),
