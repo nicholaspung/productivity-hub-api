@@ -9,7 +9,7 @@ class AppTestCase(APITestCase):
     base_url = reverse('apps')
 
     def setUp(self):
-        populate_apps()
+        populate_apps(text=False)
 
     def test_app_list(self):
         apps = App.objects.all()

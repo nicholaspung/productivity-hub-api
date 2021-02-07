@@ -41,7 +41,11 @@ def create_dailies_according_to_weekdays(user, obj_date):
         weekday_values = {6: 'Sun', 0: 'Mon', 1: 'Tue',
                           2: 'Wed', 3: 'Thu', 4: 'Fri', 5: 'Sat'}
         current_weekday = obj_date.weekday()
-        if weekday_values[current_weekday] in habit.weekdays.split(','):
+
+        weekday_in_weekdays = weekday_values[current_weekday] in habit.weekdays.split(
+            ',')
+        created_before_day = habit.date_created.date() <= obj_date
+        if weekday_in_weekdays and created_before_day:
             Daily.objects.get_or_create(
                 habit=habit, date=obj_date, user=user)
 

@@ -42,7 +42,7 @@ class ProfileTestCase(APITestCase):
     base_url = "/api/profile/"
 
     def setUp(self):
-        populate_apps()
+        populate_apps(text=False)
         app = App.objects.all()[0]
         self.user = User.objects.create_user(
             username=TEST_USERNAME, password=TEST_PASSWORD)

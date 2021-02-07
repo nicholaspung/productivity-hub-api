@@ -1,11 +1,10 @@
 from django.test import TestCase
-from rest_framework.response import Response
 from rest_framework import status
 from open_apps.models.habit_tracker import Todo, Habit, Daily
 from open_apps.serializers.habit_tracker_serializers import TodoSerializer, HabitSerializer
-from open_apps.utils import habit_tracker_utils, date_utils
+from open_apps.utils import habit_tracker_utils
 from django.contrib.auth import get_user_model
-from datetime import date
+from datetime import date, datetime, timezone
 
 User = get_user_model()
 TEST_USERNAME = "testcase"
@@ -63,7 +62,11 @@ class HabitTrackerUtilTestCase(TestCase):
     def test_create_dailies_according_to_weekdays(self):
         habit1 = Habit(name="habit1", user=self.user, weekdays="Sat")
         habit1.save()
+        habit1.date_created = datetime(2020, 1, 2, tzinfo=timezone.utc)
+        habit1.save()
         habit2 = Habit(name="habit2", user=self.user, archived=True)
+        habit2.save()
+        habit2.date_created = datetime(2021, 1, 2, tzinfo=timezone.utc)
         habit2.save()
         date1 = date(2021, 1, 2)
         habit_tracker_utils.create_dailies_according_to_weekdays(
@@ -73,7 +76,7 @@ class HabitTrackerUtilTestCase(TestCase):
 
         date2 = date(2021, 1, 3)
         habit_tracker_utils.create_dailies_according_to_weekdays(
-            self.user, date1)
+            self.user, date2)
         self.assertEqual(
             len(Daily.objects.filter(user=self.user, date=date2)), 0)
 
@@ -85,8 +88,18 @@ class HabitTrackerUtilTestCase(TestCase):
         self.assertEqual(
             len(Daily.objects.filter(user=self.user, date=date3)), 1)
 
+        date4 = date(2021, 1, 5)
+        habit2.date_created = datetime(2021, 1, 7, tzinfo=timezone.utc)
+        habit2.save()
+        habit_tracker_utils.create_dailies_according_to_weekdays(
+            self.user, date4)
+        self.assertEqual(
+            len(Daily.objects.filter(user=self.user, date=date4)), 0)
+
     def test_get_timeframe_queryset(self):
         habit = Habit(name="habit", user=self.user)
+        habit.save()
+        habit.date_created = datetime(2019, 1, 2, tzinfo=timezone.utc)
         habit.save()
         single_day = (date(2021, 1, 1), '2021-01-01')
         request = FakeClass()

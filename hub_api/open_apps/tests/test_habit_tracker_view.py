@@ -1,11 +1,8 @@
-from datetime import date
+from datetime import date, datetime, timezone
 
 from django.contrib.auth import get_user_model
 from open_apps.models.habit_tracker import (ENUM_PRIORITY_CHOICES, Daily,
-                                            Habit, Todo)
-from open_apps.serializers.habit_tracker_serializers import (DailySerializer,
-                                                             HabitSerializer,
-                                                             TodoSerializer)
+                                            Habit)
 from open_apps.utils.date_utils import get_date
 from rest_framework import status
 from rest_framework.test import APITestCase
@@ -233,6 +230,12 @@ def create_today_date(date_obj):
     return f"{date_obj.year}-{month}-{day}"
 
 
+def make_sample_habit_in_the_past(response, year=2018):
+    data = Habit.objects.get(pk=response.data["id"])
+    data.date_created = datetime(year, 1, 1, tzinfo=timezone.utc)
+    data.save()
+
+
 class DailyTestCase(APITestCase):
     base_url = "/api/dailies/"
     habit_url = '/api/habits/'
@@ -247,8 +250,11 @@ class DailyTestCase(APITestCase):
         # Same day
         habit1 = create_sample_habit()
         habit2 = create_sample_habit()
-        self.client.post(self.habit_url, data=habit1)
-        self.client.post(self.habit_url, data=habit2)
+        make_sample_habit_in_the_past(
+            self.client.post(self.habit_url, data=habit1))
+        make_sample_habit_in_the_past(
+            self.client.post(self.habit_url, data=habit2))
+
         response = self.client.post(f"{self.base_url}?date={self.today}")
         daily1Id = response.data[0]['id']
         response2 = self.client.put(
@@ -270,8 +276,10 @@ class DailyTestCase(APITestCase):
     def test_daily_list_view(self):
         habit1 = create_sample_habit()
         habit2 = create_sample_habit()
-        self.client.post(self.habit_url, data=habit1)
-        self.client.post(self.habit_url, data=habit2)
+        make_sample_habit_in_the_past(
+            self.client.post(self.habit_url, data=habit1))
+        make_sample_habit_in_the_past(
+            self.client.post(self.habit_url, data=habit2))
         response = self.client.post(f"{self.base_url}?date={self.today}")
         self.assertEqual(
             response.data[0]["habit"]["name"], habit1["name"])
@@ -281,7 +289,8 @@ class DailyTestCase(APITestCase):
 
         habit3 = create_sample_habit()
         habit3['weekdays'] = 'Mon,Tue'
-        self.client.post(self.habit_url, data=habit3)
+        make_sample_habit_in_the_past(
+            self.client.post(self.habit_url, data=habit3))
         # 2020-11-08 is a Sunday
         response2 = self.client.post(f"{self.base_url}?date=2020-11-08")
         self.assertEqual(len(response2.data), 2)
@@ -294,8 +303,10 @@ class DailyTestCase(APITestCase):
     def test_daily_week_list_view(self):
         habit1 = create_sample_habit()
         habit2 = create_sample_habit()
-        self.client.post(self.habit_url, data=habit1)
-        self.client.post(self.habit_url, data=habit2)
+        make_sample_habit_in_the_past(
+            self.client.post(self.habit_url, data=habit1))
+        make_sample_habit_in_the_past(
+            self.client.post(self.habit_url, data=habit2))
         habit1_instance = Habit.objects.get(pk=1)
         create_sample_daily(habit=habit1_instance,
                             user=self.user, date="2020-01-01")
@@ -318,8 +329,10 @@ class DailyTestCase(APITestCase):
     def test_daily_month_list_view(self):
         habit1 = create_sample_habit()
         habit2 = create_sample_habit()
-        self.client.post(self.habit_url, data=habit1)
-        self.client.post(self.habit_url, data=habit2)
+        make_sample_habit_in_the_past(
+            self.client.post(self.habit_url, data=habit1))
+        make_sample_habit_in_the_past(
+            self.client.post(self.habit_url, data=habit2))
         habit1_instance = Habit.objects.get(pk=1)
         create_sample_daily(habit=habit1_instance,
                             user=self.user, date="2020-01-01")
@@ -342,8 +355,10 @@ class DailyTestCase(APITestCase):
     def test_daily_year_list_view(self):
         habit1 = create_sample_habit()
         habit2 = create_sample_habit()
-        self.client.post(self.habit_url, data=habit1)
-        self.client.post(self.habit_url, data=habit2)
+        make_sample_habit_in_the_past(
+            self.client.post(self.habit_url, data=habit1))
+        make_sample_habit_in_the_past(
+            self.client.post(self.habit_url, data=habit2))
         habit1_instance = Habit.objects.get(pk=1)
         create_sample_daily(habit=habit1_instance,
                             user=self.user, date="2019-01-01")
@@ -366,8 +381,10 @@ class DailyTestCase(APITestCase):
     def test_daily_detail_edit(self):
         habit1 = create_sample_habit()
         habit2 = create_sample_habit()
-        self.client.post(self.habit_url, data=habit1)
-        self.client.post(self.habit_url, data=habit2)
+        make_sample_habit_in_the_past(
+            self.client.post(self.habit_url, data=habit1))
+        make_sample_habit_in_the_past(
+            self.client.post(self.habit_url, data=habit2))
         response = self.client.post(f"{self.base_url}?date={self.today}")
         self.assertEqual(response.status_code, status.HTTP_201_CREATED)
         first_daily_id = response.data[0]["id"]

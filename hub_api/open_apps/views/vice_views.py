@@ -14,7 +14,7 @@ from rest_framework.response import Response
 
 class ViceViewSet(viewsets.ModelViewSet):
     """
-    This view provides the `create`, `update`, and `delete` actions.
+    This view provides the `retrieve`, `create`, `update`, and `delete` actions.
     """
     serializer_class = ViceSerializer
     permission_classes = IsAuthenticatedAndOwner
@@ -29,13 +29,10 @@ class ViceViewSet(viewsets.ModelViewSet):
     def list(self, request):
         return unused_method()
 
-    def retrieve(self, request):
-        return unused_method()
-
 
 class ViceAnalyticViewSet(viewsets.ModelViewSet):
     """
-    This view provides the `list`, `create`, and `update` actions.
+    This view provides the `create` and `update` actions.
     """
     serializer_class = ViceAnalyticSerializer
     permission_classes = IsAuthenticatedAndOwner
@@ -64,4 +61,7 @@ class ViceAnalyticViewSet(viewsets.ModelViewSet):
         return super().partial_update(n_s, *args, **kwargs)
 
     def destroy(self, request):
+        return unused_method()
+
+    def list(self, request):
         return unused_method()
