@@ -45,6 +45,12 @@ class ViceTestCase(APITestCase):
             response3.data["time_between"], updated_vice2["time_between"])
         self.assertEqual(response3.status_code, status.HTTP_200_OK)
 
+        updated_vice3 = {"archived": True}
+        response4 = self.client.patch(
+            f"{self.base_url}{response_id}/", data=updated_vice3)
+        self.assertEqual(response4.data["archived"], updated_vice3["archived"])
+        self.assertEqual(response4.status_code, status.HTTP_200_OK)
+
     def test_vice_detail_delete(self):
         response = self.client.post(self.base_url, data=self.sample_vice)
         response_id = response.data["id"]
@@ -84,6 +90,13 @@ class ViceAnalyticTestCase(APITestCase):
         response2 = self.client.post(self.base_url)
         self.assertEqual(len(response2.data), 1)
 
+        new_vice = self.sample_vice.copy()
+        new_vice["archived"] = True
+        self.client.post(self.vice_url, data=new_vice)
+
+        response3 = self.client.post(self.base_url)
+        self.assertEqual(len(response3.data), 1)
+
     def test_vice_analytic_detail_update(self):
         self.client.post(self.vice_url, data=self.sample_vice)
         self.client.post(self.base_url)
@@ -91,11 +104,11 @@ class ViceAnalyticTestCase(APITestCase):
 
         id_1 = response.data[0]["id"]
         response2 = self.client.patch(
-            f"{self.base_url}{id_1}/", data={"hi": "there"})
+            f"{self.base_url}{id_1}/", data={"hi": "there", "frequency": 1})
         self.assertEqual(response2.data["frequency"], 1)
         self.assertEqual(response2.status_code, status.HTTP_200_OK)
         response3 = self.client.patch(
-            f"{self.base_url}{id_1}/")
+            f"{self.base_url}{id_1}/", data={"frequency": 2})
         self.assertEqual(response3.data["frequency"], 2)
         self.assertEqual(response3.status_code, status.HTTP_200_OK)
 

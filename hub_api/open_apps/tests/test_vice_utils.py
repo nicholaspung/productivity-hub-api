@@ -35,3 +35,21 @@ class SampleTestCase(TestCase):
         vice_utils.create_vice_analytic(vice2, self.user, today)
         viceAnalytic2v2 = ViceAnalytic.objects.filter(vice=vice2)
         self.assertEqual(len(viceAnalytic2v2), 1)
+
+    def test_create_unarchived_vice_analytics(self):
+        vice1 = Vice(name="hi", link="hi link", user=self.user)
+        vice1.save()
+        vice2 = Vice(name="bye", link="bye link",
+                     user=self.user, archived=True)
+        vice2.save()
+        today = date.today()
+
+        vice_utils.create_unarchived_vice_analytics(self.user, today)
+        viceAnalytics = ViceAnalytic.objects.filter(date=today)
+        self.assertEqual(len(viceAnalytics), 1)
+
+        vice3 = Vice(name="bye1", link="bye1 link", user=self.user)
+        vice3.save()
+        vice_utils.create_unarchived_vice_analytics(self.user, today)
+        viceAnalytics2 = ViceAnalytic.objects.filter(date=today)
+        self.assertEqual(len(viceAnalytics2), 2)

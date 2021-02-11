@@ -7,7 +7,7 @@ from open_apps.serializers.vice_serializers import (ViceAnalyticSerializer,
                                                     ViceSerializer)
 from open_apps.utils.api_utils import unused_method
 from open_apps.utils.date_utils import get_date
-from open_apps.utils.vice_utils import create_vice_analytic
+from open_apps.utils.vice_utils import create_unarchived_vice_analytics
 from rest_framework import status, viewsets
 from rest_framework.response import Response
 
@@ -45,20 +45,11 @@ class ViceAnalyticViewSet(viewsets.ModelViewSet):
     def create(self, request, *args, **kwargs):
         obj_date = get_date(self.request.query_params)
         user = self.request.user
-        vices = Vice.objects.filter(user=user, archived=False)
-        for vice in vices:
-            create_vice_analytic(vice, user, obj_date)
+        create_unarchived_vice_analytics(user, obj_date)
 
         vice_analytics = ViceAnalytic.objects.filter(user=user, date=obj_date)
         serialized = ViceAnalyticSerializer(vice_analytics, many=True)
         return Response(serialized.data, status=status.HTTP_201_CREATED)
-
-    def partial_update(self, request, *args, **kwargs):
-        instance = self.get_object()
-        frequency = instance.frequency + 1
-        request_replacement = {"data": {"frequency": frequency}}
-        n_s = SimpleNamespace(**request_replacement)
-        return super().partial_update(n_s, *args, **kwargs)
 
     def destroy(self, request):
         return unused_method()
