@@ -1,4 +1,4 @@
-from open_apps.models.habit_tracker import (ENUM_PRIORITY_CHOICES, Daily,
+from open_apps.models.habit_tracker import (Daily,
                                             Habit, Todo)
 from rest_framework import serializers
 

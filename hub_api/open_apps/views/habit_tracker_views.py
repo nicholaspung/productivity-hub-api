@@ -1,3 +1,4 @@
+import logging
 from datetime import date
 
 from open_apps.authentication import GeneralAuthentication
@@ -10,9 +11,11 @@ from open_apps.utils.api_utils import unused_method
 from open_apps.utils.date_utils import get_date
 from open_apps.utils.habit_tracker_utils import (
     create_dailies_according_to_weekdays, get_timeframe_queryset, reorder,
-    sanitize_habits_weekdays)
+    sanitize_habits_weekdays, get_excluded_todo_items)
 from rest_framework import status, viewsets
 from rest_framework.response import Response
+
+logger = logging.getLogger(__file__)
 
 
 class TodoViewSet(viewsets.ModelViewSet):
@@ -28,6 +31,9 @@ class TodoViewSet(viewsets.ModelViewSet):
     authentication_classes = GeneralAuthentication
 
     def get_queryset(self):
+        filter_obj = get_excluded_todo_items(self.request)
+        if filter_obj:
+            return Todo.objects.filter(user=self.request.user).exclude(**filter_obj)
         return Todo.objects.filter(user=self.request.user)
 
     def perform_create(self, serializer):

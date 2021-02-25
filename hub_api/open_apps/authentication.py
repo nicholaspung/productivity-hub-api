@@ -2,7 +2,6 @@ import os
 
 import firebase_admin
 from django.contrib.auth import get_user_model
-from django.db.utils import IntegrityError
 from firebase_admin import auth, credentials
 from rest_framework import authentication
 from rest_framework.authentication import SessionAuthentication

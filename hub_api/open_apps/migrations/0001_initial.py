@@ -11,6 +11,7 @@ class Migration(migrations.Migration):
 
     dependencies = [
         migrations.swappable_dependency(settings.AUTH_USER_MODEL),
+        ('post_saver', '0006_auto_20201129_2151')
     ]
 
     state_operations = [

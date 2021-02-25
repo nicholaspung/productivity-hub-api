@@ -1,3 +1,4 @@
+import logging
 from django.contrib.auth import get_user_model
 from django.http import Http404
 from open_apps.authentication import GeneralAuthentication
@@ -17,6 +18,8 @@ from rest_framework.generics import DestroyAPIView, ListCreateAPIView
 from rest_framework.response import Response
 
 User = get_user_model()
+
+logger = logging.getLogger(__file__)
 
 
 class UserAPIView(DestroyAPIView):

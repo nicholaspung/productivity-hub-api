@@ -20,3 +20,4 @@ class SavedPost(models.Model):
     seen = models.BooleanField(default=False)
     user = models.ForeignKey(
         'auth.User', on_delete=models.CASCADE, related_name='savedposts')
+    date = models.DateField(auto_now_add=True)

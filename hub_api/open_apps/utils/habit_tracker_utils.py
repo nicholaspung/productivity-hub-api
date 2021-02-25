@@ -1,5 +1,5 @@
 from types import SimpleNamespace
-from datetime import date
+from datetime import date, datetime, timedelta, timezone
 
 from open_apps.models.habit_tracker import Daily, Habit
 from open_apps.utils.date_utils import (get_date, get_month_range,
@@ -73,3 +73,10 @@ def get_timeframe_queryset(request):
         qs = Daily.objects.filter(user=user, date=date.today())
 
     return qs
+
+
+def get_excluded_todo_items(request):
+    date_finished = request.query_params.get('date_finished', None)
+    if not date_finished:
+        return {'date_finished__lte': datetime.now(tz=timezone.utc) - timedelta(days=30)}
+    return None

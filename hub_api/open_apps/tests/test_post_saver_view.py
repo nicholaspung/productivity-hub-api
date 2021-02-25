@@ -1,8 +1,5 @@
 from django.contrib.auth import get_user_model
-from open_apps.models.post_saver import Post, SavedPost, Title
-from open_apps.serializers.post_saver_serializers import (PostSerializer,
-                                                          SavedPostSerializer,
-                                                          TitleSerializer)
+from open_apps.models.post_saver import Post, Title
 from rest_framework import status
 from rest_framework.test import APITestCase
 

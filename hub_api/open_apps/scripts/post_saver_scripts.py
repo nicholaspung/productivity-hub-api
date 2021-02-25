@@ -24,12 +24,10 @@ def subreddit_scraper():
             post_list = subreddit_data['data']['children']
             for post in post_list:
                 post_data = post['data']
-                title = post_data['title']
-                if len(title) > 150:
-                    title = title[:150]
+                title = post_data['title'][:150]
                 post_obj = {
                     'reddit_id': post_data['id'],
-                    'title': post_data['title'],
+                    'title': title,
                     'url': post_data['url']
                 }
                 try:
@@ -61,7 +59,8 @@ def genkan_website_scraper():
                 image_content = title.select('.badge.badge-md')
                 title_content = title.select('.list-title.ajax')
                 chapter = image_content[0].contents[0].replace("\n", "")
-                manga_title = title_content[0].contents[0].replace("\n", "")
+                manga_title = title_content[0].contents[0].replace("\n", "")[
+                    :140]
                 url = image_content[0].parent['href']
                 final_title = f"{manga_title} {chapter}"
                 post_obj = {
@@ -84,9 +83,7 @@ def delete_old_posts():
     This job deletes posts that are older than 1 week
     """
     one_week_ago = date.today() - timedelta(days=7)
-    thirty_days_ago = date.today() - timedelta(days=30)
-    Post.objects.filter(date__range=(
-        thirty_days_ago, one_week_ago)).delete()
+    Post.objects.filter(date__lte=one_week_ago).delete()
 
     db.connections.close_all()
 
@@ -96,8 +93,6 @@ def delete_old_seen_saved_posts():
     This job deletes old seen saved posts that older than 2 weeks
     '''
     two_weeks_ago = date.today() - timedelta(days=14)
-    thirty_days_ago = date.today() - timedelta(days=30)
-    SavedPost.objects.filter(date__range=(
-        thirty_days_ago, two_weeks_ago)).delete()
+    SavedPost.objects.filter(date__lte=two_weeks_ago, seen=True).delete()
 
     db.connections.close_all()

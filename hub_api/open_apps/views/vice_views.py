@@ -1,5 +1,4 @@
-from types import SimpleNamespace
-
+import logging
 from open_apps.authentication import GeneralAuthentication
 from open_apps.models.vice import Vice, ViceAnalytic
 from open_apps.permissions import IsAuthenticatedAndOwner
@@ -10,6 +9,8 @@ from open_apps.utils.date_utils import get_date
 from open_apps.utils.vice_utils import create_unarchived_vice_analytics
 from rest_framework import status, viewsets
 from rest_framework.response import Response
+
+logger = logging.getLogger(__file__)
 
 
 class ViceViewSet(viewsets.ModelViewSet):

@@ -1,4 +1,4 @@
-from django.core.management.base import BaseCommand, CommandError
+from django.core.management.base import BaseCommand
 from open_apps.scripts.post_saver_scripts import delete_old_seen_saved_posts
 
 
