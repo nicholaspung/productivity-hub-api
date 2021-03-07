@@ -77,8 +77,8 @@ See the project page [here](https://github.com/nicholaspung/productivity-hub-api
 
    - `*/30 * * * *` /path/to/script/runevery30minutes
    - `0 */3 * * *` /path/to/script/runevery3hours
-   - `0 * * * 0` /path/to/script/runeveryweek
-   - `0 * 1/16 * *` /path/to/script/runevery2weeks (2 times a month, rather than every 2 weeks)
+   - `0 0 * * 0` /path/to/script/runeveryweek
+   - `0 * 1,16 * *` /path/to/script/runevery2weeks (2 times a month, rather than every 2 weeks)
 
    - You can also set outputs to files by attaching `>> /path/to/log/sample.log 2>&1`. This is good for debugging why your script isn't running
 

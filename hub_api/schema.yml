@@ -1327,15 +1327,21 @@ paths:
                 items:
                   properties:
                     user:
-                      type: integer
+                      type: string
+                      readOnly: true
                     is_anonymous:
                       type: boolean
                     apps:
                       type: array
                       items:
                         type: integer
+                    id:
+                      type: integer
+                      readOnly: true
+                    email:
+                      type: string
+                      readOnly: true
                   required:
-                  - user
                   - apps
           description: ''
     post:
@@ -1347,8 +1353,6 @@ paths:
           application/json:
             schema: &id016
               properties:
-                user:
-                  type: integer
                 is_anonymous:
                   type: boolean
                 apps:
@@ -1356,7 +1360,6 @@ paths:
                   items:
                     type: integer
               required:
-              - user
               - apps
           application/x-www-form-urlencoded:
             schema: *id016
@@ -1369,15 +1372,21 @@ paths:
               schema:
                 properties:
                   user:
-                    type: integer
+                    type: string
+                    readOnly: true
                   is_anonymous:
                     type: boolean
                   apps:
                     type: array
                     items:
                       type: integer
+                  id:
+                    type: integer
+                    readOnly: true
+                  email:
+                    type: string
+                    readOnly: true
                 required:
-                - user
                 - apps
           description: ''
   /api/profile/{id}/:
@@ -1398,15 +1407,21 @@ paths:
               schema:
                 properties:
                   user:
-                    type: integer
+                    type: string
+                    readOnly: true
                   is_anonymous:
                     type: boolean
                   apps:
                     type: array
                     items:
                       type: integer
+                  id:
+                    type: integer
+                    readOnly: true
+                  email:
+                    type: string
+                    readOnly: true
                 required:
-                - user
                 - apps
           description: ''
     put:
@@ -1424,8 +1439,6 @@ paths:
           application/json:
             schema: &id017
               properties:
-                user:
-                  type: integer
                 is_anonymous:
                   type: boolean
                 apps:
@@ -1433,7 +1446,6 @@ paths:
                   items:
                     type: integer
               required:
-              - user
               - apps
           application/x-www-form-urlencoded:
             schema: *id017
@@ -1446,15 +1458,21 @@ paths:
               schema:
                 properties:
                   user:
-                    type: integer
+                    type: string
+                    readOnly: true
                   is_anonymous:
                     type: boolean
                   apps:
                     type: array
                     items:
                       type: integer
+                  id:
+                    type: integer
+                    readOnly: true
+                  email:
+                    type: string
+                    readOnly: true
                 required:
-                - user
                 - apps
           description: ''
     patch:
@@ -1472,8 +1490,6 @@ paths:
           application/json:
             schema: &id018
               properties:
-                user:
-                  type: integer
                 is_anonymous:
                   type: boolean
                 apps:
@@ -1491,20 +1507,802 @@ paths:
               schema:
                 properties:
                   user:
-                    type: integer
+                    type: string
+                    readOnly: true
                   is_anonymous:
                     type: boolean
                   apps:
                     type: array
                     items:
                       type: integer
+                  id:
+                    type: integer
+                    readOnly: true
+                  email:
+                    type: string
+                    readOnly: true
                 required:
-                - user
                 - apps
           description: ''
     delete:
       operationId: destroyProfile
       description: This view provides the `list` and `partial_update` actions.
+      parameters:
+      - name: id
+        in: path
+        required: true
+        description: ''
+        schema:
+          type: string
+      responses:
+        '204':
+          description: ''
+  /api/useranalyticthresholds/:
+    get:
+      operationId: listUserAnalyticThresholds
+      description: This viewset provides `create` and `update` action.
+      parameters: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  properties:
+                    id:
+                      type: integer
+                      readOnly: true
+                    user:
+                      type: string
+                      readOnly: true
+                    label:
+                      type: string
+                      maxLength: 100
+                    threshold:
+                      type: integer
+                  required:
+                  - label
+          description: ''
+    post:
+      operationId: createUserAnalyticThreshold
+      description: This viewset provides `create` and `update` action.
+      parameters: []
+      requestBody:
+        content:
+          application/json:
+            schema: &id019
+              properties:
+                label:
+                  type: string
+                  maxLength: 100
+                threshold:
+                  type: integer
+              required:
+              - label
+          application/x-www-form-urlencoded:
+            schema: *id019
+          multipart/form-data:
+            schema: *id019
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                properties:
+                  id:
+                    type: integer
+                    readOnly: true
+                  user:
+                    type: string
+                    readOnly: true
+                  label:
+                    type: string
+                    maxLength: 100
+                  threshold:
+                    type: integer
+                required:
+                - label
+          description: ''
+  /api/useranalyticthresholds/{id}/:
+    get:
+      operationId: retrieveUserAnalyticThreshold
+      description: This viewset provides `create` and `update` action.
+      parameters:
+      - name: id
+        in: path
+        required: true
+        description: ''
+        schema:
+          type: string
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                properties:
+                  id:
+                    type: integer
+                    readOnly: true
+                  user:
+                    type: string
+                    readOnly: true
+                  label:
+                    type: string
+                    maxLength: 100
+                  threshold:
+                    type: integer
+                required:
+                - label
+          description: ''
+    put:
+      operationId: updateUserAnalyticThreshold
+      description: This viewset provides `create` and `update` action.
+      parameters:
+      - name: id
+        in: path
+        required: true
+        description: ''
+        schema:
+          type: string
+      requestBody:
+        content:
+          application/json:
+            schema: &id020
+              properties:
+                label:
+                  type: string
+                  maxLength: 100
+                threshold:
+                  type: integer
+              required:
+              - label
+          application/x-www-form-urlencoded:
+            schema: *id020
+          multipart/form-data:
+            schema: *id020
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                properties:
+                  id:
+                    type: integer
+                    readOnly: true
+                  user:
+                    type: string
+                    readOnly: true
+                  label:
+                    type: string
+                    maxLength: 100
+                  threshold:
+                    type: integer
+                required:
+                - label
+          description: ''
+    patch:
+      operationId: partial_updateUserAnalyticThreshold
+      description: This viewset provides `create` and `update` action.
+      parameters:
+      - name: id
+        in: path
+        required: true
+        description: ''
+        schema:
+          type: string
+      requestBody:
+        content:
+          application/json:
+            schema: &id021
+              properties:
+                label:
+                  type: string
+                  maxLength: 100
+                threshold:
+                  type: integer
+          application/x-www-form-urlencoded:
+            schema: *id021
+          multipart/form-data:
+            schema: *id021
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                properties:
+                  id:
+                    type: integer
+                    readOnly: true
+                  user:
+                    type: string
+                    readOnly: true
+                  label:
+                    type: string
+                    maxLength: 100
+                  threshold:
+                    type: integer
+                required:
+                - label
+          description: ''
+    delete:
+      operationId: destroyUserAnalyticThreshold
+      description: This viewset provides `create` and `update` action.
+      parameters:
+      - name: id
+        in: path
+        required: true
+        description: ''
+        schema:
+          type: string
+      responses:
+        '204':
+          description: ''
+  /api/vices/:
+    get:
+      operationId: listVices
+      description: This view provides the `retrieve`, `create`, `update`, and `delete`
+        actions.
+      parameters: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  properties:
+                    id:
+                      type: integer
+                      readOnly: true
+                    user:
+                      type: string
+                      readOnly: true
+                    name:
+                      type: string
+                      maxLength: 100
+                    link:
+                      type: string
+                      maxLength: 200
+                    archived:
+                      type: boolean
+                    time_between:
+                      type: string
+                  required:
+                  - name
+                  - link
+          description: ''
+    post:
+      operationId: createVice
+      description: This view provides the `retrieve`, `create`, `update`, and `delete`
+        actions.
+      parameters: []
+      requestBody:
+        content:
+          application/json:
+            schema: &id022
+              properties:
+                name:
+                  type: string
+                  maxLength: 100
+                link:
+                  type: string
+                  maxLength: 200
+                archived:
+                  type: boolean
+                time_between:
+                  type: string
+              required:
+              - name
+              - link
+          application/x-www-form-urlencoded:
+            schema: *id022
+          multipart/form-data:
+            schema: *id022
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                properties:
+                  id:
+                    type: integer
+                    readOnly: true
+                  user:
+                    type: string
+                    readOnly: true
+                  name:
+                    type: string
+                    maxLength: 100
+                  link:
+                    type: string
+                    maxLength: 200
+                  archived:
+                    type: boolean
+                  time_between:
+                    type: string
+                required:
+                - name
+                - link
+          description: ''
+  /api/vices/{id}/:
+    get:
+      operationId: retrieveVice
+      description: This view provides the `retrieve`, `create`, `update`, and `delete`
+        actions.
+      parameters:
+      - name: id
+        in: path
+        required: true
+        description: ''
+        schema:
+          type: string
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                properties:
+                  id:
+                    type: integer
+                    readOnly: true
+                  user:
+                    type: string
+                    readOnly: true
+                  name:
+                    type: string
+                    maxLength: 100
+                  link:
+                    type: string
+                    maxLength: 200
+                  archived:
+                    type: boolean
+                  time_between:
+                    type: string
+                required:
+                - name
+                - link
+          description: ''
+    put:
+      operationId: updateVice
+      description: This view provides the `retrieve`, `create`, `update`, and `delete`
+        actions.
+      parameters:
+      - name: id
+        in: path
+        required: true
+        description: ''
+        schema:
+          type: string
+      requestBody:
+        content:
+          application/json:
+            schema: &id023
+              properties:
+                name:
+                  type: string
+                  maxLength: 100
+                link:
+                  type: string
+                  maxLength: 200
+                archived:
+                  type: boolean
+                time_between:
+                  type: string
+              required:
+              - name
+              - link
+          application/x-www-form-urlencoded:
+            schema: *id023
+          multipart/form-data:
+            schema: *id023
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                properties:
+                  id:
+                    type: integer
+                    readOnly: true
+                  user:
+                    type: string
+                    readOnly: true
+                  name:
+                    type: string
+                    maxLength: 100
+                  link:
+                    type: string
+                    maxLength: 200
+                  archived:
+                    type: boolean
+                  time_between:
+                    type: string
+                required:
+                - name
+                - link
+          description: ''
+    patch:
+      operationId: partial_updateVice
+      description: This view provides the `retrieve`, `create`, `update`, and `delete`
+        actions.
+      parameters:
+      - name: id
+        in: path
+        required: true
+        description: ''
+        schema:
+          type: string
+      requestBody:
+        content:
+          application/json:
+            schema: &id024
+              properties:
+                name:
+                  type: string
+                  maxLength: 100
+                link:
+                  type: string
+                  maxLength: 200
+                archived:
+                  type: boolean
+                time_between:
+                  type: string
+          application/x-www-form-urlencoded:
+            schema: *id024
+          multipart/form-data:
+            schema: *id024
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                properties:
+                  id:
+                    type: integer
+                    readOnly: true
+                  user:
+                    type: string
+                    readOnly: true
+                  name:
+                    type: string
+                    maxLength: 100
+                  link:
+                    type: string
+                    maxLength: 200
+                  archived:
+                    type: boolean
+                  time_between:
+                    type: string
+                required:
+                - name
+                - link
+          description: ''
+    delete:
+      operationId: destroyVice
+      description: This view provides the `retrieve`, `create`, `update`, and `delete`
+        actions.
+      parameters:
+      - name: id
+        in: path
+        required: true
+        description: ''
+        schema:
+          type: string
+      responses:
+        '204':
+          description: ''
+  /api/viceanalytics/:
+    get:
+      operationId: listViceAnalytics
+      description: This view provides the `create` and `update` actions.
+      parameters: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  properties:
+                    id:
+                      type: integer
+                      readOnly: true
+                    frequency:
+                      type: integer
+                    date:
+                      type: string
+                      format: date
+                    vice:
+                      properties:
+                        id:
+                          type: integer
+                          readOnly: true
+                        name:
+                          type: string
+                          maxLength: 100
+                        link:
+                          type: string
+                          maxLength: 200
+                        archived:
+                          type: boolean
+                        time_between:
+                          type: string
+                        user:
+                          type: integer
+                      required:
+                      - name
+                      - link
+                      - user
+                      type: object
+                      readOnly: true
+                    last_updated:
+                      type: string
+                      format: date-time
+                      readOnly: true
+                  required:
+                  - date
+          description: ''
+    post:
+      operationId: createViceAnalytic
+      description: This view provides the `create` and `update` actions.
+      parameters: []
+      requestBody:
+        content:
+          application/json:
+            schema: &id025
+              properties:
+                frequency:
+                  type: integer
+                date:
+                  type: string
+                  format: date
+              required:
+              - date
+          application/x-www-form-urlencoded:
+            schema: *id025
+          multipart/form-data:
+            schema: *id025
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                properties:
+                  id:
+                    type: integer
+                    readOnly: true
+                  frequency:
+                    type: integer
+                  date:
+                    type: string
+                    format: date
+                  vice:
+                    properties:
+                      id:
+                        type: integer
+                        readOnly: true
+                      name:
+                        type: string
+                        maxLength: 100
+                      link:
+                        type: string
+                        maxLength: 200
+                      archived:
+                        type: boolean
+                      time_between:
+                        type: string
+                      user:
+                        type: integer
+                    required:
+                    - name
+                    - link
+                    - user
+                    type: object
+                    readOnly: true
+                  last_updated:
+                    type: string
+                    format: date-time
+                    readOnly: true
+                required:
+                - date
+          description: ''
+  /api/viceanalytics/{id}/:
+    get:
+      operationId: retrieveViceAnalytic
+      description: This view provides the `create` and `update` actions.
+      parameters:
+      - name: id
+        in: path
+        required: true
+        description: ''
+        schema:
+          type: string
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                properties:
+                  id:
+                    type: integer
+                    readOnly: true
+                  frequency:
+                    type: integer
+                  date:
+                    type: string
+                    format: date
+                  vice:
+                    properties:
+                      id:
+                        type: integer
+                        readOnly: true
+                      name:
+                        type: string
+                        maxLength: 100
+                      link:
+                        type: string
+                        maxLength: 200
+                      archived:
+                        type: boolean
+                      time_between:
+                        type: string
+                      user:
+                        type: integer
+                    required:
+                    - name
+                    - link
+                    - user
+                    type: object
+                    readOnly: true
+                  last_updated:
+                    type: string
+                    format: date-time
+                    readOnly: true
+                required:
+                - date
+          description: ''
+    put:
+      operationId: updateViceAnalytic
+      description: This view provides the `create` and `update` actions.
+      parameters:
+      - name: id
+        in: path
+        required: true
+        description: ''
+        schema:
+          type: string
+      requestBody:
+        content:
+          application/json:
+            schema: &id026
+              properties:
+                frequency:
+                  type: integer
+                date:
+                  type: string
+                  format: date
+              required:
+              - date
+          application/x-www-form-urlencoded:
+            schema: *id026
+          multipart/form-data:
+            schema: *id026
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                properties:
+                  id:
+                    type: integer
+                    readOnly: true
+                  frequency:
+                    type: integer
+                  date:
+                    type: string
+                    format: date
+                  vice:
+                    properties:
+                      id:
+                        type: integer
+                        readOnly: true
+                      name:
+                        type: string
+                        maxLength: 100
+                      link:
+                        type: string
+                        maxLength: 200
+                      archived:
+                        type: boolean
+                      time_between:
+                        type: string
+                      user:
+                        type: integer
+                    required:
+                    - name
+                    - link
+                    - user
+                    type: object
+                    readOnly: true
+                  last_updated:
+                    type: string
+                    format: date-time
+                    readOnly: true
+                required:
+                - date
+          description: ''
+    patch:
+      operationId: partial_updateViceAnalytic
+      description: This view provides the `create` and `update` actions.
+      parameters:
+      - name: id
+        in: path
+        required: true
+        description: ''
+        schema:
+          type: string
+      requestBody:
+        content:
+          application/json:
+            schema: &id027
+              properties:
+                frequency:
+                  type: integer
+                date:
+                  type: string
+                  format: date
+          application/x-www-form-urlencoded:
+            schema: *id027
+          multipart/form-data:
+            schema: *id027
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                properties:
+                  id:
+                    type: integer
+                    readOnly: true
+                  frequency:
+                    type: integer
+                  date:
+                    type: string
+                    format: date
+                  vice:
+                    properties:
+                      id:
+                        type: integer
+                        readOnly: true
+                      name:
+                        type: string
+                        maxLength: 100
+                      link:
+                        type: string
+                        maxLength: 200
+                      archived:
+                        type: boolean
+                      time_between:
+                        type: string
+                      user:
+                        type: integer
+                    required:
+                    - name
+                    - link
+                    - user
+                    type: object
+                    readOnly: true
+                  last_updated:
+                    type: string
+                    format: date-time
+                    readOnly: true
+                required:
+                - date
+          description: ''
+    delete:
+      operationId: destroyViceAnalytic
+      description: This view provides the `create` and `update` actions.
       parameters:
       - name: id
         in: path
@@ -1605,7 +2403,6 @@ paths:
                           type: integer
                       required:
                       - label
-                      - threshold
                       type: object
                       readOnly: true
           description: ''
@@ -1616,7 +2413,7 @@ paths:
       requestBody:
         content:
           application/json:
-            schema: &id019
+            schema: &id028
               properties:
                 frequency:
                   type: integer
@@ -1624,9 +2421,9 @@ paths:
                   type: string
                   maxLength: 100
           application/x-www-form-urlencoded:
-            schema: *id019
+            schema: *id028
           multipart/form-data:
-            schema: *id019
+            schema: *id028
       responses:
         '200':
           content:
@@ -1666,9 +2463,50 @@ paths:
                         type: integer
                     required:
                     - label
-                    - threshold
                     type: object
                     readOnly: true
+          description: ''
+  /api/apps/:
+    get:
+      operationId: listApps
+      description: This view provides the `list` action.
+      parameters: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  properties:
+                    title:
+                      type: string
+                      readOnly: true
+                    users:
+                      type: array
+                      items:
+                        properties:
+                          user:
+                            type: string
+                            readOnly: true
+                          is_anonymous:
+                            type: boolean
+                          apps:
+                            type: array
+                            items:
+                              type: integer
+                          id:
+                            type: integer
+                            readOnly: true
+                          email:
+                            type: string
+                            readOnly: true
+                        required:
+                        - apps
+                      readOnly: true
+                    id:
+                      type: integer
+                      readOnly: true
           description: ''
   /api/user/{id}/:
     delete:
