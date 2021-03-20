@@ -10,6 +10,8 @@ from open_apps.exceptions import FirebaseError, InvalidAuthToken, NoAuthToken
 from open_apps.models.firebase_auth import Profile
 from open_apps.models.app import App, APPS
 
+from open_apps.scripts.populate_anonymous_account import populate_anonymous_account
+
 User = get_user_model()
 
 
@@ -55,24 +57,27 @@ class FirebaseAuthentication(authentication.BaseAuthentication):
         except Exception:
             raise FirebaseError() from None
 
-        user, _ = User.objects.get_or_create(username=uid)
+        user, user_created = User.objects.get_or_create(username=uid)
         if email and user.email != email:
             user.email = email
             user.save()
 
-        profile, created = Profile.objects.get_or_create(
+        profile, profile_created = Profile.objects.get_or_create(
             user=user)
 
         if profile.is_anonymous != is_anonymous:
             profile.is_anonymous = is_anonymous
             profile.save()
 
+            if user_created:
+                populate_anonymous_account(user)
+
         if email and not profile.email:
             profile.email = email
             profile.save()
 
         # Default app added is Habit Tracker (1)
-        if created:
+        if profile_created:
             app = App.objects.get(title=APPS[0])
             user.profile.apps.add(app)
 
