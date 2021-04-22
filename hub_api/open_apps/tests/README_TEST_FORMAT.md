@@ -54,6 +54,14 @@ Example utility test case:
 ```
 from django.test import TestCase
 
+User = get_user_model()
+TEST_USERNAME = "testcase"
+TEST_PASSWORD = "strong_password_123"
+
+
+class FakeClass():
+    hi = 'hi'
+
 
 class SampleTestCase(TestCase):
     '''

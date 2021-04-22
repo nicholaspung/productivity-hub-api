@@ -53,21 +53,27 @@ class ProfileTestCase(APITestCase):
     def test_profile_detail_list(self):
         response = self.client.get(self.base_url)
         self.assertEqual(response.status_code, status.HTTP_200_OK)
-        apps = [app.id for app in App.objects.filter(title=DEFAULT_APPS[0])]
+        apps = [{'id': app.id, 'title': app.title}
+                for app in App.objects.filter(title=DEFAULT_APPS[0])]
         self.assertEqual(response.data['apps'], apps)
+        self.assertEqual('app_preferences' in response.data, True)
 
     def test_profile_detail_update(self):
-        apps = [app.id for app in App.objects.all()[:3]]
+        test_apps = App.objects.all()[:3]
+        apps_id = [app.id for app in test_apps]
         response = self.client.patch(
-            f"{self.base_url}{self.user.id}/", data={"apps": apps})
+            f"{self.base_url}{self.user.id}/", data={"apps": apps_id})
         self.assertEqual(response.status_code, status.HTTP_200_OK)
-        self.assertEqual(response.data['apps'], apps)
+        apps_data = [{'id': app.id, 'title': app.title} for app in test_apps]
+        self.assertEqual(response.data['apps'], apps_data)
 
-        apps2 = [app.id for app in App.objects.all()[:1]]
+        test_apps2 = App.objects.all()[:1]
+        apps2_id = [app.id for app in test_apps2]
         response2 = self.client.patch(
-            f"{self.base_url}{self.user.id}/", data={"apps": apps2})
+            f"{self.base_url}{self.user.id}/", data={"apps": apps2_id})
         self.assertEqual(response2.status_code, status.HTTP_200_OK)
-        self.assertEqual(response2.data['apps'], apps2)
+        apps2_data = [{'id': app.id, 'title': app.title} for app in test_apps2]
+        self.assertEqual(response2.data['apps'], apps2_data)
 
     def test_unauthenticated(self):
         self.client.force_authenticate(user=None)

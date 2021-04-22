@@ -46,7 +46,6 @@ def create_dailies_according_to_weekdays(user, obj_date):
             ',')
         created_before_day = habit.date_created.date(
         ) <= obj_date or date.today() <= obj_date
-        print(created_before_day)
         if weekday_in_weekdays and created_before_day:
             Daily.objects.get_or_create(
                 habit=habit, date=obj_date, user=user)

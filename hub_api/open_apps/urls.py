@@ -7,6 +7,7 @@ from open_apps.views import habit_tracker_views as ht_views
 from open_apps.views import firebase_auth_views as fba_views
 from open_apps.views import vice_views as v_views
 from open_apps.views import app_views as a_views
+from open_apps.views import time_tracker_views as t_views
 from open_apps.scripts.ap_scheduler_post_saver import scheduler as ps_scheduler
 from open_apps.scripts.ap_scheduler_firebase_auth import scheduler as fba_scheduler
 
@@ -23,14 +24,20 @@ router.register(r'useranalyticthresholds', fba_views.UserAnalyticThresholdViewSe
 router.register(r'vices', v_views.ViceViewSet, basename='Vice')
 router.register(r'viceanalytics', v_views.ViceAnalyticViewSet,
                 basename='ViceAnalytic')
+router.register(r'tracktimename', t_views.TrackTimeNameViewSet,
+                basename='TrackTimeName')
+router.register(r'tracktime', t_views.TrackTimeViewSet,
+                basename='TrackTime')
 
 urlpatterns = [
     path('', include(router.urls)),
     path('user/<int:pk>/', fba_views.UserAPIView.as_view(), name="user-delete"),
-    path('posts/', ps_views.PostAPIView.as_view(), name="posts-view"),
+    path('posts/', ps_views.PostAPIView.as_view(), name="posts"),
     path('useranalytics/', fba_views.UserAnalyticAPIView.as_view(),
-         name="useranalytics-view"),
-    path('apps/', a_views.AppAPIView.as_view(), name="apps")
+         name="useranalytics"),
+    path('apps/', a_views.AppAPIView.as_view(), name="apps"),
+    path('tracktimepreferences/<int:pk>/', t_views.TimeTrackerPreferencesAPIView.as_view(),
+         name="time-tracker-preferences")
 ]
 
 if settings.DEBUG and not settings.FIRST_TIME:

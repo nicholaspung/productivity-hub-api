@@ -16,6 +16,10 @@ class IsOwnerOrReadOnly(permissions.BasePermission):
         if isinstance(obj, User):
             return obj == request.user
 
+        if not hasattr(obj, 'user'):
+            if hasattr(obj, 'profile'):
+                return obj.profile.user == request.user
+
         return obj.user == request.user
 
 

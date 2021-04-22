@@ -110,3 +110,11 @@ class Meta:
 ```
 
 for your table to be called 'xxxx'. By explicitly calling the db_table name, you bypass Django's auto-generated table names and gain control over your database naming conventions. (Not sure about any other operations you perform in a database)
+
+## To move back to a previous migration
+
+`python manage.py showmigrations`
+
+- Pick the migration you want to do back to
+
+`python manage.py migrate [app_name] [migration_you_want_to_revert_to]`

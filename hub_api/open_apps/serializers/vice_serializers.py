@@ -5,7 +5,7 @@ from rest_framework import serializers
 class ViceSerializer(serializers.ModelSerializer):
     class Meta:
         model = Vice
-        fields = ['id', 'user', 'name', 'link', 'archived', 'time_between']
+        fields = ['id', 'name', 'link', 'archived', 'time_between']
         read_only_fields = ['id', 'user']
 
 

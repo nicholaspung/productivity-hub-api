@@ -12,13 +12,13 @@ class PostSerializer(serializers.ModelSerializer):
 class TitleSerializer(serializers.ModelSerializer):
     class Meta:
         model = Title
-        fields = ['id', 'title', 'user']
+        fields = ['id', 'title']
         read_only_fields = ['user', 'id']
 
 
 class SavedPostSerializer(serializers.ModelSerializer):
     class Meta:
         model = SavedPost
-        fields = ['id', 'title', 'url', 'seen', 'user']
+        fields = ['id', 'title', 'url', 'seen']
         read_only_fields = ['user', 'id', 'title', 'url']
         ordering = ['id']
