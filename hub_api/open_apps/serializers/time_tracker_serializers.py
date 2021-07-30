@@ -14,8 +14,8 @@ class TrackTimeSerializer(serializers.ModelSerializer):
     class Meta:
         model = TrackTime
         fields = ['id', 'date', 'track_time_name', 'start_time',
-                  'end_time', 'total_time']
-        read_only_fields = ['id', 'user', 'total_time']
+                  'end_time', 'total_time', 'notes']
+        read_only_fields = ['id', 'user']
 
     def to_representation(self, instance):
         ret = super().to_representation(instance)

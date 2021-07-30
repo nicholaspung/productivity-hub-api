@@ -4,7 +4,7 @@ from rest_framework import status
 from datetime import datetime, timedelta
 from open_apps.models.firebase_auth import Profile
 from open_apps.scripts.populate_db import populate_apps
-from open_apps.models.app import DEFAULT_APPS, App
+from open_apps.models.app import App
 
 User = get_user_model()
 TEST_USERNAME = "testcase"
@@ -12,7 +12,7 @@ TEST_PASSWORD = "strong_password_123"
 
 
 class TrackTimeNameTestCase(APITestCase):
-    base_url = '/api/tracktimename/'
+    base_url = '/api/tracktimenames/'
     sample_track_time_name = {'name': 'samepl time tracker name'}
 
     def setUp(self):
@@ -32,7 +32,7 @@ class TrackTimeNameTestCase(APITestCase):
         self.client.post(self.base_url, data=self.sample_track_time_name)
         response = self.client.get(self.base_url)
         self.assertEqual(response.status_code, status.HTTP_200_OK)
-        self.assertEqual(len(response.data), 1)
+        self.assertEqual(len(response.data), 2)
         self.assertEqual(response.data[0]['name'],
                          self.sample_track_time_name['name'])
 
@@ -59,10 +59,10 @@ class TrackTimeNameTestCase(APITestCase):
             self.base_url, data=self.sample_track_time_name)
         obj_id = response.data['id']
         response2 = self.client.get(self.base_url)
-        self.assertEqual(len(response2.data), 1)
+        self.assertEqual(len(response2.data), 2)
         self.client.delete(f"{self.base_url}{obj_id}/")
         response3 = self.client.get(self.base_url)
-        self.assertEqual(len(response3.data), 0)
+        self.assertEqual(len(response3.data), 1)
 
     def test_unauthenticated(self):
         self.client.force_authenticate(user=None)
@@ -71,8 +71,8 @@ class TrackTimeNameTestCase(APITestCase):
 
 
 class TrackTimeTestCase(APITestCase):
-    base_url = '/api/tracktime/'
-    track_time_name_url = '/api/tracktimename/'
+    base_url = '/api/tracktimes/'
+    track_time_name_url = '/api/tracktimenames/'
     sample_track_time_name = {'name': 'sample track name'}
 
     def setUp(self):
@@ -103,11 +103,37 @@ class TrackTimeTestCase(APITestCase):
         self.assertEqual(
             response.data['start_time'], f"{track_time_name['start_time'].isoformat()}Z")
 
+        # only total time is given
+        track_time_name_copy = track_time_name.copy()
+        del track_time_name_copy['start_time']
+        track_time_name_copy['total_time'] = 1000
+        response2 = self.client.post(
+            self.base_url, data=track_time_name_copy)
+        self.assertEqual(response2.status_code, status.HTTP_201_CREATED)
+        self.assertEqual(response2.data['start_time'], None)
+        self.assertEqual(
+            response2.data['total_time'], track_time_name_copy['total_time'])
+
+        # both start time and end time are given
+        track_time_name_copy2 = track_time_name.copy()
+        right_now = datetime.now()
+        track_time_name_copy2['start_time'] = right_now
+        track_time_name_copy2['end_time'] = right_now + timedelta(hours=1)
+        response3 = self.client.post(
+            self.base_url, data=track_time_name_copy2)
+        self.assertEqual(response3.status_code, status.HTTP_201_CREATED)
+        self.assertEqual(
+            response3.data['start_time'], f"{track_time_name_copy2['start_time'].isoformat()}Z")
+        self.assertEqual(
+            response3.data['end_time'], f"{track_time_name_copy2['end_time'].isoformat()}Z")
+        self.assertEqual(response3.data['total_time'], 60 * 60)
+
     def test_track_time_list(self):
         today = datetime.now().date().isoformat()
         [response, _] = self.util_create_track_time_items(
             obj_date=today)
-        self.util_create_track_time_items()
+        self.util_create_track_time_items(
+            obj_data={'name': 'sample track name 2'})
         response2 = self.client.get(self.base_url)
         self.assertEqual(response2.status_code, status.HTTP_200_OK)
         self.assertEqual(len(response2.data), 1)

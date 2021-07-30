@@ -24,9 +24,9 @@ router.register(r'useranalyticthresholds', fba_views.UserAnalyticThresholdViewSe
 router.register(r'vices', v_views.ViceViewSet, basename='Vice')
 router.register(r'viceanalytics', v_views.ViceAnalyticViewSet,
                 basename='ViceAnalytic')
-router.register(r'tracktimename', t_views.TrackTimeNameViewSet,
+router.register(r'tracktimenames', t_views.TrackTimeNameViewSet,
                 basename='TrackTimeName')
-router.register(r'tracktime', t_views.TrackTimeViewSet,
+router.register(r'tracktimes', t_views.TrackTimeViewSet,
                 basename='TrackTime')
 
 urlpatterns = [

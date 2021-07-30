@@ -7,7 +7,7 @@ from open_apps.serializers.time_tracker_serializers import (
     TrackTimeNameSerializer, TrackTimeSerializer, TimeTrackerPreferencesSerializer)
 from open_apps.utils.api_utils import unused_method
 from open_apps.utils.date_utils import get_date
-from open_apps.utils.time_tracker_utils import get_archived_time_tracker_name_items
+from open_apps.utils.time_tracker_utils import get_archived_time_tracker_name_items, create_default_break_name
 from open_apps.models.firebase_auth import Profile
 from rest_framework import viewsets
 from rest_framework.generics import UpdateAPIView
@@ -25,6 +25,7 @@ class TrackTimeNameViewSet(viewsets.ModelViewSet):
 
     def get_queryset(self):
         is_archived = get_archived_time_tracker_name_items(self.request)
+        create_default_break_name(self.request)
         return TrackTimeName.objects.filter(user=self.request.user, archived=is_archived)
 
     def perform_create(self, serializer):
