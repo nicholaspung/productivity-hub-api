@@ -15,20 +15,18 @@ logger = logging.getLogger(__file__)
 
 class ViceViewSet(viewsets.ModelViewSet):
     """
-    This view provides the `retrieve`, `create`, `update`, and `delete` actions.
+    This view provides the `list`, `retrieve`, `create`, `update`, and `delete` actions.
     """
     serializer_class = ViceSerializer
     permission_classes = IsAuthenticatedAndOwner
     authentication_classes = GeneralAuthentication
 
     def get_queryset(self):
-        return Vice.objects.filter(user=self.request.user)
+        is_archived = bool(self.request.query_params.get('archived', False))
+        return Vice.objects.filter(user=self.request.user, archived=is_archived)
 
     def perform_create(self, serializer):
         serializer.save(user=self.request.user)
-
-    def list(self, request):
-        return unused_method()
 
 
 class ViceAnalyticViewSet(viewsets.ModelViewSet):

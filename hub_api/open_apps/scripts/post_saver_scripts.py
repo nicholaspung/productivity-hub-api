@@ -44,12 +44,7 @@ def genkan_website_scraper():
     '''
     This job scrapes 'genkan' websites to grab titles put into Post table
     '''
-    urls = ['https://leviatanscans.com/latest',
-            'https://reaperscans.com/latest',
-            'https://zeroscans.com/latest',
-            'https://skscans.com/latest',
-            'https://methodscans.com/latest',
-            'https://hatigarmscanz.net/latest']
+    urls = ['https://zeroscans.com/latest']
     for url in urls:
         try:
             html = requests.get(url)
@@ -70,12 +65,137 @@ def genkan_website_scraper():
                 try:
                     Post.objects.get_or_create(
                         title=post_obj['title'], url=post_obj['url'])
-                except IntegrityError as e:
+                except IntegrityError:
                     continue
-        except requests.exceptions.RequestException as e:
+        except requests.exceptions.RequestException:
             return
 
     db.connections.close_all()
+
+
+def website_scraper_1():
+    urls = ['https://reaperscans.com/latest-comic/']
+    for url in urls:
+        try:
+            html = requests.get(url)
+            soup = BeautifulSoup(html.text, "html.parser")
+            titles = soup.select('.page-item-detail.manga')
+            for title in titles:
+                chapters = title.select(
+                    '.item-summary > .list-chapter > .chapter-item.has-thumb.free-chap > .chapter.font-meta > .btn-link')
+                manga_title = title.select(
+                    '.item-summary > .post-title.font-title > .h5 > a')[0].contents[0]
+                for chapter in chapters:
+                    chapter_num = chapter.contents[0].split(' ')[2]
+                    url = chapter['href']
+                    final_title = f"{manga_title} Ch. {chapter_num}"
+                    post_obj = {
+                        'title': final_title,
+                        'url': url
+                    }
+                    try:
+                        Post.objects.get_or_create(
+                            title=post_obj['title'], url=post_obj['url'])
+                    except IntegrityError:
+                        continue
+        except requests.exceptions.RequestException:
+            return
+    db.connections.close_all()
+
+
+def website_scraper_2():
+    urls = ['https://luminousscans.com/series/?order=update',
+            'https://www.asurascans.com/manga/?order=update',
+            'https://alpha-scans.org/manga/?order=update'
+            ]
+    for url in urls:
+        try:
+            html = requests.get(url)
+            soup = BeautifulSoup(html.text, "html.parser")
+            titles = soup.select('.bs')
+            for title in titles:
+                url = title.select('.bsx > a')[0]['href']
+                manga_title = title.select('.bsx > a')[0]['title']
+                chapter = title.select('.bsx > a > .bigor > .adds > .epxs')[
+                    0].contents[0]
+                final_title = f"{manga_title} {chapter}"
+                post_obj = {
+                    'title': final_title,
+                    'url': url
+                }
+                try:
+                    Post.objects.get_or_create(
+                        title=post_obj['title'], url=post_obj['url'])
+                except IntegrityError:
+                    continue
+        except requests.exceptions.RequestException:
+            return
+
+
+def website_scraper_3():
+    urls = ['https://flamescans.org/']
+    for url in urls:
+        try:
+            html = requests.get(url)
+            soup = BeautifulSoup(html.text, "html.parser")
+            titles = soup.select('.bs.styletere')
+            for title in titles:
+                manga_title = title.select('.bsx > a')[0]['title']
+                chapters = title.select('.bsx > .bigor > .chapter-list')
+
+                if len(chapters) == 0:
+                    continue
+
+                for chapter in chapters:
+                    chapter_num = chapter.select('.adds > .epxs')
+
+                    if len(chapter_num) == 0:
+                        continue
+
+                    chapter_num_text = chapter_num[0].contents[0].replace(
+                        '\n', '').split(' ')[1]
+                    url = chapter.contents[1]['href']
+                    final_title = f"{manga_title} Ch. {chapter_num_text}"
+                    post_obj = {
+                        'title': final_title,
+                        'url': url
+                    }
+                    try:
+                        Post.objects.get_or_create(
+                            title=post_obj['title'], url=post_obj['url'])
+                    except IntegrityError:
+                        continue
+        except requests.exceptions.RequestException:
+            return
+
+
+def website_scraper_4():
+    urls = ['https://reader.kireicake.com/reader/']
+    for url in urls:
+        try:
+            html = requests.get(url)
+            soup = BeautifulSoup(html.text, "html.parser")
+            titles = soup.select('.group')
+            for title in titles:
+                manga_title = title.select('.title > a')[0]['title']
+                chapters = title.select('.element')
+
+                for chapter in chapters:
+                    chapter_num = chapter.select('.title > a')[0]['title']
+                    url = chapter.select('.title > a')[0]['href']
+                    final_title = f"{manga_title} {chapter_num}"
+                    post_obj = {
+                        'title': final_title,
+                        'url': url
+                    }
+
+                    try:
+                        Post.objects.get_or_create(
+                            title=post_obj['title'], url=post_obj['url'])
+                    except IntegrityError:
+                        continue
+        except requests.exceptions.RequestException:
+            return
 
 
 def delete_old_posts():
