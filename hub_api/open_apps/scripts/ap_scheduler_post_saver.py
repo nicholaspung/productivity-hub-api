@@ -6,7 +6,7 @@ from open_apps.scripts.post_saver_scripts import (delete_old_posts,
                                                   genkan_website_scraper,
                                                   subreddit_scraper, website_scraper_1,
                                                   website_scraper_2, website_scraper_3,
-                                                  website_scraper_4, website_scraper_5)
+                                                  website_scraper_4)
 
 job_defaults = {
     'max_instances': 1,
