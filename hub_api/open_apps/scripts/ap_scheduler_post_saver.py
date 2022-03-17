@@ -47,11 +47,6 @@ def dev_website_scraper_4():
     website_scraper_4()
 
 
-@scheduler.scheduled_job('interval', id='post_saver.scripts.website_scraper_5', minutes=30)
-def dev_website_scraper_5():
-    website_scraper_5()
-
-
 @scheduler.scheduled_job('interval', id='post_saver.scripts.delete_old_posts', weeks=1)
 def dev_delete_old_posts():
     delete_old_posts()
