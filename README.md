@@ -118,3 +118,10 @@ for your table to be called 'xxxx'. By explicitly calling the db_table name, you
 - Pick the migration you want to do back to
 
 `python manage.py migrate [app_name] [migration_you_want_to_revert_to]`
+
+## Choose between CronJobs and Python AP Scheduler
+
+You can configure to either run cron jobs via Cron on your server or to use Python AP Scheduler
+
+- Cron jobs need to be configured within your server
+- Python AP Scheduler needs to be run everytime your server starts up
